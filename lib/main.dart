@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'services/firebase_options.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const LetsMeetApp());
 }
 
@@ -10,15 +18,28 @@ class LetsMeetApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'LetsMeet',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: kIsWeb ? const ForWeb() : const MyHomePage(title: "HEHOENUHT"),
     );
   }
 }
 
+// ??: temporary for web
+class ForWeb extends StatelessWidget {
+  const ForWeb({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(color: Colors.amber[300]),
+    );
+  }
+}
+
+// ?? temporary for mobile
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
