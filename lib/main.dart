@@ -22,7 +22,7 @@ class LetsMeetApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: kIsWeb ? const ForWeb() : const MyHomePage(title: "HEHOENUHT"),
+      home: kIsWeb ? const ForWeb() : const MyHomePage(title: "ForMobile"),
     );
   }
 }
