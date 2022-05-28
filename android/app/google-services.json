@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "961058682017",
+    "project_id": "letsmeet-cspj",
+    "storage_bucket": "letsmeet-cspj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961058682017:android:ef6a511c94b79e68fc6ce0",
+        "android_client_info": {
+          "package_name": "com.letsmeet.letsmeet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961058682017-8lvk9jo4ckghfufb7pdionih4jhnq0si.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHmmxkkDheRhiu2yrmLhhV7NmIoAGhvOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "961058682017-8lvk9jo4ckghfufb7pdionih4jhnq0si.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
