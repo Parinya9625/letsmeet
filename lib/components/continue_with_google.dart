@@ -23,7 +23,7 @@ class _ContinueWithGoogleButtonState extends State<ContinueWithGoogleButton> {
         padding: EdgeInsets.only(
           left: 16,
         ),
-        child: Text('Continue with google'),
+        child: Text('Continue with Google'),
       ),
       style: TextButton.styleFrom(
         primary: Colors.black,
