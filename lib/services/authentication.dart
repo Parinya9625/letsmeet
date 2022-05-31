@@ -47,8 +47,11 @@ class AuthenticationService {
         idToken: googleSignInAuthentication.idToken,
       );
 
-      await checkUserAge().then((validUser) async {
-        if (validUser) {
+      await getUserBirthday().then((birthday) async {
+        DateTime now = DateTime.now();
+
+        // Age over 18 can sign in
+        if (birthday != null && now.year - birthday.year >= 18) {
           await _firebaseAuth.signInWithCredential(authCredential);
         } else {
           signOut();
@@ -61,18 +64,19 @@ class AuthenticationService {
     }
   }
 
-  Future<bool> checkUserAge() async {
+  Future<DateTime?> getUserBirthday() async {
     var client = (await _googleSignIn.authenticatedClient())!;
     PeopleServiceApi peopleServiceApi = PeopleServiceApi(client);
 
     Person person = await peopleServiceApi.people
         .get("people/me", personFields: "birthdays");
 
-    DateTime now = DateTime.now();
-    var year = person.birthdays?.last.date?.year;
+    Date? birthday = person.birthdays?.last.date;
+    if (birthday != null) {
+      return DateTime(birthday.year!, birthday.month!, birthday.day!);
+    }
 
-    if (year != null && now.year - year >= 18) return true;
-    return false;
+    return null;
   }
 
   Future<String> resetPassword({required String email}) async {
