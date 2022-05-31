@@ -1,15 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:letsmeet/services/authentication.dart';
+import 'package:letsmeet/services/storage.dart';
 import 'package:provider/provider.dart';
 import 'services/firebase_options.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // TODO : change recaptcha key
+  await FirebaseAppCheck.instance.activate(
+    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
   );
 
   runApp(const LetsMeetApp());
@@ -29,6 +36,9 @@ class LetsMeetApp extends StatelessWidget {
             create: (context) =>
                 context.read<AuthenticationService>().authStateChanges,
             initialData: null),
+        Provider<StorageService>(
+          create: (_) => StorageService(FirebaseStorage.instance),
+        ),
       ],
       child: MaterialApp(
         title: 'LetsMeet',
