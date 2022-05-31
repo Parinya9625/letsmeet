@@ -34,6 +34,16 @@ class LetsMeetApp extends StatelessWidget {
         title: 'LetsMeet',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          inputDecorationTheme: const InputDecorationTheme(
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(
+                Radius.circular(16),
+              ),
+            ),
+          ),
         ),
         home: kIsWeb ? const ForWeb() : const ForMobile(),
       ),
