@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:letsmeet/services/authentication.dart';
+import 'package:provider/provider.dart';
 import 'services/firebase_options.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -17,12 +20,23 @@ class LetsMeetApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'LetsMeet',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        Provider<AuthenticationService>(
+          create: (_) => AuthenticationService(FirebaseAuth.instance),
+        ),
+        StreamProvider<User?>(
+            create: (context) =>
+                context.read<AuthenticationService>().authStateChanges,
+            initialData: null),
+      ],
+      child: MaterialApp(
+        title: 'LetsMeet',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: kIsWeb ? const ForWeb() : const ForMobile(),
       ),
-      home: kIsWeb ? const ForWeb() : const MyHomePage(title: "ForMobile"),
     );
   }
 }
@@ -33,55 +47,32 @@ class ForWeb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: Colors.amber[300]),
+    return Scaffold(
+      appBar: AppBar(title: const Text("For Web")),
+      body: Column(
+        children: const [],
+      ),
     );
   }
 }
 
 // ?? temporary for mobile
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+class ForMobile extends StatefulWidget {
+  const ForMobile({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ForMobile> createState() => _ForMobileState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class _ForMobileState extends State<ForMobile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text("For Mobile"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body: Column(
+        children: const [],
       ),
     );
   }
