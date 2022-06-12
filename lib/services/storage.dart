@@ -15,24 +15,10 @@ class StorageService {
         .join();
   }
 
-  Future<String> uploadProfileImage({required File file}) async {
+  Future<String> uploadImage({required String userId, required File file}) async {
     final storageRef = _firebaseStorage.ref();
     final imageRef =
-        storageRef.child("images/profiles/${generateName(25)}.png");
-
-    try {
-      await imageRef.putFile(file);
-
-      return imageRef.getDownloadURL();
-    } on FirebaseException catch (e) {
-      return e.message.toString();
-    }
-  }
-
-  Future<String> uploadEventImage({required File file}) async {
-    final storageRef = _firebaseStorage.ref();
-    final imageRef =
-        storageRef.child("images/events/${generateName(25)}.png");
+        storageRef.child("images/$userId/${generateName(30)}.png");
 
     try {
       await imageRef.putFile(file);

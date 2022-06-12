@@ -1,13 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:letsmeet/models/category.dart';
+import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/services/authentication.dart';
+import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/services/storage.dart';
 import 'package:provider/provider.dart';
+import 'models/event.dart';
+import 'pages/test_auth.dart';
 import 'services/firebase_options.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_app_check/firebase_app_check.dart';
+
+import 'models/report.dart';
+import 'models/ban.dart';
+import 'models/user.dart' as lm;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,11 +43,44 @@ class LetsMeetApp extends StatelessWidget {
           create: (_) => AuthenticationService(FirebaseAuth.instance),
         ),
         StreamProvider<User?>(
-            create: (context) =>
-                context.read<AuthenticationService>().authStateChanges,
-            initialData: null),
+          create: (context) =>
+              context.read<AuthenticationService>().authStateChanges,
+          initialData: null,
+        ),
         Provider<StorageService>(
           create: (_) => StorageService(FirebaseStorage.instance),
+        ),
+        Provider<CloudFirestoreService>(
+          create: (_) => CloudFirestoreService(FirebaseFirestore.instance),
+        ),
+        StreamProvider<List<Ban>>(
+          create: (context) => context.read<CloudFirestoreService>().streamBans,
+          initialData: const [],
+        ),
+        StreamProvider<List<Report>>(
+          create: (context) =>
+              context.read<CloudFirestoreService>().streamReports,
+          initialData: const [],
+        ),
+        StreamProvider<List<lm.User>>(
+          create: (context) =>
+              context.read<CloudFirestoreService>().streamUsers,
+          initialData: const [],
+        ),
+        StreamProvider<List<Event>>(
+          create: (context) =>
+              context.read<CloudFirestoreService>().streamEvents,
+          initialData: const [],
+        ),
+        StreamProvider<List<Category>>(
+          create: (context) =>
+              context.read<CloudFirestoreService>().streamCategories,
+          initialData: const [],
+        ),
+        StreamProvider<List<Role>>(
+          create: (context) =>
+              context.read<CloudFirestoreService>().streamRoles,
+          initialData: const [],
         ),
       ],
       child: MaterialApp(
@@ -91,9 +134,7 @@ class _ForMobileState extends State<ForMobile> {
       appBar: AppBar(
         title: const Text("For Mobile"),
       ),
-      body: Column(
-        children: const [],
-      ),
+      body: const AuthPage(),
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:provider/provider.dart';
 
-
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
 
@@ -70,11 +69,9 @@ class _AuthPageState extends State<AuthPage> {
               child: const Text("Sign in Google"),
             ),
             TextButton(
-              onPressed: () {
-              },
+              onPressed: () {},
               child: const Text("Forget password"),
             ),
-            
           ],
         ),
       );
