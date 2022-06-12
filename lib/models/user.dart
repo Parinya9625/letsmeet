@@ -60,7 +60,7 @@ class User {
 
   Future<Role> get getRole async => Role.fromFirestore(doc: await role.get());
 
-  Future<List<Category>> get getFavGategory => Future.wait(favCategory
+  Future<List<Category>> get getFavCategory => Future.wait(favCategory
       .map((ref) async => Category.fromFirestore(doc: await ref.get())));
 
   Future<List<Event>> get getRecentView => Future.wait(

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letsmeet/services/firestore.dart';
-import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/user.dart';
 
 class Chat {
@@ -35,7 +34,7 @@ class Chat {
       by: data["by"],
       sendTime: data["sendTime"].toDate(),
       text: data["text"],
-      image: data["image"],
+      image: List<String>.from(data["image"]),
     );
   }
 
