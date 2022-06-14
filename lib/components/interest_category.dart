@@ -47,44 +47,63 @@ class _InterestCategorySelectorState extends State<InterestCategorySelector> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: GridView.count(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 32 / 10,
-        padding: const EdgeInsets.all(16.0),
-        shrinkWrap: true,
+      child: Column(
         children: [
-          for (Category category in categories) ...{
-            ElevatedButton(
-              style: btnStyle(category),
-              onPressed: () {
-                setState(() {
-                  widget.controller.select(category);
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Icon(category.icon),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Text(
-                        category.name,
-                        textAlign: TextAlign.center,
-                        softWrap: true,
-                      ),
-                    ),
-                  ],
+          Padding(
+            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            child: Row(
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(right: 16.0),
+                  child: Icon(Icons.category),
                 ),
-              ),
+                Text(
+                  "Interest Category",
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              ],
             ),
-          }
+          ),
+          GridView.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 32 / 10,
+            padding: const EdgeInsets.all(16.0),
+            shrinkWrap: true,
+            children: [
+              for (Category category in categories) ...{
+                ElevatedButton(
+                  style: btnStyle(category),
+                  onPressed: () {
+                    setState(() {
+                      widget.controller.select(category);
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Icon(category.icon),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            category.name,
+                            textAlign: TextAlign.center,
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              }
+            ],
+          ),
         ],
       ),
     );
