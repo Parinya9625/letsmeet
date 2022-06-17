@@ -70,6 +70,7 @@ class _InterestCategorySelectorState extends State<InterestCategorySelector> {
             mainAxisSpacing: 8,
             childAspectRatio: 32 / 10,
             padding: const EdgeInsets.all(16.0),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             children: [
               for (Category category in categories) ...{
