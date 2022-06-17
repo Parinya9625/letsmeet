@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NoConnectionBanner extends StatefulWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
-  const NoConnectionBanner({Key? key, required this.onPressed})
-      : super(key: key);
+  const NoConnectionBanner({Key? key, this.onPressed}) : super(key: key);
 
   @override
   State<NoConnectionBanner> createState() => _NoConnectionBannerState();

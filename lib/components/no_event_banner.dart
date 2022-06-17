@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NoEventBanner extends StatefulWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
-  const NoEventBanner({Key? key, required this.onPressed}) : super(key: key);
+  const NoEventBanner({Key? key, this.onPressed}) : super(key: key);
 
   @override
   State<NoEventBanner> createState() => _NoEventBannerState();
