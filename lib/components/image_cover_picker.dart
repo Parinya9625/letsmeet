@@ -27,7 +27,10 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
             children: [
               Icon(icon, size: 32),
               const SizedBox(height: 8),
-              Text(text.toString())
+              Text(
+                text.toString(),
+                style: Theme.of(context).textTheme.bodyText1,
+              )
             ],
           ),
         ),
@@ -75,9 +78,9 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 "Select image with",
-                style: TextStyle(fontSize: 16),
+                style: Theme.of(context).textTheme.headline1,
               ),
               const SizedBox(height: 16),
               Row(
@@ -105,9 +108,6 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -115,14 +115,14 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Row(
-                children: const [
-                  Padding(
+                children: [
+                  const Padding(
                     padding: EdgeInsets.only(right: 16.0),
                     child: Icon(Icons.image_rounded),
                   ),
                   Text(
                     "Image Cover",
-                    style: TextStyle(fontSize: 16.0),
+                    style: Theme.of(context).textTheme.headline1,
                   ),
                 ],
               ),
@@ -131,7 +131,7 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
               width: double.infinity,
               height: 120,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Theme.of(context).disabledColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: InkWell(
@@ -160,16 +160,12 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
                     } else ...{
                       const Icon(
                         Icons.image_rounded,
-                        color: Colors.grey,
                         size: 32,
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         "Select image cover",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                     }
                   ],

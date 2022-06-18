@@ -19,9 +19,6 @@ class _SearchEventCardState extends State<SearchEventCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: widget.onPressed,
@@ -55,20 +52,23 @@ class _SearchEventCardState extends State<SearchEventCard> {
                       Row(
                         children: [
                           Expanded(
-                            child: Text(widget.event.name,
-                                style: const TextStyle(fontSize: 16)),
+                            child: Text(
+                              widget.event.name,
+                              style: Theme.of(context).textTheme.headline1,
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(right: 8.0),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
                             child: Icon(
                               Icons.person_rounded,
                               size: 16,
-                              color: Colors.grey,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color,
                             ),
                           ),
                           FutureBuilder(
@@ -84,7 +84,7 @@ class _SearchEventCardState extends State<SearchEventCard> {
                               User user = snapshot.data[0];
                               return Text(
                                 "${user.name} ${user.surname}",
-                                style: const TextStyle(color: Colors.grey),
+                                style: Theme.of(context).textTheme.bodyText1,
                               );
                             },
                           ),
@@ -100,30 +100,31 @@ class _SearchEventCardState extends State<SearchEventCard> {
                                   ? Icons.videocam_rounded
                                   : Icons.place_rounded,
                               size: 16,
-                              color: Colors.grey,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color,
                             ),
                           ),
                           Text(
                             widget.event.location["name"],
-                            style: const TextStyle(color: Colors.grey),
+                            style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ],
                       ),
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(right: 8.0),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
                             child: Icon(
                               Icons.calendar_month_rounded,
                               size: 16,
-                              color: Colors.grey,
+                              color: Theme.of(context).textTheme.bodyText1!.color,
                             ),
                           ),
                           Text(
                             DateFormat("EEE, dd MMM y, HH:mm")
                                 .format(widget.event.startTime),
-                            style: const TextStyle(color: Colors.grey),
+                            style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ],
                       ),

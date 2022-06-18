@@ -26,40 +26,33 @@ class _InterestCategorySelectorState extends State<InterestCategorySelector> {
 
     ButtonStyle btnStyle(Category category) {
       return ButtonStyle(
-        shape: MaterialStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
         elevation: isSelected(category)
             ? MaterialStateProperty.all<double>(2)
             : MaterialStateProperty.all<double>(0),
         backgroundColor: isSelected(category)
-            ? MaterialStateProperty.all<Color>(Colors.blue)
-            : MaterialStateProperty.all<Color>(Colors.white),
+            ? MaterialStateProperty.all<Color>(Theme.of(context).primaryColor)
+            : MaterialStateProperty.all<Color>(Theme.of(context).cardColor),
         foregroundColor: isSelected(category)
             ? MaterialStateProperty.all<Color>(Colors.white)
-            : MaterialStateProperty.all<Color>(Colors.grey),
+            : MaterialStateProperty.all<Color>(
+                Theme.of(context).textTheme.bodyText1!.color!),
       );
     }
 
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
             child: Row(
-              children: const [
-                Padding(
+              children: [
+                const Padding(
                   padding: EdgeInsets.only(right: 16.0),
                   child: Icon(Icons.category),
                 ),
                 Text(
                   "Interest Category",
-                  style: TextStyle(fontSize: 16.0),
+                  style: Theme.of(context).textTheme.headline1,
                 ),
               ],
             ),
@@ -88,7 +81,9 @@ class _InterestCategorySelectorState extends State<InterestCategorySelector> {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: Icon(category.icon),
+                          child: Icon(
+                            category.icon,
+                          ),
                         ),
                         Expanded(
                           flex: 3,
