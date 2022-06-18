@@ -323,7 +323,7 @@ class _TestFirestoreState extends State<TestFirestore>
       }
     }
 
-    Event testEvent = Event(
+    Event testEventIP = Event(
       id: "_test",
       ageRestrict: false,
       category: FirebaseFirestore.instance
@@ -332,7 +332,10 @@ class _TestFirestoreState extends State<TestFirestore>
       createdTime: DateTime.now(),
       description: "This is a test event",
       image: "https://picsum.photos/200?image=123",
-      location: const GeoPoint(0, 0),
+      location: {
+        "name": "In person event !",
+        "geoPoint": const GeoPoint(1, 2),
+      },
       maxMember: 20,
       member: [],
       memberReviewed: [],
@@ -341,7 +344,7 @@ class _TestFirestoreState extends State<TestFirestore>
       startTime: DateTime.now(),
       type: "In Person",
     );
-    Event testEvent2 = Event(
+    Event testEventIP2 = Event(
       id: "_test",
       ageRestrict: false,
       category: FirebaseFirestore.instance
@@ -350,14 +353,17 @@ class _TestFirestoreState extends State<TestFirestore>
       createdTime: DateTime.now(),
       description: "Update event !",
       image: "https://picsum.photos/200?image=456",
-      location: const GeoPoint(0, 0),
+      location: {
+        "name": "name update",
+        "link": "https://google.com",
+      },
       maxMember: 20,
       member: [],
       memberReviewed: [],
       name: "Test Event with update",
       owner: FirebaseFirestore.instance.collection("users").doc("_test"),
       startTime: DateTime.now(),
-      type: "In Person",
+      type: "Online",
     );
     User testUser = User(
       id: "_test",
@@ -393,7 +399,7 @@ class _TestFirestoreState extends State<TestFirestore>
                               setState(() {
                                 context
                                     .read<CloudFirestoreService>()
-                                    .addEvent(event: testEvent);
+                                    .addEvent(event: testEventIP);
                               });
                             },
                             child: const Text("Add Event")),
@@ -409,7 +415,7 @@ class _TestFirestoreState extends State<TestFirestore>
                               setState(() {
                                 context
                                     .read<CloudFirestoreService>()
-                                    .updateEvent(event: testEvent2);
+                                    .updateEvent(event: testEventIP2);
                               });
                             },
                             child: const Text("Update Event")),
@@ -460,7 +466,7 @@ class _TestFirestoreState extends State<TestFirestore>
                                 context
                                     .read<CloudFirestoreService>()
                                     .addEventMember(
-                                        event: testEvent, user: testUser);
+                                        event: testEventIP, user: testUser);
                               });
                             },
                             child: const Text("Add member")),
@@ -472,7 +478,7 @@ class _TestFirestoreState extends State<TestFirestore>
                                 context
                                     .read<CloudFirestoreService>()
                                     .removeEventMember(
-                                        event: testEvent2, user: testUser);
+                                        event: testEventIP2, user: testUser);
                               });
                             },
                             child: const Text("Remove member")),
@@ -489,7 +495,7 @@ class _TestFirestoreState extends State<TestFirestore>
                                 context
                                     .read<CloudFirestoreService>()
                                     .addEventMemberReview(
-                                        event: testEvent, user: testUser);
+                                        event: testEventIP, user: testUser);
                               });
                             },
                             child: const Text("Add member review")),
@@ -501,7 +507,7 @@ class _TestFirestoreState extends State<TestFirestore>
                                 context
                                     .read<CloudFirestoreService>()
                                     .removeEventMemberReview(
-                                        event: testEvent2, user: testUser);
+                                        event: testEventIP2, user: testUser);
                               });
                             },
                             child: const Text("Remove member review")),
@@ -521,7 +527,7 @@ class _TestFirestoreState extends State<TestFirestore>
                             onPressed: () {
                               setState(() {
                                 context.read<CloudFirestoreService>().addChat(
-                                    eventId: testEvent.id!,
+                                    eventId: testEventIP.id!,
                                     chat: Chat.create(
                                         by: testUser.toDocRef(),
                                         image: [],
@@ -537,7 +543,7 @@ class _TestFirestoreState extends State<TestFirestore>
                                 context
                                     .read<CloudFirestoreService>()
                                     .removeChat(
-                                        eventId: testEvent.id!,
+                                        eventId: testEventIP.id!,
                                         chatId: _chat.text.trim());
                               });
                             },

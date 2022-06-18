@@ -8,13 +8,12 @@ import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/services/storage.dart';
+import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
 import 'models/event.dart';
-import 'pages/test_auth.dart';
 import 'services/firebase_options.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_app_check/firebase_app_check.dart';
-
 import 'models/report.dart';
 import 'models/ban.dart';
 import 'models/user.dart' as lm;
@@ -85,19 +84,7 @@ class LetsMeetApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'LetsMeet',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          inputDecorationTheme: const InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(
-                Radius.circular(16),
-              ),
-            ),
-          ),
-        ),
+        theme: lightTheme,
         home: kIsWeb ? const ForWeb() : const ForMobile(),
       ),
     );
@@ -112,9 +99,7 @@ class ForWeb extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("For Web")),
-      body: Column(
-        children: const [],
-      ),
+      body: Column(),
     );
   }
 }
@@ -134,7 +119,7 @@ class _ForMobileState extends State<ForMobile> {
       appBar: AppBar(
         title: const Text("For Mobile"),
       ),
-      body: const AuthPage(),
+      body: Column(),
     );
   }
 }

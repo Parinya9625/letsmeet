@@ -20,8 +20,12 @@ class Role {
   Role.create(
       {required this.name,
       required this.foregroundColor,
-      required this.backgroundColor})
-      : id = null;
+      required this.backgroundColor,
+      bool isAdmin = false})
+      : id = null,
+        permission = {
+          "isAdmin": isAdmin,
+        };
 
   set isAdmin(bool value) {
     permission["isAdmin"] = value;

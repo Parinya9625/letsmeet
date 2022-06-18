@@ -10,7 +10,11 @@ class Event {
   final DateTime createdTime;
   final String description;
   final String image;
-  final GeoPoint location;
+  Map<String, dynamic> location = {
+    "name": "event name",
+    "geoPoint": const GeoPoint(0, 0),
+    "link": "https://",
+  };
   final int maxMember;
   final List<DocumentReference> member;
   final List<DocumentReference> memberReviewed;
@@ -34,21 +38,45 @@ class Event {
       required this.owner,
       required this.startTime,
       required this.type});
-  Event.create(
+  Event.createInPerson(
       {required this.ageRestrict,
       required this.category,
       required this.description,
       required this.image,
-      required this.location,
+      required String locationName,
+      required GeoPoint geoPoint,
       required this.maxMember,
       required this.member,
       required this.name,
       required this.owner,
-      required this.startTime,
-      required this.type})
+      required this.startTime})
       : id = null,
         createdTime = DateTime.now(),
-        memberReviewed = [];
+        memberReviewed = [],
+        location = {
+          "name": locationName,
+          "geoPoint": geoPoint,
+        },
+        type = "In Person";
+  Event.createOnline(
+      {required this.ageRestrict,
+      required this.category,
+      required this.description,
+      required this.image,
+      required String link,
+      required this.maxMember,
+      required this.member,
+      required this.name,
+      required this.owner,
+      required this.startTime})
+      : id = null,
+        createdTime = DateTime.now(),
+        memberReviewed = [],
+        location = {
+          "name": "Online event",
+          "link": link,
+        },
+        type = "Online";
 
   Future<Category> get getCategory async =>
       Category.fromFirestore(doc: await category.get());

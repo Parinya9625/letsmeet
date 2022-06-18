@@ -13,7 +13,7 @@ class ContinueWithGoogleButton extends StatefulWidget {
 class _ContinueWithGoogleButtonState extends State<ContinueWithGoogleButton> {
   @override
   Widget build(BuildContext context) {
-    return TextButton.icon(
+    return ElevatedButton.icon(
       icon: Image.asset(
         'lib/assets/images/google_icon.png',
         height: 24,
@@ -25,16 +25,13 @@ class _ContinueWithGoogleButtonState extends State<ContinueWithGoogleButton> {
         ),
         child: Text('Continue with Google'),
       ),
-      style: TextButton.styleFrom(
-        primary: Colors.black,
-        backgroundColor: Colors.white,
-        elevation: 1.0,
-        minimumSize: const Size.fromHeight(56),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(16),
-          ),
-        ),
+      style: ButtonStyle(
+        textStyle:
+            MaterialStateProperty.all(Theme.of(context).textTheme.headline1),
+        foregroundColor: MaterialStateProperty.all(
+            Theme.of(context).textTheme.headline1!.color),
+        backgroundColor: MaterialStateProperty.all(Theme.of(context).cardColor),
+        minimumSize: MaterialStateProperty.all(const Size.fromHeight(56)),
       ),
       onPressed: widget.onPressed,
     );
