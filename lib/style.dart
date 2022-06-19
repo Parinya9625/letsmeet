@@ -98,4 +98,8 @@ ThemeData lightTheme = ThemeData(
       color: _subtitle,
     ),
   ),
+  checkboxTheme: CheckboxThemeData(
+    checkColor: MaterialStateProperty.all(_card),
+    fillColor: MaterialStateProperty.all(_main),
+  ),
 );
