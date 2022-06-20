@@ -15,6 +15,7 @@ Color _background = const Color.fromRGBO(242, 249, 251, 1);
 Color _card = Colors.white;
 Color _error = const Color.fromRGBO(255, 78, 80, 1);
 Color _disable = const Color.fromRGBO(243, 243, 243, 1);
+Color _highlight = const Color.fromRGBO(242, 201, 76, 1);
 // Color _description = const Color.fromRGBO(106, 106, 106, 1);
 
 // // Debug
@@ -26,9 +27,11 @@ Color _disable = const Color.fromRGBO(243, 243, 243, 1);
 // Color _card = _debug;
 // Color _error = _debug;
 // Color _disable = _debug;
+// Color _highlight = _debug;
 
 ThemeData lightTheme = ThemeData(
   primaryColor: _main,
+  highlightColor: _highlight,
   colorScheme: ColorScheme.fromSwatch(
     accentColor: _main,
     errorColor: _error,
