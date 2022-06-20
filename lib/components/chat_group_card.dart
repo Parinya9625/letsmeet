@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:letsmeet/models/event.dart';
-import 'package:letsmeet/models/user.dart';
 
 class ChatGroupCard extends StatefulWidget {
   final Event event;
@@ -41,10 +40,10 @@ class _ChatGroupCardState extends State<ChatGroupCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${widget.event.name}",
+                        widget.event.name,
                         style: Theme.of(context).textTheme.headline1,
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 6),
                       Text(
                         "last message • 32 mins",
                         style: Theme.of(context).textTheme.bodyText1,
