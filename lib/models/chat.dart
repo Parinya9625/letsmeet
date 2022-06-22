@@ -4,10 +4,11 @@ import 'package:letsmeet/models/user.dart';
 
 class Chat {
   final String? id;
-  final DocumentReference by;
+  final DocumentReference? by;
   final DateTime sendTime;
-  final String text;
+  final String? text;
   final List<String> image;
+  final bool isAlert;
 
   Chat({
     required this.id,
@@ -15,16 +16,26 @@ class Chat {
     required this.sendTime,
     required this.text,
     required this.image,
+    required this.isAlert,
   });
 
   Chat.create({
     required this.by,
     required this.text,
-    required this.image,
+    this.image = const [],
   })  : id = null,
-        sendTime = DateTime.now();
+        sendTime = DateTime.now(),
+        isAlert = false;
 
-  Future<User> get getBy async => User.fromFirestore(doc: await by.get());
+  Chat.createAlert({
+    required this.text,
+  })  : id = null,
+        sendTime = DateTime.now(),
+        by = null,
+        image = [],
+        isAlert = true;
+
+  Future<User> get getBy async => User.fromFirestore(doc: await by!.get());
 
   factory Chat.fromFirestore({required DocumentSnapshot doc}) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -35,6 +46,7 @@ class Chat {
       sendTime: data["sendTime"].toDate(),
       text: data["text"],
       image: List<String>.from(data["image"]),
+      isAlert: data["isAlert"] ?? false,
     );
   }
 
@@ -52,6 +64,7 @@ class Chat {
       "sendTime": sendTime,
       "text": text,
       "image": image,
+      "isAlert": isAlert,
     };
   }
 }
