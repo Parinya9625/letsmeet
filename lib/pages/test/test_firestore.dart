@@ -540,6 +540,18 @@ class _TestFirestoreState extends State<TestFirestore>
                         child: ElevatedButton(
                             onPressed: () {
                               setState(() {
+                                context.read<CloudFirestoreService>().addChat(
+                                    eventId: testEventIP.id!,
+                                    chat: Chat.createAlert(
+                                        text: _chat.text.trim()));
+                              });
+                            },
+                            child: const Text("Send alert")),
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
                                 context
                                     .read<CloudFirestoreService>()
                                     .removeChat(
@@ -661,21 +673,28 @@ class _TestFirestoreState extends State<TestFirestore>
           return Column(
             children: [
               for (Chat chat in listChat) ...{
-                FutureBuilder(
-                  future: Future.wait([chat.getBy]),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (!snapshot.hasData) {
-                      return const CircularProgressIndicator.adaptive();
-                    }
+                if (chat.by != null) ...{
+                  FutureBuilder(
+                    future: Future.wait([chat.getBy]),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData) {
+                        return const CircularProgressIndicator.adaptive();
+                      }
 
-                    User user = snapshot.data[0];
+                      User user = snapshot.data[0];
 
-                    return ListTile(
-                      title: Text(chat.text),
-                      subtitle: Text("${user.name} ${user.surname}"),
-                    );
-                  },
-                ),
+                      return ListTile(
+                        title: Text(chat.text.toString()),
+                        subtitle: Text("${user.name} ${user.surname}"),
+                      );
+                    },
+                  ),
+                } else ...{
+                  ListTile(
+                    title: Text(chat.text.toString()),
+                    subtitle: Text("Chat Alert"),
+                  ),
+                }
               }
             ],
           );
