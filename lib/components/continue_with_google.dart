@@ -13,27 +13,34 @@ class ContinueWithGoogleButton extends StatefulWidget {
 class _ContinueWithGoogleButtonState extends State<ContinueWithGoogleButton> {
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: Image.asset(
-        'lib/assets/images/google_icon.png',
-        height: 24,
-        width: 24,
-      ),
-      label: const Padding(
-        padding: EdgeInsets.only(
-          left: 16,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 56),
+      child: Card(
+        elevation: widget.onPressed != null ? 2 : 0,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: widget.onPressed,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'lib/assets/images/google_icon.png',
+                height: 24,
+                width: 24,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                ),
+                child: Text(
+                  'Continue with Google',
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+              ),
+            ],
+          ),
         ),
-        child: Text('Continue with Google'),
       ),
-      style: ButtonStyle(
-        textStyle:
-            MaterialStateProperty.all(Theme.of(context).textTheme.headline1),
-        foregroundColor: MaterialStateProperty.all(
-            Theme.of(context).textTheme.headline1!.color),
-        backgroundColor: MaterialStateProperty.all(Theme.of(context).cardColor),
-        minimumSize: MaterialStateProperty.all(const Size.fromHeight(56)),
-      ),
-      onPressed: widget.onPressed,
     );
   }
 }

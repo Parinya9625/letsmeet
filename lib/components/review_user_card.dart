@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import "package:flutter/material.dart";
 import 'package:letsmeet/components/controllers/review_user_controller.dart';
 import 'package:letsmeet/models/user.dart';
+import 'package:letsmeet/style.dart';
 
 class ReviewUserCard extends StatefulWidget {
   final User user;
@@ -55,7 +56,9 @@ class _ReviewUserCardState extends State<ReviewUserCard> {
                               i <= widget.controller.value
                                   ? Icons.star_rounded
                                   : Icons.star_border_rounded,
-                              color: Theme.of(context).highlightColor,
+                              color: Theme.of(context)
+                                  .extension<LetsMeetColor>()!
+                                  .rating,
                             ),
                           ),
                         }

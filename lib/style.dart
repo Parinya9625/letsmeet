@@ -31,7 +31,6 @@ Color _highlight = const Color.fromRGBO(242, 201, 76, 1);
 
 ThemeData lightTheme = ThemeData(
   primaryColor: _main,
-  highlightColor: _highlight,
   colorScheme: ColorScheme.fromSwatch(
     accentColor: _main,
     errorColor: _error,
@@ -58,6 +57,9 @@ ThemeData lightTheme = ThemeData(
   appBarTheme: AppBarTheme(
     backgroundColor: _card,
     foregroundColor: _title,
+  ),
+  tabBarTheme: TabBarTheme(
+    labelColor: _title,
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
@@ -105,4 +107,36 @@ ThemeData lightTheme = ThemeData(
     checkColor: MaterialStateProperty.all(_card),
     fillColor: MaterialStateProperty.all(_main),
   ),
+  extensions: [
+    LetsMeetColor(
+      rating: _highlight,
+    ),
+  ],
 );
+
+class LetsMeetColor extends ThemeExtension<LetsMeetColor> {
+  final Color rating;
+
+  const LetsMeetColor({
+    required this.rating,
+  });
+
+  @override
+  ThemeExtension<LetsMeetColor> copyWith({Color? rating}) {
+    return LetsMeetColor(
+      rating: rating ?? this.rating,
+    );
+  }
+
+  @override
+  ThemeExtension<LetsMeetColor> lerp(
+      ThemeExtension<LetsMeetColor>? other, double t) {
+    if (other is! LetsMeetColor) {
+      return this;
+    }
+
+    return LetsMeetColor(
+      rating: Color.lerp(rating, other.rating, t)!,
+    );
+  }
+}
