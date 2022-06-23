@@ -63,6 +63,8 @@ ThemeData lightTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
+      padding:
+          MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 16, horizontal: 24)),
       elevation: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.disabled)) {
           return 0;
