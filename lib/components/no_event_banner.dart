@@ -46,10 +46,7 @@ class _NoEventBannerState extends State<NoEventBanner> {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 onPressed: widget.onPressed,
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Reload'),
-                ),
+                child: const Text('Reload'),
               ),
             ),
           ],

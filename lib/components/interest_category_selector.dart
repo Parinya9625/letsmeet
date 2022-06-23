@@ -26,6 +26,9 @@ class _InterestCategorySelectorState extends State<InterestCategorySelector> {
 
     ButtonStyle btnStyle(Category category) {
       return ButtonStyle(
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(horizontal: 16),
+        ),
         elevation: isSelected(category)
             ? MaterialStateProperty.all<double>(2)
             : MaterialStateProperty.all<double>(0),
