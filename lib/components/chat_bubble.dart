@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/chat.dart';
 import 'package:letsmeet/models/user.dart';
 
@@ -166,6 +167,30 @@ class _ChatBubbleState extends State<ChatBubble> {
     ];
   }
 
+  List<Widget> placeholder(BoxConstraints constraints) {
+    return [
+      if (widget.isSender) ...{
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: widget.isContinue ? null : Colors.black,
+          ),
+        ),
+        const SizedBox(width: 8),
+      },
+      Container(
+        width: constraints.maxWidth / 2,
+        height: 48,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.black,
+        ),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -203,17 +228,25 @@ class _ChatBubbleState extends State<ChatBubble> {
         return FutureBuilder(
           future: Future.wait([widget.chat.getBy]),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) {
-              return const Text("Loading");
-            }
-
-            User user = snapshot.data[0];
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: widget.isSender
-                  ? MainAxisAlignment.start
-                  : MainAxisAlignment.end,
-              children: chatBubble(constraints, user),
+            return ShimmerLoading(
+              isLoading: !snapshot.hasData,
+              placeholder: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: widget.isSender
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
+                children: placeholder(constraints),
+              ),
+              builder: (BuildContext context) {
+                User user = snapshot.data[0];
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: widget.isSender
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.end,
+                  children: chatBubble(constraints, user),
+                );
+              },
             );
           },
         );
