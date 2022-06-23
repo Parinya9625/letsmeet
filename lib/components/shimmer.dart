@@ -88,16 +88,16 @@ class _SlidingGradientTransform extends GradientTransform {
 class ShimmerLoading extends StatefulWidget {
   /// isLoading
   /// - true  : display shimmer effect on [placeholder]
-  /// - false : display [child]
+  /// - false : display [builder]
   final bool isLoading;
   final Widget placeholder;
-  final Widget child;
+  final WidgetBuilder builder;
 
   const ShimmerLoading({
     Key? key,
     required this.isLoading,
     required this.placeholder,
-    required this.child,
+    required this.builder,
   }) : super(key: key);
 
   @override
@@ -135,7 +135,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
   @override
   Widget build(BuildContext context) {
     if (!widget.isLoading) {
-      return widget.child;
+      return widget.builder(context);
     }
 
     final shimmer = Shimmer.of(context)!;
