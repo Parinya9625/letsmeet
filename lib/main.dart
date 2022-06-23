@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/services/authentication.dart';
@@ -82,10 +83,12 @@ class LetsMeetApp extends StatelessWidget {
           initialData: const [],
         ),
       ],
-      child: MaterialApp(
-        title: 'LetsMeet',
-        theme: lightTheme,
-        home: kIsWeb ? const ForWeb() : const ForMobile(),
+      child: Shimmer(
+        child: MaterialApp(
+          title: 'LetsMeet',
+          theme: lightTheme,
+          home: kIsWeb ? const ForWeb() : const ForMobile(),
+        ),
       ),
     );
   }
