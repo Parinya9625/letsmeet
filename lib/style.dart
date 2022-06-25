@@ -16,7 +16,8 @@ Color _card = Colors.white;
 Color _error = const Color.fromRGBO(255, 78, 80, 1);
 Color _disable = const Color.fromRGBO(243, 243, 243, 1);
 Color _highlight = const Color.fromRGBO(242, 201, 76, 1);
-// Color _description = const Color.fromRGBO(106, 106, 106, 1);
+Color _green = const Color.fromRGBO(25, 214, 104, 1);
+Color _description = const Color.fromRGBO(106, 106, 106, 1);
 
 // // Debug
 // Color _debug = const Color.fromRGBO(212, 41, 255, 1);
@@ -28,6 +29,7 @@ Color _highlight = const Color.fromRGBO(242, 201, 76, 1);
 // Color _error = _debug;
 // Color _disable = _debug;
 // Color _highlight = _debug;
+// Color _green = _debug;
 
 ThemeData lightTheme = ThemeData(
   primaryColor: _main,
@@ -63,8 +65,8 @@ ThemeData lightTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      padding:
-          MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 16, horizontal: 24)),
+      padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(vertical: 16, horizontal: 24)),
       elevation: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.disabled)) {
           return 0;
@@ -83,6 +85,35 @@ ThemeData lightTheme = ThemeData(
         return _main;
       }),
     ),
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+      overlayColor: MaterialStateProperty.resolveWith(
+        (states) {
+          if (states.contains(MaterialState.disabled)) {
+            return Colors.transparent;
+          }
+          return _main.withOpacity(0.1);
+        },
+      ),
+      foregroundColor: MaterialStateProperty.resolveWith(
+        (states) {
+          if (states.contains(MaterialState.disabled)) {
+            return _disable;
+          }
+          return _main;
+        },
+      ),
+    ),
+  ),
+  radioTheme: RadioThemeData(
+    fillColor: MaterialStateProperty.all(_main),
+    overlayColor: MaterialStateProperty.all(_main.withOpacity(0.1)),
   ),
   cardColor: _card,
   cardTheme: CardTheme(
@@ -109,24 +140,61 @@ ThemeData lightTheme = ThemeData(
     checkColor: MaterialStateProperty.all(_card),
     fillColor: MaterialStateProperty.all(_main),
   ),
+  popupMenuTheme: PopupMenuThemeData(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    color: _card,
+  ),
+  dialogTheme: DialogTheme(
+    backgroundColor: _card,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    titleTextStyle: TextStyle(
+      color: _title,
+      fontWeight: FontWeight.w500,
+      fontSize: 20,
+    ),
+    contentTextStyle: TextStyle(
+      fontWeight: FontWeight.normal,
+      color: _subtitle,
+    ),
+  ),
   extensions: [
     LetsMeetColor(
       rating: _highlight,
+      eventOpen: _green,
+      eventClose: _description,
+      eventRestrict: _error,
     ),
   ],
 );
 
 class LetsMeetColor extends ThemeExtension<LetsMeetColor> {
   final Color rating;
+  final Color eventOpen;
+  final Color eventClose;
+  final Color eventRestrict;
 
   const LetsMeetColor({
     required this.rating,
+    required this.eventOpen,
+    required this.eventClose,
+    required this.eventRestrict,
   });
 
   @override
-  ThemeExtension<LetsMeetColor> copyWith({Color? rating}) {
+  ThemeExtension<LetsMeetColor> copyWith(
+      {Color? rating,
+      Color? eventOpen,
+      Color? eventClose,
+      Color? eventRestrict}) {
     return LetsMeetColor(
       rating: rating ?? this.rating,
+      eventOpen: eventOpen ?? this.eventOpen,
+      eventClose: eventClose ?? this.eventClose,
+      eventRestrict: eventRestrict ?? this.eventRestrict,
     );
   }
 
@@ -139,6 +207,9 @@ class LetsMeetColor extends ThemeExtension<LetsMeetColor> {
 
     return LetsMeetColor(
       rating: Color.lerp(rating, other.rating, t)!,
+      eventOpen: Color.lerp(eventOpen, other.eventOpen, t)!,
+      eventClose: Color.lerp(eventClose, other.eventClose, t)!,
+      eventRestrict: Color.lerp(eventRestrict, other.eventRestrict, t)!,
     );
   }
 }
