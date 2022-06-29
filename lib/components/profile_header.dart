@@ -259,12 +259,6 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                 TextButton(
                   onPressed: selectedReport != null
                       ? () {
-                          // context.read<CloudFirestoreService>().addReport(
-                          //       report: Report.event(
-                          //         id: widget.event.id!,
-                          //         reason: [reportOption[selectedReport!]],
-                          //       ),
-                          //     );
                           context.read<CloudFirestoreService>().addReport(
                                 report: Report.user(
                                   id: widget.user.id!,
