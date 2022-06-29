@@ -41,13 +41,13 @@ class Role {
         data["foregroundColor"]["r"],
         data["foregroundColor"]["g"],
         data["foregroundColor"]["b"],
-        data["foregroundColor"]["o"],
+        (data["foregroundColor"]["o"] as int).toDouble()
       ),
       backgroundColor: Color.fromRGBO(
         data["backgroundColor"]["r"],
         data["backgroundColor"]["g"],
         data["backgroundColor"]["b"],
-        data["backgroundColor"]["o"],
+        (data["backgroundColor"]["o"] as int).toDouble(),
       ),
       permission: Map<String, bool>.from(data["permission"]),
     );
