@@ -33,15 +33,20 @@ Color _description = const Color.fromRGBO(106, 106, 106, 1);
 
 ThemeData lightTheme = ThemeData(
   primaryColor: _main,
+  errorColor: _error,
   colorScheme: ColorScheme.fromSwatch(
     accentColor: _main,
-    errorColor: _error,
   ),
   textTheme: TextTheme(
     headline1: TextStyle(
       color: _title,
       fontWeight: FontWeight.w500,
       fontSize: 16,
+    ),
+    headline2: TextStyle(
+      color: _title,
+      fontWeight: FontWeight.w500,
+      fontSize: 14,
     ),
     bodyText1: TextStyle(
       fontWeight: FontWeight.normal,
@@ -61,7 +66,15 @@ ThemeData lightTheme = ThemeData(
     foregroundColor: _title,
   ),
   tabBarTheme: TabBarTheme(
-    labelColor: _title,
+    labelColor: _main,
+    unselectedLabelColor: _subtitle,
+    indicator: UnderlineTabIndicator(
+      borderSide: BorderSide(
+        color: _main,
+        width: 2.0,
+      ),
+      insets: const EdgeInsets.symmetric(horizontal: 32),
+    ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
