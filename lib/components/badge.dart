@@ -14,11 +14,10 @@ class Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return Material(
+      borderRadius: BorderRadius.circular(16),
+      elevation: 2,
+      color: backgroundColor,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
         child: Text(
