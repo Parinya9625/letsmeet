@@ -174,6 +174,15 @@ ThemeData lightTheme = ThemeData(
       color: _subtitle,
     ),
   ),
+  sliderTheme: SliderThemeData.fromPrimaryColors(
+    primaryColor: _main,
+    primaryColorDark: _main,
+    primaryColorLight: _main,
+    valueIndicatorTextStyle: TextStyle(
+      fontWeight: FontWeight.normal,
+      color: _subtitle,
+    ),
+  ),
   extensions: [
     LetsMeetColor(
       rating: _highlight,
