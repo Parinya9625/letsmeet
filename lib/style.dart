@@ -34,10 +34,16 @@ Color _description = const Color.fromRGBO(106, 106, 106, 1);
 ThemeData lightTheme = ThemeData(
   primaryColor: _main,
   errorColor: _error,
-  colorScheme: ColorScheme.fromSwatch(
-    accentColor: _main,
+  colorScheme: ColorScheme.light(
+    primary: _main,
+    secondary: _main,
   ),
   textTheme: TextTheme(
+    headlineLarge: TextStyle(
+      color: _title,
+      fontWeight: FontWeight.w500,
+      fontSize: 36,
+    ),
     headline1: TextStyle(
       color: _title,
       fontWeight: FontWeight.w500,
@@ -47,6 +53,12 @@ ThemeData lightTheme = ThemeData(
       color: _title,
       fontWeight: FontWeight.w500,
       fontSize: 14,
+    ),
+    //? link
+    headline3: TextStyle(
+      color: _main,
+      fontWeight: FontWeight.w500,
+      fontSize: 16,
     ),
     bodyText1: TextStyle(
       fontWeight: FontWeight.normal,
