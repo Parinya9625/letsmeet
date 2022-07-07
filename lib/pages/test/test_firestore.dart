@@ -332,10 +332,10 @@ class _TestFirestoreState extends State<TestFirestore>
       createdTime: DateTime.now(),
       description: "This is a test event",
       image: "https://picsum.photos/200?image=123",
-      location: {
-        "name": "In person event !",
-        "geoPoint": const GeoPoint(1, 2),
-      },
+      location: EventLocation(
+        name: "In person event !",
+        geoPoint: const GeoPoint(1, 2),
+      ),
       maxMember: 20,
       member: [],
       memberReviewed: [],
@@ -353,10 +353,10 @@ class _TestFirestoreState extends State<TestFirestore>
       createdTime: DateTime.now(),
       description: "Update event !",
       image: "https://picsum.photos/200?image=456",
-      location: {
-        "name": "name update",
-        "link": "https://google.com",
-      },
+      location: EventLocation(
+        name: "name update",
+        link: "https://google.com",
+      ),
       maxMember: 20,
       member: [],
       memberReviewed: [],
@@ -1123,18 +1123,14 @@ class _TestFirestoreState extends State<TestFirestore>
       name: "TEST",
       backgroundColor: Colors.greenAccent,
       foregroundColor: Colors.white,
-      permission: {
-        "isAdmin": false,
-      },
+      permission: UserPermission(),
     );
     Role testRole2 = Role(
       id: "_test",
       name: "TEST (Update)",
       backgroundColor: Colors.purpleAccent,
       foregroundColor: Colors.white,
-      permission: {
-        "isAdmin": false,
-      },
+      permission: UserPermission(),
     );
 
     return Padding(

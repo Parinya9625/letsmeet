@@ -10,11 +10,7 @@ class Event {
   final DateTime createdTime;
   final String description;
   final String image;
-  Map<String, dynamic> location = {
-    "name": "event name",
-    "geoPoint": const GeoPoint(0, 0),
-    "link": "https://",
-  };
+  final EventLocation location;
   final int maxMember;
   final List<DocumentReference> member;
   final List<DocumentReference> memberReviewed;
@@ -43,6 +39,7 @@ class Event {
       required this.category,
       required this.description,
       required this.image,
+      required String placeId,
       required String locationName,
       required GeoPoint geoPoint,
       required this.maxMember,
@@ -53,10 +50,11 @@ class Event {
       : id = null,
         createdTime = DateTime.now(),
         memberReviewed = [],
-        location = {
-          "name": locationName,
-          "geoPoint": geoPoint,
-        },
+        location = EventLocation(
+          placeId: placeId,
+          name: locationName,
+          geoPoint: geoPoint,
+        ),
         type = "In Person";
   Event.createOnline(
       {required this.ageRestrict,
@@ -72,10 +70,10 @@ class Event {
       : id = null,
         createdTime = DateTime.now(),
         memberReviewed = [],
-        location = {
-          "name": "Online event",
-          "link": link,
-        },
+        location = EventLocation(
+          name: "Online event",
+          link: link,
+        ),
         type = "Online";
 
   Future<Category> get getCategory async =>
@@ -99,7 +97,7 @@ class Event {
       createdTime: data["createdTime"].toDate(),
       description: data["description"],
       image: data["image"],
-      location: data["location"],
+      location: EventLocation.fromMap(map: data["location"]),
       maxMember: data["maxMember"],
       member: List<DocumentReference>.from(data["member"]),
       memberReviewed: List<DocumentReference>.from(data["memberReviewed"]),
@@ -117,7 +115,7 @@ class Event {
       "createdTime": createdTime,
       "description": description,
       "image": image,
-      "location": location,
+      "location": location.toMap(),
       "maxMember": maxMember,
       "member": member,
       "memberReviewed": memberReviewed,
@@ -135,5 +133,37 @@ class Event {
   @override
   String toString() {
     return "$id - $member";
+  }
+}
+
+class EventLocation {
+  final String? placeId;
+  final String name;
+  final GeoPoint? geoPoint;
+  final String? link;
+
+  EventLocation({
+    required this.name,
+    this.placeId,
+    this.geoPoint,
+    this.link,
+  });
+
+  factory EventLocation.fromMap({required Map<String, dynamic> map}) {
+    return EventLocation(
+      name: map["name"],
+      placeId: map["placeId"],
+      geoPoint: map["geoPoint"],
+      link: map["link"],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "placeId": placeId,
+      "name": name,
+      "geoPoint": geoPoint,
+      "link": link,
+    };
   }
 }

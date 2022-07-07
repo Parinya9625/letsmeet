@@ -153,7 +153,7 @@ class _SearchEventCardState extends State<SearchEventCard> {
                       ),
                     ),
                     Text(
-                      widget.event.location["name"],
+                      widget.event.location.name,
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ],
