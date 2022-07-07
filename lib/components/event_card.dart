@@ -268,7 +268,7 @@ class _EventCardState extends State<EventCard> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    widget.event.location["name"],
+                                    widget.event.location.name,
                                     style:
                                         Theme.of(context).textTheme.bodyText1,
                                   ),
