@@ -1123,18 +1123,14 @@ class _TestFirestoreState extends State<TestFirestore>
       name: "TEST",
       backgroundColor: Colors.greenAccent,
       foregroundColor: Colors.white,
-      permission: {
-        "isAdmin": false,
-      },
+      permission: UserPermission(),
     );
     Role testRole2 = Role(
       id: "_test",
       name: "TEST (Update)",
       backgroundColor: Colors.purpleAccent,
       foregroundColor: Colors.white,
-      permission: {
-        "isAdmin": false,
-      },
+      permission: UserPermission(),
     );
 
     return Padding(

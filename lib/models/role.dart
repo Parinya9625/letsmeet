@@ -7,9 +7,7 @@ class Role {
   final String name;
   final Color foregroundColor;
   final Color backgroundColor;
-  Map<String, bool> permission = {
-    "isAdmin": false,
-  };
+  final UserPermission permission;
 
   Role(
       {required this.id,
@@ -21,15 +19,8 @@ class Role {
       {required this.name,
       required this.foregroundColor,
       required this.backgroundColor,
-      bool isAdmin = false})
-      : id = null,
-        permission = {
-          "isAdmin": isAdmin,
-        };
-
-  set isAdmin(bool value) {
-    permission["isAdmin"] = value;
-  }
+      required this.permission})
+      : id = null;
 
   factory Role.fromFirestore({required DocumentSnapshot doc}) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -38,18 +29,17 @@ class Role {
       id: doc.id,
       name: data["name"],
       foregroundColor: Color.fromRGBO(
-        data["foregroundColor"]["r"],
-        data["foregroundColor"]["g"],
-        data["foregroundColor"]["b"],
-        (data["foregroundColor"]["o"] as int).toDouble()
-      ),
+          data["foregroundColor"]["r"],
+          data["foregroundColor"]["g"],
+          data["foregroundColor"]["b"],
+          (data["foregroundColor"]["o"] as int).toDouble()),
       backgroundColor: Color.fromRGBO(
         data["backgroundColor"]["r"],
         data["backgroundColor"]["g"],
         data["backgroundColor"]["b"],
         (data["backgroundColor"]["o"] as int).toDouble(),
       ),
-      permission: Map<String, bool>.from(data["permission"]),
+      permission: UserPermission.fromMap(map: data["permission"]),
     );
   }
 
@@ -72,7 +62,27 @@ class Role {
         "b": backgroundColor.blue,
         "o": backgroundColor.opacity,
       },
-      "permission": permission,
+      "permission": permission.toMap(),
+    };
+  }
+}
+
+class UserPermission {
+  final bool isAdmin;
+
+  UserPermission({
+    this.isAdmin = false,
+  });
+
+  factory UserPermission.fromMap({required Map<String, dynamic> map}) {
+    return UserPermission(
+      isAdmin: map["isAdmin"] ?? false,
+    );
+  }
+
+  Map<String, bool> toMap() {
+    return {
+      "isAdmin": isAdmin,
     };
   }
 }
