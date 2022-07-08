@@ -56,7 +56,7 @@ class _SignInPageState extends State<SignInPage> {
                     style: Theme.of(context).textTheme.bodyText1,
                     children: [
                       TextSpan(
-                        text: "Forget Password ?",
+                        text: "Forgot password?",
                         style: Theme.of(context).textTheme.headline3,
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
