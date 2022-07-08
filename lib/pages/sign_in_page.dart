@@ -76,7 +76,7 @@ class _SignInPageState extends State<SignInPage> {
                 child: const Text("SIGN IN"),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
+                padding: const EdgeInsets.all(32),
                 child: Row(
                   children: [
                     Expanded(

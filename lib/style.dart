@@ -151,6 +151,8 @@ ThemeData lightTheme = ThemeData(
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: _card,
+    prefixIconColor: _subtitle,
+    suffixIconColor: _subtitle,
     border: const OutlineInputBorder(
       borderSide: BorderSide.none,
       borderRadius: BorderRadius.all(

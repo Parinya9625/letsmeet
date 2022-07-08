@@ -3,7 +3,7 @@ import 'package:letsmeet/components/controllers/checkbox_tile_controller.dart';
 
 class CheckboxTile extends StatefulWidget {
   final CheckboxTileController controller;
-  final String? title;
+  final Widget? title;
 
   const CheckboxTile({Key? key, required this.controller, this.title})
       : super(key: key);
@@ -28,7 +28,8 @@ class _CheckboxTileState extends State<CheckboxTile> {
           child: Row(
             children: [
               Checkbox(
-                visualDensity: const VisualDensity(vertical: -2, horizontal: -2),
+                visualDensity:
+                    const VisualDensity(vertical: -2, horizontal: -2),
                 value: widget.controller.value,
                 onChanged: (value) {
                   setState(() {
@@ -39,10 +40,7 @@ class _CheckboxTileState extends State<CheckboxTile> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16.0),
-                  child: Text(
-                    "${widget.title}",
-                    style: Theme.of(context).textTheme.headline1
-                  ),
+                  child: widget.title,
                 ),
               ),
             ],
