@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 Color _main = const Color.fromRGBO(0, 160, 185, 1);
 Color _title = const Color.fromRGBO(58, 58, 58, 1);
-Color _subtitle = const Color.fromRGBO(170, 170, 170, 1);
+Color _subtitle = const Color.fromRGBO(160, 160, 160, 1);
 Color _background = const Color.fromRGBO(242, 249, 251, 1);
 Color _card = Colors.white;
 Color _error = const Color.fromRGBO(255, 78, 80, 1);
@@ -195,6 +195,12 @@ ThemeData lightTheme = ThemeData(
     valueIndicatorTextStyle: TextStyle(
       fontWeight: FontWeight.normal,
       color: _subtitle,
+    ),
+  ),
+  snackBarTheme: SnackBarThemeData(
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
     ),
   ),
   extensions: [
