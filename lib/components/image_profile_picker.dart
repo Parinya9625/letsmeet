@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:letsmeet/components/controllers/image_picker_controller.dart';
 
-class ImageCoverPicker extends StatefulWidget {
-  const ImageCoverPicker({Key? key, required this.controller})
+class ImageProfilePicker extends StatefulWidget {
+  const ImageProfilePicker({Key? key, required this.controller})
       : super(key: key);
 
   final ImagePickerController controller;
 
   @override
-  State<ImageCoverPicker> createState() => _ImageCoverPickerState();
+  State<ImageProfilePicker> createState() => _ImageProfilePickerState();
 }
 
-class _ImageCoverPickerState extends State<ImageCoverPicker> {
+class _ImageProfilePickerState extends State<ImageProfilePicker> {
   Widget pickerOptionButton(
       {VoidCallback? onPressed, required IconData icon, String? text}) {
     return Material(
@@ -107,74 +107,45 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(right: 16.0),
-                    child: Icon(Icons.image_rounded),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 96,
+          height: 96,
+          child: Material(
+            borderRadius: BorderRadius.circular(16),
+            clipBehavior: Clip.antiAlias,
+            elevation: Theme.of(context).cardTheme.elevation!,
+            color: Theme.of(context).disabledColor,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (widget.controller.value != null) ...{
+                  Expanded(
+                    child: widget.controller.value.runtimeType == String
+                        ? CachedNetworkImage(
+                            imageUrl: widget.controller.value,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.file(
+                            File(widget.controller.value!.path),
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
                   ),
-                  Text(
-                    "Image Cover",
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                ],
-              ),
+                },
+              ],
             ),
-            Ink(
-              width: double.infinity,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Theme.of(context).disabledColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: showPickerOption,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (widget.controller.value != null) ...{
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: widget.controller.value.runtimeType == String
-                              ? CachedNetworkImage(
-                                  imageUrl: widget.controller.value,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.file(
-                                  File(widget.controller.value!.path),
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
-                      ),
-                    } else ...{
-                      const Icon(
-                        Icons.image_rounded,
-                        size: 32,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Select image cover",
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    }
-                  ],
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 8),
+        ElevatedButton(
+          onPressed: showPickerOption,
+          child: const Text("SELECT IMAGE"),
+        ),
+      ],
     );
   }
 }
