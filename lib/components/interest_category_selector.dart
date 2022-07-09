@@ -15,32 +15,32 @@ class InterestCategorySelector extends StatefulWidget {
 }
 
 class _InterestCategorySelectorState extends State<InterestCategorySelector> {
+  // if "category" is selected ?
+  bool isSelected(Category category) {
+    return widget.controller.value.contains(category);
+  }
+
+  ButtonStyle btnStyle(Category category) {
+    return ButtonStyle(
+      padding: MaterialStateProperty.all(
+        const EdgeInsets.symmetric(horizontal: 16),
+      ),
+      elevation: isSelected(category)
+          ? MaterialStateProperty.all<double>(2)
+          : MaterialStateProperty.all<double>(0),
+      backgroundColor: isSelected(category)
+          ? MaterialStateProperty.all<Color>(Theme.of(context).primaryColor)
+          : MaterialStateProperty.all<Color>(Theme.of(context).cardColor),
+      foregroundColor: isSelected(category)
+          ? MaterialStateProperty.all<Color>(Colors.white)
+          : MaterialStateProperty.all<Color>(
+              Theme.of(context).textTheme.bodyText1!.color!),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Category> categories = context.watch<List<Category>>();
-
-    // if "category" is selected ?
-    bool isSelected(Category category) {
-      return widget.controller.value.contains(category);
-    }
-
-    ButtonStyle btnStyle(Category category) {
-      return ButtonStyle(
-        padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 16),
-        ),
-        elevation: isSelected(category)
-            ? MaterialStateProperty.all<double>(2)
-            : MaterialStateProperty.all<double>(0),
-        backgroundColor: isSelected(category)
-            ? MaterialStateProperty.all<Color>(Theme.of(context).primaryColor)
-            : MaterialStateProperty.all<Color>(Theme.of(context).cardColor),
-        foregroundColor: isSelected(category)
-            ? MaterialStateProperty.all<Color>(Colors.white)
-            : MaterialStateProperty.all<Color>(
-                Theme.of(context).textTheme.bodyText1!.color!),
-      );
-    }
 
     return Card(
       child: Column(
@@ -78,7 +78,7 @@ class _InterestCategorySelectorState extends State<InterestCategorySelector> {
                     });
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -88,12 +88,12 @@ class _InterestCategorySelectorState extends State<InterestCategorySelector> {
                             category.icon,
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Expanded(
                           flex: 3,
                           child: Text(
                             category.name,
                             textAlign: TextAlign.center,
-                            softWrap: true,
                           ),
                         ),
                       ],
