@@ -59,7 +59,7 @@ class _ComponentsPageState extends State<ComponentsPage> {
         runSpacing: 8,
         children: [
           ContinueWithGoogleButton(onPressed: () {}),
-          ImageCoverPicker(controller: ImageCoverPickerController()),
+          ImageCoverPicker(controller: ImagePickerController()),
           InterestCategorySelector(
               controller: InterestCategorySelectorController()),
           NoConnectionBanner(onPressed: () {}),

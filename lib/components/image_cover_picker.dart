@@ -8,7 +8,7 @@ class ImageCoverPicker extends StatefulWidget {
   const ImageCoverPicker({Key? key, required this.controller})
       : super(key: key);
 
-  final ImageCoverPickerController controller;
+  final ImagePickerController controller;
 
   @override
   State<ImageCoverPicker> createState() => _ImageCoverPickerState();
