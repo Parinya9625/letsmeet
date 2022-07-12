@@ -162,6 +162,10 @@ ThemeData lightTheme = ThemeData(
     hintStyle: TextStyle(
       color: _subtitle,
     ),
+    errorStyle: TextStyle(
+      color: _error,
+      fontSize: 12,
+    ),
   ),
   checkboxTheme: CheckboxThemeData(
     checkColor: MaterialStateProperty.all(_card),
