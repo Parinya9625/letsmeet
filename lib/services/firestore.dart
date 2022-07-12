@@ -130,6 +130,12 @@ class CloudFirestoreService {
     });
   }
 
+  updateUserPartial({required String id, required Map<String, dynamic> data}) {
+    _firestore.runTransaction((transaction) async {
+      transaction.update(_firestore.collection("users").doc(id), data);
+    });
+  }
+
   removeUser({required String id}) {
     _firestore.runTransaction((transaction) async {
       DocumentReference documentReference =
