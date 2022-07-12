@@ -50,6 +50,7 @@ class _ComponentsPageState extends State<ComponentsPage> {
     recentView: [],
     role: FirebaseFirestore.instance.collection("roles").doc("user"),
     surname: "surname",
+    isFinishSetup: true,
   );
 
   @override
