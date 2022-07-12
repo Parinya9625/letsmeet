@@ -16,44 +16,51 @@ class User {
   final List<DocumentReference> recentView;
   final DocumentReference role;
   final String surname;
+  final bool isFinishSetup;
 
-  User(
-      {required this.id,
-      required this.bio,
-      required this.birthday,
-      required this.createdTime,
-      required this.favCategory,
-      required this.image,
-      required this.name,
-      required this.rating,
-      required this.recentView,
-      required this.role,
-      required this.surname});
-  User.create(
-      {required this.bio,
-      required this.birthday,
-      required this.image,
-      required this.name,
-      required this.surname})
-      : id = null,
-        createdTime = DateTime.now(),
+  User({
+    required this.id,
+    required this.bio,
+    required this.birthday,
+    required this.createdTime,
+    required this.favCategory,
+    required this.image,
+    required this.name,
+    required this.rating,
+    required this.recentView,
+    required this.role,
+    required this.surname,
+    required this.isFinishSetup,
+  });
+  User.create({
+    required this.birthday,
+    required this.image,
+    required this.name,
+    required this.surname,
+    DateTime? createdTime,
+  })  : id = null,
+        bio = "",
+        createdTime = createdTime ?? DateTime.now(),
         favCategory = [],
         rating = [],
         recentView = [],
+        isFinishSetup = false,
         role = FirebaseFirestore.instance
             .collection(CollectionPath.roles)
             .doc("user");
-  User.createWithID(
-      {required this.id,
-      required this.bio,
-      required this.birthday,
-      required this.image,
-      required this.name,
-      required this.surname})
-      : createdTime = DateTime.now(),
+  User.createWithID({
+    required this.id,
+    required this.birthday,
+    required this.image,
+    required this.name,
+    required this.surname,
+    DateTime? createdTime,
+  })  : bio = "",
+        createdTime = createdTime ?? DateTime.now(),
         favCategory = [],
         rating = [],
         recentView = [],
+        isFinishSetup = false,
         role = FirebaseFirestore.instance
             .collection(CollectionPath.roles)
             .doc("user");
@@ -81,6 +88,7 @@ class User {
       recentView: List<DocumentReference>.from(data["recentView"]),
       role: data["role"],
       surname: data["surname"],
+      isFinishSetup: data["isFinishSetup"] ?? true,
     );
   }
 
@@ -100,6 +108,7 @@ class User {
       "recentView": recentView,
       "role": role,
       "surname": surname,
+      "isFinishSetup": isFinishSetup,
     };
   }
 }
