@@ -43,7 +43,7 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
     XFile? file =
         await picker.pickImage(source: ImageSource.camera, maxHeight: 320);
     if (file != null) {
-      widget.controller.value = file;
+      widget.controller.xfile = file;
     }
     setState(() {
       Navigator.pop(context);
@@ -55,7 +55,7 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
     XFile? file =
         await picker.pickImage(source: ImageSource.gallery, maxHeight: 320);
     if (file != null) {
-      widget.controller.value = file;
+      widget.controller.xfile = file;
     }
     setState(() {
       Navigator.pop(context);
@@ -140,18 +140,18 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (widget.controller.value != null) ...{
+                    if (widget.controller.path != null) ...{
                       Expanded(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
-                          child: widget.controller.value.runtimeType == String
+                          child: widget.controller.xfile == null
                               ? CachedNetworkImage(
-                                  imageUrl: widget.controller.value,
+                                  imageUrl: widget.controller.path!,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
                                 )
                               : Image.file(
-                                  File(widget.controller.value!.path),
+                                  widget.controller.file!,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
                                 ),

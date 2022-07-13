@@ -3,6 +3,53 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/people/v1.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 
+enum AuthenticationResult {
+  invalidEmail("The email address is badly formatted."),
+  emailNotFound("No account found for this email."),
+  wrongPassword("The password that you've entered is incorrect."),
+  emailAlreadyInUse("This email already in use."),
+  error("Unknow error. Please try again later."),
+  success("");
+
+  final String message;
+  const AuthenticationResult(this.message);
+
+  factory AuthenticationResult.fromCode(String code) {
+    switch (code) {
+      case "invalid-email":
+        return AuthenticationResult.invalidEmail;
+      case "user-not-found":
+        return AuthenticationResult.emailNotFound;
+      case "wrong-password":
+        return AuthenticationResult.wrongPassword;
+      case "email-already-in-use":
+        return AuthenticationResult.emailAlreadyInUse;
+      default:
+        return AuthenticationResult.error;
+    }
+  }
+}
+
+class AuthResultWithUserInfo {
+  final AuthenticationResult result;
+  final String? uid;
+  final String? name;
+  final String? surname;
+  final DateTime? birthday;
+  final String? photoUrl;
+  final DateTime? createdTime;
+
+  AuthResultWithUserInfo({
+    required this.result,
+    this.uid,
+    this.birthday,
+    this.name,
+    this.surname,
+    this.photoUrl,
+    this.createdTime,
+  });
+}
+
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn =
@@ -10,33 +57,49 @@ class AuthenticationService {
 
   AuthenticationService(this._firebaseAuth);
 
-  Stream<User?> get authStateChanges => _firebaseAuth.idTokenChanges();
+  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
-  Future<String> signIn(
+  Future<AuthenticationResult> signIn(
       {required String email, required String password}) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
 
-      return "";
+      return AuthenticationResult.success;
     } on FirebaseAuthException catch (e) {
-      return e.message.toString();
+      return AuthenticationResult.fromCode(e.code);
     }
   }
 
-  Future<String> signUp(
+  Future<AuthResultWithUserInfo> signUp(
       {required String email, required String password}) async {
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential userCredential = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
-      return "";
+      return AuthResultWithUserInfo(
+          result: AuthenticationResult.success, uid: userCredential.user!.uid);
     } on FirebaseAuthException catch (e) {
-      return e.message.toString();
+      return AuthResultWithUserInfo(
+          result: AuthenticationResult.fromCode(e.code));
     }
   }
 
-  Future<String> signInWithGoogle() async {
+  Future<AuthenticationResult> isEmailExists({required String email}) async {
+    try {
+      List<String> signInMethod =
+          await _firebaseAuth.fetchSignInMethodsForEmail(email);
+
+      if (signInMethod.isNotEmpty) {
+        return AuthenticationResult.emailAlreadyInUse;
+      }
+      return AuthenticationResult.emailNotFound;
+    } on FirebaseAuthException catch (e) {
+      return AuthenticationResult.fromCode(e.code);
+    }
+  }
+
+  Future<AuthResultWithUserInfo> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await _googleSignIn.signIn();
@@ -47,20 +110,39 @@ class AuthenticationService {
         idToken: googleSignInAuthentication.idToken,
       );
 
-      await getUserBirthday().then((birthday) async {
-        DateTime now = DateTime.now();
+      DateTime now = DateTime.now();
+      var ageLimitDay = DateTime(now.year - 18, now.month, now.day);
+      late UserCredential userCredential;
+      final birthday = await getUserBirthday();
+      if (birthday != null && birthday.isBefore(ageLimitDay)) {
+        userCredential =
+            await _firebaseAuth.signInWithCredential(authCredential);
 
-        // Age over 18 can sign in
-        if (birthday != null && now.year - birthday.year >= 18) {
-          await _firebaseAuth.signInWithCredential(authCredential);
-        } else {
-          signOut();
-        }
-      });
+        final displayName = userCredential.user!.displayName!.trim();
+        final splitIndex = displayName.indexOf(" ");
+        final name = splitIndex != -1
+            ? displayName.substring(0, splitIndex)
+            : displayName;
+        final surname = splitIndex != -1
+            ? displayName.substring(splitIndex, displayName.length)
+            : "";
 
-      return "";
+        return AuthResultWithUserInfo(
+          result: AuthenticationResult.success,
+          uid: userCredential.user!.uid,
+          birthday: birthday,
+          name: name.trim(),
+          surname: surname.trim(),
+          photoUrl: userCredential.user!.photoURL,
+          createdTime: userCredential.user!.metadata.creationTime,
+        );
+      } else {
+        signOut();
+        return AuthResultWithUserInfo(result: AuthenticationResult.error);
+      }
     } on FirebaseAuthException catch (e) {
-      return e.message.toString();
+      return AuthResultWithUserInfo(
+          result: AuthenticationResult.fromCode(e.code));
     }
   }
 
@@ -79,13 +161,13 @@ class AuthenticationService {
     return null;
   }
 
-  Future<String> resetPassword({required String email}) async {
+  Future<AuthenticationResult> resetPassword({required String email}) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
 
-      return "";
+      return AuthenticationResult.success;
     } on FirebaseAuthException catch (e) {
-      return e.message.toString();
+      return AuthenticationResult.fromCode(e.code);
     }
   }
 
