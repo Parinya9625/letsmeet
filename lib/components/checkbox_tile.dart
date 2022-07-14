@@ -31,6 +31,7 @@ class CheckboxTileState extends State<CheckboxTile> {
         borderRadius: BorderRadius.circular(16),
         onTap: () {
           setState(() {
+            _isValid = true;
             widget.controller.value = !widget.controller.value!;
           });
         },
