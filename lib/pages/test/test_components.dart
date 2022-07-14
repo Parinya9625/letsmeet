@@ -69,7 +69,7 @@ class _ComponentsPageState extends State<ComponentsPage> {
           SearchEventCard(event: event),
           const TextField(
             decoration: InputDecoration(hintText: "Enter text..."),
-          ).withElevation(),
+          ),
           ChatBubble(chat: chat, isSender: true),
           ChatBubble(chat: chat),
           ChatGroupCard(event: event, lastChat: chat, onPressed: () {}),
