@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:letsmeet/components/checkbox_tile.dart';
 import 'package:letsmeet/components/continue_with_google.dart';
 import 'package:letsmeet/components/controllers/checkbox_tile_controller.dart';
-import 'package:letsmeet/components/textfield_extension.dart';
+import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
@@ -182,35 +182,37 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextFormField(
+                        InputField(
                           controller: nameController,
-                          decoration: const InputDecoration(
-                            hintText: 'Name',
-                            prefixIcon: Icon(Icons.person_rounded),
-                          ),
+                          hintText: 'Name',
+                          icon: const Icon(Icons.person_rounded),
+                          onClear: () {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Please enter your name\n";
                             }
                             return null;
                           },
-                        ).withElevation(),
+                        ),
                         const SizedBox(height: 16),
-                        TextFormField(
+                        InputField(
                           controller: surnameController,
-                          decoration: const InputDecoration(
-                            hintText: 'Surname',
-                            prefixIcon: Icon(Icons.person_rounded),
-                          ),
+                          hintText: 'Surname',
+                          icon: const Icon(Icons.person_rounded),
+                          onClear: () {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Please enter your surname\n";
                             }
                             return null;
                           },
-                        ).withElevation(),
+                        ),
                         const SizedBox(height: 16),
-                        GestureDetector(
+                        InputField(
+                          readOnly: true,
+                          controller: birthdayController,
+                          hintText: 'Birthday',
+                          icon: const Icon(Icons.cake_rounded),
                           onTap: () async {
                             DateTime? date = await _showDatePicker(birthday);
 
@@ -222,37 +224,26 @@ class _SignUpPageState extends State<SignUpPage> {
                               }
                             });
                           },
-                          child: TextFormField(
-                            enabled: false,
-                            controller: birthdayController,
-                            decoration: InputDecoration(
-                              hintText: 'Birthday',
-                              prefixIcon: Icon(
-                                Icons.cake_rounded,
-                                color: Theme.of(context).iconTheme.color,
-                              ),
-                            ),
-                            validator: (value) {
-                              var now = DateTime.now();
-                              var ageLimitDay =
-                                  DateTime(now.year - 18, now.month, now.day);
+                          validator: (value) {
+                            var now = DateTime.now();
+                            var ageLimitDay =
+                                DateTime(now.year - 18, now.month, now.day);
 
-                              if (value == null || value.isEmpty) {
-                                return "Please select your birthday\n";
-                              } else if (birthday!.isAfter(ageLimitDay)) {
-                                return "User over 18 can sign up\n";
-                              }
-                              return null;
-                            },
-                          ).withElevation(),
+                            if (value == null || value.isEmpty) {
+                              return "Please select your birthday\n";
+                            } else if (birthday!.isAfter(ageLimitDay)) {
+                              return "User over 18 can sign up\n";
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
-                        TextFormField(
+                        InputField(
                           controller: emailController,
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
-                            prefixIcon: Icon(Icons.email_rounded),
-                          ),
+                          hintText: 'Email',
+                          keyboardType: TextInputType.emailAddress,
+                          icon: const Icon(Icons.email_rounded),
+                          onClear: () {},
                           validator: (value) {
                             RegExp emailPattern = RegExp(
                                 r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$",
@@ -264,17 +255,16 @@ class _SignUpPageState extends State<SignUpPage> {
                             }
                             return null;
                           },
-                        ).withElevation(),
+                        ),
                         const SizedBox(height: 16),
-                        TextFormField(
+                        InputField(
                           controller: passwordController,
                           obscureText: true,
                           enableSuggestions: false,
                           autocorrect: false,
-                          decoration: const InputDecoration(
-                            hintText: 'Password',
-                            prefixIcon: Icon(Icons.lock_rounded),
-                          ),
+                          hintText: 'Password',
+                          icon: const Icon(Icons.lock_rounded),
+                          onClear: () {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Please enter your password\n";
@@ -283,17 +273,16 @@ class _SignUpPageState extends State<SignUpPage> {
                             }
                             return null;
                           },
-                        ).withElevation(),
+                        ),
                         const SizedBox(height: 16),
-                        TextFormField(
+                        InputField(
                           controller: confirmPasswordController,
                           obscureText: true,
                           enableSuggestions: false,
                           autocorrect: false,
-                          decoration: const InputDecoration(
-                            hintText: 'Confirm Password',
-                            prefixIcon: Icon(Icons.lock_rounded),
-                          ),
+                          hintText: 'Confirm Password',
+                          icon: const Icon(Icons.lock_rounded),
+                          onClear: () {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Please enter your password\n";
@@ -303,7 +292,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             }
                             return null;
                           },
-                        ).withElevation(),
+                        ),
                         const SizedBox(height: 16),
                         CheckboxTile(
                           key: tosKey,

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsmeet/components/controllers/location_picker_controller.dart';
-import 'package:letsmeet/components/textfield_extension.dart';
+import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/services/google_place_api.dart';
 import 'package:location/location.dart';
 
@@ -418,26 +418,19 @@ class _GoogleMapPageState extends State<_GoogleMapPage> {
             // search bar
             Padding(
               padding: const EdgeInsets.all(16),
-              child: TextField(
+              child: InputField(
                 controller: searchBarController,
                 focusNode: searchBarNode,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.search_rounded),
-                  suffixIcon: searchBarNode.hasFocus
-                      ? IconButton(
-                          icon: const Icon(Icons.close_rounded),
-                          onPressed: () {
-                            searchBarController.clear();
-                            setState(() {
-                              predictions.clear();
-                            });
-                          },
-                        )
-                      : null,
-                ),
+                icon: const Icon(Icons.search_rounded),
+                hintText: "Search location",
+                onClear: () {
+                  setState(() {
+                    predictions.clear();
+                  });
+                },
                 onChanged: onStopTyping,
                 onSubmitted: onSearchSubmit,
-              ).withElevation(),
+              ),
             ),
 
             // place detail
