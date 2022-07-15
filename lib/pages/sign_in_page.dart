@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:letsmeet/components/textfield_extension.dart';
+import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/components/continue_with_google.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/services/authentication.dart';
@@ -89,36 +89,35 @@ class _SignInPageState extends State<SignInPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextFormField(
+                        InputField(
                           controller: emailController,
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
-                            prefixIcon: Icon(Icons.email_rounded),
-                          ),
+                          hintText: 'Email',
+                          keyboardType: TextInputType.emailAddress,
+                          icon: const Icon(Icons.email_rounded),
+                          onClear: () {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Please enter your email\n";
                             }
                             return null;
                           },
-                        ).withElevation(),
+                        ),
                         const SizedBox(height: 16),
-                        TextFormField(
+                        InputField(
                           controller: passwordController,
                           obscureText: true,
                           enableSuggestions: false,
                           autocorrect: false,
-                          decoration: const InputDecoration(
-                            hintText: 'Password',
-                            prefixIcon: Icon(Icons.lock_rounded),
-                          ),
+                          hintText: 'Password',
+                          icon: const Icon(Icons.lock_rounded),
+                          onClear: () {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Please enter your password\n";
                             }
                             return null;
                           },
-                        ).withElevation(),
+                        ),
                       ],
                     ),
                   ),

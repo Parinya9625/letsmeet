@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:letsmeet/components/controllers/image_picker_controller.dart';
 import 'package:letsmeet/components/controllers/interest_category_controller.dart';
 import 'package:letsmeet/components/image_profile_picker.dart';
+import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/components/interest_category_selector.dart';
-import 'package:letsmeet/components/textfield_extension.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/services/storage.dart';
@@ -113,13 +113,12 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                     controller: imageController,
                   ),
                   const SizedBox(height: 16),
-                  TextField(
+                  InputField(
                     controller: bioController,
-                    decoration: const InputDecoration(
-                      hintText: 'Bio',
-                      prefixIcon: Icon(Icons.badge_rounded),
-                    ),
-                  ).withElevation(),
+                    hintText: 'Bio',
+                    icon: const Icon(Icons.badge_rounded),
+                    onClear: () {},
+                  ),
                   const SizedBox(height: 16),
                   InterestCategorySelector(
                     controller: categoryController,

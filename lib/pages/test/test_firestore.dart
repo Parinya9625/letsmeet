@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:letsmeet/components/textfield_extension.dart';
 import 'package:letsmeet/models/ban.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/chat.dart';
@@ -522,7 +521,7 @@ class _TestFirestoreState extends State<TestFirestore>
                     controller: _chat,
                     decoration: const InputDecoration(
                         hintText: "Type message... / Chat ID"),
-                  ).withElevation(),
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -756,7 +755,7 @@ class _TestFirestoreState extends State<TestFirestore>
                   TextField(
                     controller: _reason,
                     decoration: const InputDecoration(hintText: "reason"),
-                  ).withElevation(),
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -872,11 +871,11 @@ class _TestFirestoreState extends State<TestFirestore>
                   TextField(
                     controller: _id,
                     decoration: const InputDecoration(hintText: "ID"),
-                  ).withElevation(),
+                  ),
                   TextField(
                     controller: _reason,
                     decoration: const InputDecoration(hintText: "Reason"),
-                  ).withElevation(),
+                  ),
                   Row(
                     children: [
                       Expanded(

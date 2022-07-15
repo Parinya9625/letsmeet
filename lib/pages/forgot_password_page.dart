@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:letsmeet/components/textfield_extension.dart';
+import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:provider/provider.dart';
 
@@ -67,19 +67,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextFormField(
+                    InputField(
                       controller: emailController,
-                      decoration: const InputDecoration(
-                        hintText: 'Email',
-                        prefixIcon: Icon(Icons.email_rounded),
-                      ),
+                      hintText: 'Email',
+                      keyboardType: TextInputType.emailAddress,
+                      icon: const Icon(Icons.email_rounded),
+                      onClear: () {},
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Please enter your email\n";
                         }
                         return null;
                       },
-                    ).withElevation(),
+                    ),
                   ],
                 ),
               ),

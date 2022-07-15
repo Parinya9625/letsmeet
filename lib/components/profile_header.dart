@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:letsmeet/components/all.dart';
 import 'package:letsmeet/components/badge.dart';
+import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/report.dart';
 import 'package:letsmeet/models/role.dart';

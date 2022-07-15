@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:letsmeet/components/controllers/search_filter_controller.dart';
+import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/components/search_filter_base.dart';
-import 'package:letsmeet/components/textfield_extension.dart';
 
 class DateSearchFilter extends StatefulWidget {
   final SearchFilterController controller;
@@ -76,7 +76,11 @@ class _DateSearchFilterState extends State<DateSearchFilter> {
       },
       child: Column(
         children: [
-          GestureDetector(
+          InputField(
+            controller: selectedValueText,
+            icon: const Icon(Icons.calendar_month_rounded),
+            hintText: "Pick date range",
+            readOnly: true,
             onTap: () async {
               DateTimeRange? dateRange = await showDatePicker(selectedValue);
 
@@ -87,17 +91,6 @@ class _DateSearchFilterState extends State<DateSearchFilter> {
                 }
               });
             },
-            child: TextField(
-              controller: selectedValueText,
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.calendar_month_rounded,
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                hintText: "Pick date range",
-              ),
-              enabled: false,
-            ).withElevation(),
           ),
         ],
       ),
