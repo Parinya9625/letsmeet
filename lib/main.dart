@@ -122,7 +122,15 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
                     .snapshots()
                     .map((doc) =>
                         doc.exists ? lm.User.fromFirestore(doc: doc) : null),
-                initialData: null,
+                // set init data with only user [id] for fix data is too slow
+                // to load by provider
+                initialData: lm.User.createWithID(
+                  id: user.uid,
+                  birthday: DateTime.now(),
+                  image: "",
+                  name: "",
+                  surname: "",
+                ),
               ),
             );
           });
