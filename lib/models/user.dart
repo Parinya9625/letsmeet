@@ -12,7 +12,7 @@ class User {
   final List<DocumentReference> favCategory;
   final String image;
   final String name;
-  final List<double> rating;
+  final List<int> rating;
   final List<DocumentReference> recentView;
   final DocumentReference role;
   final String surname;
@@ -84,7 +84,7 @@ class User {
       favCategory: List<DocumentReference>.from(data["favCategory"]),
       image: data["image"],
       name: data["name"],
-      rating: List<double>.from(data["rating"]),
+      rating: List<int>.from(data["rating"]),
       recentView: List<DocumentReference>.from(data["recentView"]),
       role: data["role"],
       surname: data["surname"],
