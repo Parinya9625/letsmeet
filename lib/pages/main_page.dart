@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:letsmeet/models/user.dart';
+import 'package:letsmeet/pages/user_profile_page.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -34,6 +37,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = context.read<User?>();
+
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
@@ -91,7 +96,7 @@ class _MainPageState extends State<MainPage> {
               page = const TempPage(color: Colors.orange);
               break;
             case "/profile":
-              page = const TempPage(color: Colors.blueAccent);
+              page = UserProfilePage(userId: user!.id!, isOtherUser: false);
               break;
             default:
               page = const TempPage(color: Colors.black);
