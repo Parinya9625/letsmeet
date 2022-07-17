@@ -7,6 +7,7 @@ import 'package:letsmeet/models/report.dart';
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:collection/collection.dart';
+import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,10 @@ class ProfileHeader extends StatefulWidget {
 
   @override
   State<ProfileHeader> createState() => _ProfileHeaderState();
+}
+
+enum _PopupMenuValue {
+  signout,
 }
 
 class _ProfileHeaderState extends State<ProfileHeader> {
@@ -100,7 +105,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           builder: (BuildContext context) {
             Role role = snapshot.data[0];
             List<Category> favCategory = snapshot.data[1];
-            int rating = widget.user.rating.average.toInt();
+            double rating = widget.user.rating.isNotEmpty
+                ? widget.user.rating.average
+                : 0.0;
 
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,10 +154,12 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                         spacing: 8,
                         runSpacing: 8,
                         children: [
-                          Text(
-                            "Interests :",
-                            style: Theme.of(context).textTheme.headline2,
-                          ),
+                          if (favCategory.isNotEmpty) ...{
+                            Text(
+                              "Interests :",
+                              style: Theme.of(context).textTheme.headline2,
+                            ),
+                          },
                           for (Category category in favCategory) ...{
                             Icon(category.icon),
                           }
@@ -169,7 +178,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                             Icon(
                               i <= rating
                                   ? Icons.star_rounded
-                                  : Icons.star_border_rounded,
+                                  : rating.round() == i
+                                      ? Icons.star_half_rounded
+                                      : Icons.star_border_rounded,
                               color: Theme.of(context)
                                   .extension<LetsMeetColor>()!
                                   .rating,
@@ -213,24 +224,63 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             ),
           ),
           const SizedBox(width: 8),
-          Material(
-            elevation: 2,
-            borderRadius: BorderRadius.circular(100),
-            clipBehavior: Clip.antiAlias,
-            color: Theme.of(context).primaryColor,
-            child: InkWell(
-              onTap: () {},
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(
-                  Icons.menu_rounded,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
+          popupMenu(),
         }
       ],
+    );
+  }
+
+  Widget popupMenu() {
+    GlobalKey<PopupMenuButtonState<_PopupMenuValue>> key = GlobalKey();
+
+    return PopupMenuButton(
+      key: key,
+      position: PopupMenuPosition.under,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: _PopupMenuValue.signout,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              Icons.logout_rounded,
+              color: Theme.of(context).errorColor,
+            ),
+            title: Text(
+              "Sign out",
+              style: Theme.of(context).textTheme.headline1!.copyWith(
+                    color: Theme.of(context).errorColor,
+                  ),
+            ),
+          ),
+        ),
+      ],
+      onSelected: (selected) {
+        switch (selected) {
+          case _PopupMenuValue.signout:
+            {
+              context.read<AuthenticationService>().signOut();
+            }
+            break;
+        }
+      },
+      child: Material(
+        elevation: 2,
+        borderRadius: BorderRadius.circular(100),
+        clipBehavior: Clip.antiAlias,
+        color: Theme.of(context).primaryColor,
+        child: InkWell(
+          onTap: () {
+            key.currentState!.showButtonMenu();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(12.0),
+            child: Icon(
+              Icons.menu_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
