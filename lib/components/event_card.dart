@@ -27,7 +27,7 @@ class EventCard extends StatefulWidget {
   State<EventCard> createState() => _EventCardState();
 }
 
-enum PopupMenuValue {
+enum _PopupMenuValue {
   report,
 }
 
@@ -114,14 +114,14 @@ class _EventCardState extends State<EventCard> {
   }
 
   Widget popupMenu() {
-    GlobalKey<PopupMenuButtonState<PopupMenuValue>> key = GlobalKey();
+    GlobalKey<PopupMenuButtonState<_PopupMenuValue>> key = GlobalKey();
 
     return PopupMenuButton(
       key: key,
       position: PopupMenuPosition.under,
       itemBuilder: (context) => [
         PopupMenuItem(
-          value: PopupMenuValue.report,
+          value: _PopupMenuValue.report,
           child: ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Icon(
@@ -137,7 +137,7 @@ class _EventCardState extends State<EventCard> {
       ],
       onSelected: (selected) {
         switch (selected) {
-          case PopupMenuValue.report:
+          case _PopupMenuValue.report:
             {
               showReportDialog();
             }
