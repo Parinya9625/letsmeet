@@ -432,7 +432,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.symmetric(vertical: 32),
           child: Column(
             children: [
               Form(
@@ -451,7 +451,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                         }
                         return null;
                       },
-                    ),
+                    ).horizontalPadding(),
                     const SizedBox(height: 16),
                     Visibility(
                       visible: typeController.text.isEmpty ||
@@ -467,7 +467,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                           const SizedBox(height: 16),
                         ],
                       ),
-                    ),
+                    ).horizontalPadding(),
                     InputField(
                       controller: categoryController,
                       icon: const Icon(Icons.category_rounded),
@@ -480,7 +480,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                         }
                         return null;
                       },
-                    ),
+                    ).horizontalPadding(),
                     const SizedBox(height: 16),
                     Visibility(
                       visible: _showSuggestion,
@@ -501,6 +501,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                               "startTime",
                               isGreaterThanOrEqualTo: DateTime.now(),
                             )
+                            .limit(10)
                             .snapshots()
                             .map((events) => events.docs
                                 .map((doc) => Event.fromFirestore(doc: doc))
@@ -508,7 +509,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
                           if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
+                            return const SizedBox();
                           }
 
                           List<Event> listEvent = snapshot.data!;
@@ -530,6 +531,8 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                                       ),
                                     ),
                                     IconButton(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: EdgeInsets.zero,
                                       icon: const Icon(Icons.close_rounded),
                                       onPressed: () {
                                         setState(() {
@@ -538,24 +541,31 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                                       },
                                     ),
                                   ],
-                                ),
+                                ).horizontalPadding(),
+                                const SizedBox(height: 8),
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: listEvent
-                                        .map(
-                                          (event) => EventCard(
-                                            event: event,
-                                            isSmall: true,
-                                            onPressed: () {
-                                              //TODO: Add
-                                            },
-                                          ),
-                                        )
-                                        .toList(),
+                                  child: Wrap(
+                                    direction: Axis.horizontal,
+                                    spacing: 8,
+                                    children: [
+                                      const SizedBox(width: 32),
+                                      ...listEvent
+                                          .map(
+                                            (event) => EventCard(
+                                              event: event,
+                                              isSmall: true,
+                                              onPressed: () {
+                                                //TODO: Add
+                                              },
+                                            ),
+                                          )
+                                          .toList(),
+                                      const SizedBox(width: 32),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 24),
                               ],
                             ),
                           );
@@ -566,7 +576,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                       key: imageKey,
                       controller: imageController,
                       errorText: "Please select event image cover",
-                    ),
+                    ).horizontalPadding(),
                     const SizedBox(height: 16),
                     InputField(
                       controller: nameController,
@@ -581,7 +591,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                         }
                         return null;
                       },
-                    ),
+                    ).horizontalPadding(),
                     const SizedBox(height: 16),
                     InputField(
                       controller: dateController,
@@ -595,7 +605,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                         }
                         return null;
                       },
-                    ),
+                    ).horizontalPadding(),
                     const SizedBox(height: 16),
                     InputField(
                       controller: timeController,
@@ -609,7 +619,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                         }
                         return null;
                       },
-                    ),
+                    ).horizontalPadding(),
                     const SizedBox(height: 16),
                     InputField(
                       controller: maxPeopleController,
@@ -628,7 +638,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                         }
                         return null;
                       },
-                    ),
+                    ).horizontalPadding(),
                     const SizedBox(height: 16),
                     Visibility(
                       visible: typeController.text.trim() == "Online",
@@ -652,7 +662,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                           const SizedBox(height: 16),
                         ],
                       ),
-                    ),
+                    ).horizontalPadding(),
                     InputField(
                       controller: detailController,
                       icon: const Icon(Icons.notes_rounded),
@@ -660,12 +670,12 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                       keyboardType: TextInputType.multiline,
                       minLines: 1,
                       maxLines: 50,
-                    ),
+                    ).horizontalPadding(),
                     const SizedBox(height: 16),
                     CheckboxTile(
                       controller: limitController,
                       title: const Text("Limit for people over 20 years"),
-                    )
+                    ).horizontalPadding(),
                   ],
                 ),
               ),
@@ -673,6 +683,15 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+extension PaddingEx on Widget {
+  Widget horizontalPadding() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: this,
     );
   }
 }
