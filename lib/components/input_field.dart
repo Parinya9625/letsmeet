@@ -19,6 +19,7 @@ class InputField extends StatefulWidget {
   final bool? enabled;
   final bool enableSuggestions;
   final bool autocorrect;
+  final List<TextInputFormatter>? inputFormatters;
   final String? hintText;
   final Widget? icon;
   final VoidCallback? onClear;
@@ -48,6 +49,7 @@ class InputField extends StatefulWidget {
     this.enabled,
     this.enableSuggestions = true,
     this.autocorrect = true,
+    this.inputFormatters,
     this.hintText,
     this.icon,
     this.onClear,
@@ -117,6 +119,7 @@ class _InputFieldState extends State<InputField> {
         ),
         enabled: widget.enabled,
         enableSuggestions: widget.enableSuggestions,
+        inputFormatters: widget.inputFormatters,
       ),
     );
   }
