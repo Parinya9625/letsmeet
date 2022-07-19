@@ -4,10 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/role.dart';
+import 'package:letsmeet/pages/create_edit_event_page.dart';
 import 'package:letsmeet/pages/forgot_password_page.dart';
 import 'package:letsmeet/pages/main_page.dart';
 import 'package:letsmeet/pages/setup_profile_page.dart';
@@ -167,6 +169,7 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
           banSnapshot.listen((doc) {
             if (doc.data() != null) {
               FirebaseAuth.instance.signOut();
+              GoogleSignIn().signOut();
 
               Ban ban = Ban.fromFirestore(doc: doc);
               showBanDialog(ban);
@@ -234,6 +237,9 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
               context.read<CloudFirestoreService>().streamRoles,
           initialData: const [],
         ),
+        Provider<GlobalKey<NavigatorState>>(
+          create: (_) => navigatorKey,
+        ),
       ],
       child: Shimmer(
         child: MaterialApp(
@@ -249,6 +255,20 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
             "/signin": (context) => const SignInPage(),
             "/signin/forgot": (context) => const ForgotPasswordPage(),
             "/": (context) => const MainPage(),
+            "/event/create": (context) => const CreateEditEventPage(),
+          },
+          onGenerateRoute: (settings) {
+            Widget? page;
+            switch (settings.name) {
+              case "/event/edit":
+                page = CreateEditEventPage(event: settings.arguments as Event?);
+                break;
+            }
+
+            if (page != null) {
+              return MaterialPageRoute(builder: (context) => page!);
+            }
+            return null;
           },
           initialRoute: "/startup",
           // home: kIsWeb ? const ForWeb() : const ForMobile(),

@@ -8,14 +8,17 @@ import 'package:location/location.dart';
 
 class LocationPicker extends StatefulWidget {
   final LocationPickerController controller;
+  final String? errorText;
 
-  const LocationPicker({Key? key, required this.controller}) : super(key: key);
+  const LocationPicker({Key? key, required this.controller, this.errorText})
+      : super(key: key);
 
   @override
-  State<LocationPicker> createState() => _LocationPickerState();
+  State<LocationPicker> createState() => LocationPickerState();
 }
 
-class _LocationPickerState extends State<LocationPicker> {
+class LocationPickerState extends State<LocationPicker>
+    with SingleTickerProviderStateMixin {
   Completer<GoogleMapController> mapController = Completer();
   Marker? currentMarker;
 
@@ -55,11 +58,32 @@ class _LocationPickerState extends State<LocationPicker> {
     });
   }
 
+  bool _isValid = true;
+
+  bool validate() {
+    setState(() {
+      _isValid = widget.controller.placeId != null;
+      if (_isValid) {
+        _animationController.reverse();
+      } else {
+        _animationController.forward();
+      }
+    });
+    return _isValid;
+  }
+
+  late AnimationController _animationController;
+
   @override
   void initState() {
     if (widget.controller.placeId != null) {
       updateMarker(widget.controller.lat!, widget.controller.lng!);
     }
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
 
     super.initState();
   }
@@ -151,6 +175,22 @@ class _LocationPickerState extends State<LocationPicker> {
                 ),
               ),
             ),
+            if (!_isValid && widget.errorText != null) ...{
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  FadeTransition(
+                    opacity: _animationController,
+                    child: Text(
+                      widget.errorText!,
+                      style: Theme.of(context).inputDecorationTheme.errorStyle,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ),
+                ],
+              ),
+            },
           ],
         ),
       ),

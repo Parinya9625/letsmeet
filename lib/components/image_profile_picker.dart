@@ -40,8 +40,8 @@ class _ImageProfilePickerState extends State<ImageProfilePicker> {
 
   void openCamera() async {
     ImagePicker picker = ImagePicker();
-    XFile? file =
-        await picker.pickImage(source: ImageSource.camera, maxHeight: 320);
+    XFile? file = await picker.pickImage(
+        source: ImageSource.camera, maxHeight: 128, imageQuality: 50);
     if (file != null) {
       widget.controller.xfile = file;
     }
@@ -52,8 +52,8 @@ class _ImageProfilePickerState extends State<ImageProfilePicker> {
 
   void openGallery() async {
     ImagePicker picker = ImagePicker();
-    XFile? file =
-        await picker.pickImage(source: ImageSource.gallery, maxHeight: 320);
+    XFile? file = await picker.pickImage(
+        source: ImageSource.gallery, maxHeight: 128, imageQuality: 50);
     if (file != null) {
       widget.controller.xfile = file;
     }

@@ -179,6 +179,12 @@ class CloudFirestoreService {
     });
   }
 
+  updateEventPartial({required String id, required Map<String, dynamic> data}) {
+    _firestore.runTransaction((transaction) async {
+      transaction.update(_firestore.collection("events").doc(id), data);
+    });
+  }
+
   removeEvent({required String id}) {
     _firestore.runTransaction((transaction) async {
       DocumentReference documentReference =
