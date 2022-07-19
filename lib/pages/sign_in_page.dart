@@ -193,12 +193,16 @@ class _SignInPageState extends State<SignInPage> {
                           .read<AuthenticationService>()
                           .signInWithGoogle();
 
-                      final doc = await FirebaseFirestore.instance
-                          .collection("users")
-                          .doc(result.uid)
-                          .get();
+                      if (result.result ==
+                          AuthenticationResult.googleSigninDismiss) {
+                        Navigator.pop(context);
+                      } else if (result.result ==
+                          AuthenticationResult.success) {
+                        final doc = await FirebaseFirestore.instance
+                            .collection("users")
+                            .doc(result.uid)
+                            .get();
 
-                      if (result.result == AuthenticationResult.success) {
                         if (!doc.exists) {
                           User user = User.createWithID(
                             id: result.uid,
