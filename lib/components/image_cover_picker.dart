@@ -5,16 +5,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:letsmeet/components/controllers/image_picker_controller.dart';
 
 class ImageCoverPicker extends StatefulWidget {
-  const ImageCoverPicker({Key? key, required this.controller})
+  final ImagePickerController controller;
+  final String? errorText;
+
+  const ImageCoverPicker({Key? key, required this.controller, this.errorText})
       : super(key: key);
 
-  final ImagePickerController controller;
-
   @override
-  State<ImageCoverPicker> createState() => _ImageCoverPickerState();
+  State<ImageCoverPicker> createState() => ImageCoverPickerState();
 }
 
-class _ImageCoverPickerState extends State<ImageCoverPicker> {
+class ImageCoverPickerState extends State<ImageCoverPicker>
+    with SingleTickerProviderStateMixin {
   Widget pickerOptionButton(
       {VoidCallback? onPressed, required IconData icon, String? text}) {
     return Material(
@@ -40,8 +42,8 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
 
   void openCamera() async {
     ImagePicker picker = ImagePicker();
-    XFile? file =
-        await picker.pickImage(source: ImageSource.camera, maxHeight: 320);
+    XFile? file = await picker.pickImage(
+        source: ImageSource.camera, maxHeight: 128, imageQuality: 50);
     if (file != null) {
       widget.controller.xfile = file;
     }
@@ -52,8 +54,8 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
 
   void openGallery() async {
     ImagePicker picker = ImagePicker();
-    XFile? file =
-        await picker.pickImage(source: ImageSource.gallery, maxHeight: 320);
+    XFile? file = await picker.pickImage(
+        source: ImageSource.gallery, maxHeight: 128, imageQuality: 50);
     if (file != null) {
       widget.controller.xfile = file;
     }
@@ -103,6 +105,32 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
         );
       },
     );
+  }
+
+  bool _isValid = true;
+
+  bool validate() {
+    setState(() {
+      _isValid = widget.controller.path != null;
+      if (_isValid) {
+        _animationController.reverse();
+      } else {
+        _animationController.forward();
+      }
+    });
+    return _isValid;
+  }
+
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+
+    super.initState();
   }
 
   @override
@@ -172,6 +200,22 @@ class _ImageCoverPickerState extends State<ImageCoverPicker> {
                 ),
               ),
             ),
+            if (!_isValid && widget.errorText != null) ...{
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  FadeTransition(
+                    opacity: _animationController,
+                    child: Text(
+                      widget.errorText!,
+                      style: Theme.of(context).inputDecorationTheme.errorStyle,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ),
+                ],
+              ),
+            },
           ],
         ),
       ),
