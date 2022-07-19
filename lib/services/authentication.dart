@@ -9,6 +9,7 @@ enum AuthenticationResult {
   wrongPassword("The password that you've entered is incorrect."),
   emailAlreadyInUse("This email already in use."),
   error("Unknow error. Please try again later."),
+  googleSigninDismiss(""),
   success("");
 
   final String message;
@@ -143,6 +144,9 @@ class AuthenticationService {
     } on FirebaseAuthException catch (e) {
       return AuthResultWithUserInfo(
           result: AuthenticationResult.fromCode(e.code));
+    } catch (e) {
+      return AuthResultWithUserInfo(
+          result: AuthenticationResult.googleSigninDismiss);
     }
   }
 
