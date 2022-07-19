@@ -75,7 +75,7 @@ class _MainPageState extends State<MainPage> {
           color: Colors.white,
         ),
         onPressed: () {
-          // TODO: Add create event page
+          Navigator.pushNamed(context, "/event/create");
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
