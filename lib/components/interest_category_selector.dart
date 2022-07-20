@@ -17,7 +17,7 @@ class InterestCategorySelector extends StatefulWidget {
 class _InterestCategorySelectorState extends State<InterestCategorySelector> {
   // if "category" is selected ?
   bool isSelected(Category category) {
-    return widget.controller.value.contains(category);
+    return widget.controller.value.any((cat) => cat.id == category.id);
   }
 
   ButtonStyle btnStyle(Category category) {

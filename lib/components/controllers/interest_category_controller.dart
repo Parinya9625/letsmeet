@@ -10,8 +10,8 @@ class InterestCategorySelectorController extends ChangeNotifier {
   List<Category> get value => List<Category>.from(_selectedValue);
 
   void select(Category category) {
-    if (_selectedValue.contains(category)) {
-      _selectedValue.remove(category);
+    if (_selectedValue.any((cat) => cat.id == category.id)) {
+      _selectedValue.removeWhere((cat) => cat.id == category.id);
     } else {
       _selectedValue.add(category);
     }
