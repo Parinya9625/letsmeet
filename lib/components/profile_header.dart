@@ -219,7 +219,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         } else ...{
           Expanded(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: widget.onEditPressed,
               child: const Text("EDIT PROFILE"),
             ),
           ),

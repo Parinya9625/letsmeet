@@ -6,6 +6,7 @@ import 'package:letsmeet/components/profile_header.dart';
 import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/user.dart';
+import 'package:provider/provider.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String userId;
@@ -226,7 +227,10 @@ class _UserProfilePageState extends State<UserProfilePage>
                           user: user,
                           isOtherUser: widget.isOtherUser,
                           onEditPressed: () {
-                            // TODO : Add edit profile nav
+                            context
+                                .read<GlobalKey<NavigatorState>>()
+                                .currentState!
+                                .pushNamed("/profile/edit");
                           },
                         ),
                       ),
