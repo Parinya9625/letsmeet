@@ -10,6 +10,7 @@ import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/pages/create_edit_event_page.dart';
+import 'package:letsmeet/pages/edit_profile_page.dart';
 import 'package:letsmeet/pages/forgot_password_page.dart';
 import 'package:letsmeet/pages/main_page.dart';
 import 'package:letsmeet/pages/setup_profile_page.dart';
@@ -256,6 +257,8 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
             "/signin/forgot": (context) => const ForgotPasswordPage(),
             "/": (context) => const MainPage(),
             "/event/create": (context) => const CreateEditEventPage(),
+            "/profile/edit": (context) =>
+                EditProfilePage(user: context.read<lm.User?>()!),
           },
           onGenerateRoute: (settings) {
             Widget? page;

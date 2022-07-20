@@ -24,15 +24,20 @@ class SetupProfileArguments {
 }
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({Key? key}) : super(key: key);
+  final User user;
+  const EditProfilePage({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  bool isSkipSetupProfile = true;
-
+  final formKey = GlobalKey<FormState>();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController surnameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   InterestCategorySelectorController categoryController =
       InterestCategorySelectorController();
@@ -40,25 +45,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void initState() {
-    bioController.addListener(() {
-      skipSetupProfile();
-    });
-    categoryController.addListener(() {
-      skipSetupProfile();
-    });
-    imageController.addListener(() {
-      skipSetupProfile();
+    imageController.url = widget.user.image;
+    nameController.text = widget.user.name;
+    surnameController.text = widget.user.surname;
+    bioController.text = widget.user.bio;
+
+    widget.user.getFavCategory.then((listCategory) {
+      setState(() {
+        categoryController.value = listCategory;
+      });
     });
 
     super.initState();
-  }
-
-  void skipSetupProfile() {
-    setState(() {
-      isSkipSetupProfile = bioController.text.isEmpty &&
-          categoryController.value.isEmpty &&
-          imageController.path == null;
-    });
   }
 
   showLoading() {
@@ -87,53 +85,102 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    User? lmUser = context.watch<User?>();
-
-    imageController.url = lmUser?.image != null
-        ? lmUser!.image
-        : "https://avatars.dicebear.com/api/identicon/${lmUser?.id ?? 0}.png?size=64&backgroundColor=white";
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Profile"),
-        actions: [IconButton(onPressed: (){}, icon: Icon(Icons.done))],
+        title: const Text("Edit Profile"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.done_rounded),
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                String? imageUrl;
+
+                showLoading();
+
+                if (imageController.file != null) {
+                  imageUrl = await context.read<StorageService>().uploadImage(
+                        userId: widget.user.id!,
+                        file: imageController.file!,
+                      );
+                } else {
+                  imageUrl = imageController.path;
+                }
+
+                var updateUser = {
+                  "image": imageUrl,
+                  "name": nameController.text.trim(),
+                  "surname": surnameController.text.trim(),
+                  "bio": bioController.text.trim(),
+                  "favCategory": categoryController.value
+                      .map((category) => category.toDocRef())
+                      .toList(),
+                };
+
+                context.read<CloudFirestoreService>().updateUserPartial(
+                      id: widget.user.id!,
+                      data: updateUser,
+                    );
+
+                Navigator.pop(context); // Pop loading screen
+                Navigator.pop(context); // Pop edit profile
+              }
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           controller: ScrollController(),
           child: Padding(
             padding: const EdgeInsets.all(32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 32),
-                ImageProfilePicker(
-                  controller: imageController,
-                ),
-                const SizedBox(height: 16),
-                InputField(
-                  hintText: "Name",
-                  icon: const Icon(Icons.person),
-                ),
-                const SizedBox(height: 16),
-                InputField(
-                  hintText: "Surname",
-                  icon: const Icon(Icons.person),
-                ),
-                const SizedBox(height: 16),
-                InputField(
-                  controller: bioController,
-                  hintText: 'Bio',
-                  icon: const Icon(Icons.badge_rounded),
-                  onClear: () {},
-                ),
-                const SizedBox(height: 16),
-                InterestCategorySelector(
-                  controller: categoryController,
-                ),
-                const SizedBox(height: 32),
-              ],
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ImageProfilePicker(
+                    controller: imageController,
+                  ),
+                  const SizedBox(height: 16),
+                  InputField(
+                    controller: nameController,
+                    hintText: "Name",
+                    icon: const Icon(Icons.person_rounded),
+                    onClear: () {},
+                    validator: (value) {
+                      if (nameController.text.trim().isEmpty) {
+                        return "Please enter your name\n";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  InputField(
+                    controller: surnameController,
+                    hintText: "Surname",
+                    icon: const Icon(Icons.person_rounded),
+                    onClear: () {},
+                    validator: (value) {
+                      if (surnameController.text.trim().isEmpty) {
+                        return "Please enter your surname\n";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  InputField(
+                    controller: bioController,
+                    hintText: 'Bio',
+                    icon: const Icon(Icons.badge_rounded),
+                    onClear: () {},
+                  ),
+                  const SizedBox(height: 16),
+                  InterestCategorySelector(
+                    controller: categoryController,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
