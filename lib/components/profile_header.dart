@@ -105,9 +105,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           builder: (BuildContext context) {
             Role role = snapshot.data[0];
             List<Category> favCategory = snapshot.data[1];
-            double rating = widget.user.rating.isNotEmpty
-                ? widget.user.rating.average
-                : 0.0;
+            double rating = widget.user.rating.average();
 
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
