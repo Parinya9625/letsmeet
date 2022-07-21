@@ -46,7 +46,7 @@ class _ComponentsPageState extends State<ComponentsPage> {
     favCategory: [],
     image: "https://picsum.photos/200?image=21",
     name: "name",
-    rating: [],
+    rating: UserRating(),
     recentView: [],
     role: FirebaseFirestore.instance.collection("roles").doc("user"),
     surname: "surname",
