@@ -165,6 +165,13 @@ class CloudFirestoreService {
     });
   }
 
+  reviewUser({required String id, required int rating}) {
+    _firestore
+        .collection("users")
+        .doc(id)
+        .update({"rating.$rating": FieldValue.increment(1)});
+  }
+
   // * ----------  EVENT ----------
 
   addEvent({required Event event}) {

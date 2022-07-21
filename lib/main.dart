@@ -13,6 +13,7 @@ import 'package:letsmeet/pages/create_edit_event_page.dart';
 import 'package:letsmeet/pages/edit_profile_page.dart';
 import 'package:letsmeet/pages/forgot_password_page.dart';
 import 'package:letsmeet/pages/main_page.dart';
+import 'package:letsmeet/pages/review_user_page.dart';
 import 'package:letsmeet/pages/setup_profile_page.dart';
 import 'package:letsmeet/pages/sign_in_page.dart';
 import 'package:letsmeet/pages/sign_up_page.dart';
@@ -265,6 +266,9 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
             switch (settings.name) {
               case "/event/edit":
                 page = CreateEditEventPage(event: settings.arguments as Event?);
+                break;
+              case "/event/review":
+                page = ReviewUserPage(event: settings.arguments as Event);
                 break;
             }
 
