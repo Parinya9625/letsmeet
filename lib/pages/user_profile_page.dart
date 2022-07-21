@@ -191,13 +191,20 @@ class _UserProfilePageState extends State<UserProfilePage>
       ]),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          User? globalUser = context.read<User?>();
+          if (widget.isOtherUser == false && globalUser != null) {
+            // load current user data from provider for better loading time
+            user = globalUser;
+          } else {
+            // wait for loading other user profile
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        } else {
+          // Load new user data everytime it refresh
+          user = User.fromFirestore(doc: snapshot.data[0]);
         }
-
-        // Load new user data everytime it refresh
-        user = User.fromFirestore(doc: snapshot.data[0]);
 
         return NestedScrollView(
           controller: scrollController,
