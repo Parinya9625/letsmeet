@@ -236,7 +236,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             if (value == null || value.isEmpty) {
                               return "Please select your birthday\n";
                             } else if (birthday!.isAfter(ageLimitDay)) {
-                              return "User over 18 can sign up\n";
+                              return "User over 18 can't sign up\n";
                             }
                             return null;
                           },
