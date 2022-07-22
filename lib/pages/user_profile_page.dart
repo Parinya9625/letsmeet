@@ -167,7 +167,10 @@ class _UserProfilePageState extends State<UserProfilePage>
                                     .any((member) => member.id == user.id)
                                 : false,
                             onPressed: () {
-                              //TODO : Tap Event Card
+                              context
+                                  .read<GlobalKey<NavigatorState>>()
+                                  .currentState!
+                                  .pushNamed("/event", arguments: event);
                             },
                           ),
                         );
@@ -185,109 +188,116 @@ class _UserProfilePageState extends State<UserProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.wait([
-        FirebaseFirestore.instance.collection("users").doc(widget.userId).get()
-      ]),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData) {
-          User? globalUser = context.read<User?>();
-          if (widget.isOtherUser == false && globalUser != null) {
-            // load current user data from provider for better loading time
-            user = globalUser;
+    return Scaffold(
+      body: FutureBuilder(
+        future: Future.wait([
+          FirebaseFirestore.instance
+              .collection("users")
+              .doc(widget.userId)
+              .get()
+        ]),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            User? globalUser = context.read<User?>();
+            if (widget.isOtherUser == false && globalUser != null) {
+              // load current user data from provider for better loading time
+              user = globalUser;
+            } else {
+              // wait for loading other user profile
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           } else {
-            // wait for loading other user profile
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            // Load new user data everytime it refresh
+            user = User.fromFirestore(doc: snapshot.data[0]);
           }
-        } else {
-          // Load new user data everytime it refresh
-          user = User.fromFirestore(doc: snapshot.data[0]);
-        }
 
-        return NestedScrollView(
-          controller: scrollController,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              SliverOverlapAbsorber(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                sliver: SliverAppBar(
-                  pinned: true,
-                  expandedHeight: 320,
-                  toolbarHeight: kToolbarHeight,
-                  forceElevated: true,
-                  title: AnimatedOpacity(
-                    opacity: isExpanded ? 1 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Text("${user.name} ${user.surname}"),
-                  ),
-                  flexibleSpace: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
+          return NestedScrollView(
+            controller: scrollController,
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return [
+                SliverOverlapAbsorber(
+                  handle:
+                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  sliver: SliverAppBar(
+                    pinned: true,
+                    expandedHeight: 320,
+                    toolbarHeight: kToolbarHeight,
+                    forceElevated: true,
+                    title: AnimatedOpacity(
+                      opacity: isExpanded ? 1 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Text("${user.name} ${user.surname}"),
                     ),
-                    child: FlexibleSpaceBar(
-                      background: SafeArea(
-                        child: ProfileHeader(
-                          user: user,
-                          isOtherUser: widget.isOtherUser,
-                          onEditPressed: () {
-                            context
-                                .read<GlobalKey<NavigatorState>>()
-                                .currentState!
-                                .pushNamed("/profile/edit");
-                          },
+                    flexibleSpace: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                      ),
+                      child: FlexibleSpaceBar(
+                        background: SafeArea(
+                          child: ProfileHeader(
+                            user: user,
+                            isOtherUser: widget.isOtherUser,
+                            onEditPressed: () {
+                              context
+                                  .read<GlobalKey<NavigatorState>>()
+                                  .currentState!
+                                  .pushNamed("/profile/edit");
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  bottom: TabBar(
-                    controller: tabController,
-                    tabs: tabName,
-                  ),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
+                    bottom: TabBar(
+                      controller: tabController,
+                      tabs: tabName,
+                    ),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ];
-          },
-          body: TabBarView(
-            controller: tabController!,
-            children: [
-              eventTab(
-                id: "myEvent",
-                stream: FirebaseFirestore.instance
-                    .collection("events")
-                    .where("owner", isEqualTo: user.toDocRef())
-                    .snapshots()
-                    .map(
-                      (events) => events.docs
-                          .map((doc) => Event.fromFirestore(doc: doc))
-                          .toList(),
-                    ),
-              ),
-              eventTab(
-                id: "joinedEvent",
-                stream: FirebaseFirestore.instance
-                    .collection("events")
-                    .where("member", arrayContains: user.toDocRef())
-                    .snapshots()
-                    .map(
-                      (events) => events.docs
-                          .map((doc) => Event.fromFirestore(doc: doc))
-                          .toList(),
-                    ),
-              ),
-            ],
-          ),
-        );
-      },
+              ];
+            },
+            body: TabBarView(
+              controller: tabController!,
+              children: [
+                eventTab(
+                  id: "myEvent",
+                  stream: FirebaseFirestore.instance
+                      .collection("events")
+                      .where("owner", isEqualTo: user.toDocRef())
+                      .snapshots()
+                      .map(
+                        (events) => events.docs
+                            .map((doc) => Event.fromFirestore(doc: doc))
+                            .toList(),
+                      ),
+                ),
+                eventTab(
+                  id: "joinedEvent",
+                  stream: FirebaseFirestore.instance
+                      .collection("events")
+                      .where("owner", isNotEqualTo: user.toDocRef())
+                      .where("member", arrayContains: user.toDocRef())
+                      .snapshots()
+                      .map(
+                        (events) => events.docs
+                            .map((doc) => Event.fromFirestore(doc: doc))
+                            .toList(),
+                      ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
