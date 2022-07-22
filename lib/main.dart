@@ -17,6 +17,8 @@ import 'package:letsmeet/pages/review_user_page.dart';
 import 'package:letsmeet/pages/setup_profile_page.dart';
 import 'package:letsmeet/pages/sign_in_page.dart';
 import 'package:letsmeet/pages/sign_up_page.dart';
+import 'package:letsmeet/pages/user_profile_page.dart';
+import 'package:letsmeet/pages/view_event_page.dart';
 import 'package:letsmeet/pages/welcome_page.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
@@ -264,11 +266,23 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
           onGenerateRoute: (settings) {
             Widget? page;
             switch (settings.name) {
+              case "/event":
+                page = ViewEventPage(event: settings.arguments as Event);
+                break;
               case "/event/edit":
                 page = CreateEditEventPage(event: settings.arguments as Event?);
                 break;
               case "/event/review":
                 page = ReviewUserPage(event: settings.arguments as Event);
+                break;
+              case "/profile":
+                Map<String, dynamic> args =
+                    settings.arguments as Map<String, dynamic>;
+
+                page = UserProfilePage(
+                  isOtherUser: args["isOtherUser"],
+                  userId: args["userId"],
+                );
                 break;
             }
 

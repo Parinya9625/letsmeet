@@ -192,17 +192,19 @@ class CloudFirestoreService {
     });
   }
 
-  removeEvent({required String id}) {
-    _firestore.runTransaction((transaction) async {
+  Future<bool> removeEvent({required String id}) async {
+    return await _firestore.runTransaction((transaction) async {
       DocumentReference documentReference =
           _firestore.collection(CollectionPath.events).doc(id);
 
       transaction.delete(documentReference);
-    });
+      return true;
+    }).onError((error, stackTrace) => false);
   }
 
-  addEventMember({required Event event, required User user}) {
-    _firestore.runTransaction((transaction) async {
+  Future<bool> addEventMember(
+      {required Event event, required User user}) async {
+    return await _firestore.runTransaction((transaction) async {
       var doc = await event.toDocRef().get();
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -213,11 +215,14 @@ class CloudFirestoreService {
       transaction.update(event.toDocRef(), {
         "member": member,
       });
-    });
+
+      return true;
+    }).onError((error, stackTrace) => false);
   }
 
-  removeEventMember({required Event event, required User user}) {
-    _firestore.runTransaction((transaction) async {
+  Future<bool> removeEventMember(
+      {required Event event, required User user}) async {
+    return await _firestore.runTransaction((transaction) async {
       var doc = await event.toDocRef().get();
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -228,7 +233,9 @@ class CloudFirestoreService {
       transaction.update(event.toDocRef(), {
         "member": member,
       });
-    });
+
+      return true;
+    }).onError((error, stackTrace) => false);
   }
 
   addEventMemberReview({required Event event, required User user}) {
