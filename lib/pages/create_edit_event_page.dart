@@ -274,7 +274,8 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
   void checkSuggest() {
     if (typeController.text.trim() == "In Person" &&
         locationController.placeId != null &&
-        category != null) {
+        category != null &&
+        widget.event == null) {
       if (typeController.text.trim() != _sugType ||
           locationController.placeId != _sugPlaceId ||
           category != _sugCategory) {
@@ -304,10 +305,20 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
       } else if (typeController.text.trim() == "Online") {
         urlController.text = widget.event!.location.link!;
       }
-      category = context
-          .read<List<Category>>()
-          .firstWhere((cat) => cat.id == widget.event!.category.id);
-      categoryController.text = category!.name;
+
+      List<Category> listCategory = context.read<List<Category>>();
+      if (listCategory.isEmpty) {
+        // Fix listCategory is empty when first time launch this page
+        widget.event!.getCategory.then((cat) {
+          category = cat;
+          categoryController.text = category!.name;
+        });
+      } else {
+        category = listCategory
+            .firstWhere((cat) => cat.id == widget.event!.category.id);
+        categoryController.text = category!.name;
+      }
+
       imageController.url = widget.event!.image;
       nameController.text = widget.event!.name;
       date = widget.event!.startTime;
