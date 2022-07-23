@@ -430,8 +430,9 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                   updateEvent.remove("member");
                   updateEvent.remove("memberReviewed");
 
-                  context.read<CloudFirestoreService>().updateEventPartial(
-                      id: widget.event!.id!, data: updateEvent);
+                  context
+                      .read<CloudFirestoreService>()
+                      .updateEvent(id: widget.event!.id!, data: updateEvent);
                 }
 
                 Navigator.pop(context); // Pop loading screen

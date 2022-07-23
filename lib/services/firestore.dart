@@ -3,10 +3,9 @@ import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/models/user.dart';
-
-import '../models/ban.dart';
-import '../models/chat.dart';
-import '../models/report.dart';
+import 'package:letsmeet/models/ban.dart';
+import 'package:letsmeet/models/chat.dart';
+import 'package:letsmeet/models/report.dart';
 
 class CollectionPath {
   CollectionPath._();
@@ -62,102 +61,72 @@ class CloudFirestoreService {
   // * ----------  BAN ----------
 
   addBan({required Ban ban}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.set(ban.toDocRef(), ban.toMap());
-    });
+    ban.toDocRef().set(ban.toMap());
   }
 
-  updateBan({required Ban ban}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.update(ban.toDocRef(), ban.toMap());
-    });
+  updateBan({required String id, required Map<String, dynamic> data}) {
+    _firestore.collection(CollectionPath.bans).doc(id).update(data);
   }
 
   removeBan({required String id}) {
-    _firestore.runTransaction((transaction) async {
-      DocumentReference documentReference =
-          _firestore.collection(CollectionPath.bans).doc(id);
-
-      transaction.delete(documentReference);
-    });
+    _firestore.collection(CollectionPath.bans).doc(id).delete();
   }
 
   // * ----------  REPORT ----------
 
-  addReport({required Report report}) {
-    _firestore.runTransaction((transaction) async {
-      var doc = await report.toDocRef().get();
+  Future<bool> addReport({required Report report}) {
+    return _firestore.runTransaction((transaction) async {
+      final doc = await transaction.get(report.toDocRef());
 
       if (doc.exists) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        // Merge new report to latest report data
+        Report latestReport = Report.fromFirestore(doc: doc);
+        List<String> reason = latestReport.reason;
 
-        List<String> reason = List<String>.from(data["reason"]);
         reason.addAll(report.reason);
 
-        transaction.update(
-          report.toDocRef(),
-          {
-            "count": data["count"] + 1,
-            "reason": reason,
-          },
-        );
+        transaction.update(report.toDocRef(), {
+          "reason": reason,
+          "count": FieldValue.increment(1),
+        });
       } else {
-        transaction.set(report.toDocRef(), report.toMap());
+        // Create new report
+        report.toDocRef().set(report.toMap());
       }
-    });
+
+      return true;
+    }).onError((error, stackTrace) => false);
   }
 
   removeReport({required String id}) {
-    _firestore.runTransaction((transaction) async {
-      DocumentReference documentReference =
-          _firestore.collection(CollectionPath.reports).doc(id);
-
-      transaction.delete(documentReference);
-    });
+    _firestore.collection(CollectionPath.reports).doc(id).delete();
   }
 
   // * ----------  USER ----------
 
   addUser({required User user}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.set(user.toDocRef(), user.toMap());
-    });
+    user.toDocRef().set(user.toMap());
   }
 
-  updateUser({required User user}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.update(user.toDocRef(), user.toMap());
-    });
-  }
-
-  updateUserPartial({required String id, required Map<String, dynamic> data}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.update(_firestore.collection("users").doc(id), data);
-    });
+  updateUser({required String id, required Map<String, dynamic> data}) {
+    _firestore.collection(CollectionPath.users).doc(id).update(data);
   }
 
   removeUser({required String id}) {
-    _firestore.runTransaction((transaction) async {
-      DocumentReference documentReference =
-          _firestore.collection(CollectionPath.users).doc(id);
-
-      transaction.delete(documentReference);
-    });
+    _firestore.collection(CollectionPath.users).doc(id).delete();
   }
 
-  addUserRecentView({required User user, required Event event}) {
+  addUserRecentView({required User user, required String eventId}) {
     _firestore.runTransaction((transaction) async {
-      var doc = await user.toDocRef().get();
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      final doc = await transaction.get(user.toDocRef());
+      User latestUser = User.fromFirestore(doc: doc);
+      var recentView = latestUser.recentView;
 
-      List<DocumentReference> recentView =
-          List<DocumentReference>.from(data["recentView"]);
-      recentView.insert(0, event.toDocRef());
+      recentView.insert(
+          0, _firestore.collection(CollectionPath.events).doc(eventId));
 
       int maxRV = 20;
-      if (recentView.length > maxRV) {
-        recentView = recentView.take(maxRV).toList();
-      }
+      recentView = recentView.take(maxRV).toList();
 
       transaction.update(user.toDocRef(), {
         "recentView": recentView,
@@ -175,161 +144,89 @@ class CloudFirestoreService {
   // * ----------  EVENT ----------
 
   addEvent({required Event event}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.set(event.toDocRef(), event.toMap());
-    });
+    event.toDocRef().set(event.toMap());
   }
 
-  updateEvent({required Event event}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.update(event.toDocRef(), event.toMap());
-    });
+  updateEvent({required String id, required Map<String, dynamic> data}) {
+    _firestore.collection(CollectionPath.events).doc(id).update(data);
   }
 
-  updateEventPartial({required String id, required Map<String, dynamic> data}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.update(_firestore.collection("events").doc(id), data);
-    });
-  }
-
-  Future<bool> removeEvent({required String id}) async {
-    return await _firestore.runTransaction((transaction) async {
-      DocumentReference documentReference =
-          _firestore.collection(CollectionPath.events).doc(id);
-
-      transaction.delete(documentReference);
-      return true;
-    }).onError((error, stackTrace) => false);
+  Future<void> removeEvent({required String id}) async {
+    return _firestore.collection(CollectionPath.events).doc(id).delete();
   }
 
   Future<bool> addEventMember(
       {required Event event, required User user}) async {
-    return await _firestore.runTransaction((transaction) async {
-      var doc = await event.toDocRef().get();
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return _firestore.runTransaction((transaction) async {
+      final doc = await transaction.get(event.toDocRef());
+      Event latestEvent = Event.fromFirestore(doc: doc);
 
-      List<DocumentReference> member =
-          List<DocumentReference>.from(data["member"]);
-      member.add(user.toDocRef());
-
-      transaction.update(event.toDocRef(), {
-        "member": member,
-      });
-
-      return true;
+      if (latestEvent.member.length < latestEvent.maxMember) {
+        // Event can join
+        event.toDocRef().update({
+          "member": FieldValue.arrayUnion([user.toDocRef()]),
+        });
+        return true;
+      } else {
+        // Event have max member
+        return false;
+      }
     }).onError((error, stackTrace) => false);
   }
 
   Future<bool> removeEventMember(
       {required Event event, required User user}) async {
-    return await _firestore.runTransaction((transaction) async {
-      var doc = await event.toDocRef().get();
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-      List<DocumentReference> member =
-          List<DocumentReference>.from(data["member"]);
-      member.remove(user.toDocRef());
-
-      transaction.update(event.toDocRef(), {
-        "member": member,
-      });
-
-      return true;
-    }).onError((error, stackTrace) => false);
+    event.toDocRef().update({
+      "member": FieldValue.arrayRemove([user.toDocRef()])
+    });
+    return true;
   }
 
   addEventMemberReview({required Event event, required User user}) {
-    _firestore.runTransaction((transaction) async {
-      var doc = await event.toDocRef().get();
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-      List<DocumentReference> member =
-          List<DocumentReference>.from(data["memberReviewed"]);
-      member.add(user.toDocRef());
-
-      transaction.update(event.toDocRef(), {
-        "memberReviewed": member,
-      });
-    });
-  }
-
-  removeEventMemberReview({required Event event, required User user}) {
-    _firestore.runTransaction((transaction) async {
-      var doc = await event.toDocRef().get();
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-      List<DocumentReference> member =
-          List<DocumentReference>.from(data["memberReviewed"]);
-      member.remove(user.toDocRef());
-
-      transaction.update(event.toDocRef(), {
-        "memberReviewed": member,
-      });
+    event.toDocRef().update({
+      "memberReviewed": FieldValue.arrayUnion([user.toDocRef()])
     });
   }
 
   addChat({required String eventId, required Chat chat}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.set(chat.toDocRef(eventId: eventId), chat.toMap());
-    });
+    chat.toDocRef(eventId: eventId).set(chat.toMap());
   }
 
   removeChat({required String eventId, required String chatId}) {
-    _firestore.runTransaction((transaction) async {
-      DocumentReference documentReference = _firestore
-          .collection(CollectionPath.events)
-          .doc(eventId)
-          .collection(SubcollectionPath.chats)
-          .doc(chatId);
-
-      transaction.delete(documentReference);
-    });
+    _firestore
+        .collection(CollectionPath.events)
+        .doc(eventId)
+        .collection(SubcollectionPath.chats)
+        .doc(chatId)
+        .delete();
   }
 
   // * ----------  CATEGORY ----------
 
   addCategory({required Category category}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.set(category.toDocRef(), category.toMap());
-    });
+    category.toDocRef().set(category.toMap());
   }
 
-  updateCategory({required Category category}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.update(category.toDocRef(), category.toMap());
-    });
+  updateCategory({required String id, required Map<String, dynamic> data}) {
+    _firestore.collection(CollectionPath.categories).doc(id).update(data);
   }
 
   removeCategory({required String id}) {
-    _firestore.runTransaction((transaction) async {
-      DocumentReference documentReference =
-          _firestore.collection(CollectionPath.categories).doc(id);
-
-      transaction.delete(documentReference);
-    });
+    _firestore.collection(CollectionPath.categories).doc(id).delete();
   }
 
   // * ----------  ROLE ----------
 
   addRole({required Role role}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.set(role.toDocRef(), role.toMap());
-    });
+    role.toDocRef().set(role.toMap());
   }
 
-  updateRole({required Role role}) {
-    _firestore.runTransaction((transaction) async {
-      transaction.update(role.toDocRef(), role.toMap());
-    });
+  updateRole({required String id, required Map<String, dynamic> data}) {
+    _firestore.collection(CollectionPath.roles).doc(id).update(data);
   }
 
   removeRole({required String id}) {
-    _firestore.runTransaction((transaction) async {
-      DocumentReference documentReference =
-          _firestore.collection(CollectionPath.roles).doc(id);
-
-      transaction.delete(documentReference);
-    });
+    _firestore.collection(CollectionPath.roles).doc(id).delete();
   }
 
   // --------------------

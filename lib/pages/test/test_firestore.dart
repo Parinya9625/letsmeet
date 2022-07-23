@@ -161,7 +161,9 @@ class _TestFirestoreState extends State<TestFirestore>
                               setState(() {
                                 context
                                     .read<CloudFirestoreService>()
-                                    .updateUser(user: testUser2);
+                                    .updateUser(
+                                        id: testUser2.id!,
+                                        data: testUser2.toMap());
                               });
                             },
                             child: const Text("Update")),
@@ -231,11 +233,12 @@ class _TestFirestoreState extends State<TestFirestore>
                                   .read<CloudFirestoreService>()
                                   .addUserRecentView(
                                       user: testUser,
-                                      event: listEvent
+                                      eventId: listEvent
                                           .where((e) =>
                                               e.id == userRecentEventDropdown)
                                           .toList()
-                                          .first);
+                                          .first
+                                          .id!);
                             });
                           },
                           child: const Text("Add recent view")),
@@ -417,7 +420,9 @@ class _TestFirestoreState extends State<TestFirestore>
                               setState(() {
                                 context
                                     .read<CloudFirestoreService>()
-                                    .updateEvent(event: testEventIP2);
+                                    .updateEvent(
+                                        id: testEventIP2.id!,
+                                        data: testEventIP2.toMap());
                               });
                             },
                             child: const Text("Update Event")),
@@ -506,10 +511,10 @@ class _TestFirestoreState extends State<TestFirestore>
                         child: ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                context
-                                    .read<CloudFirestoreService>()
-                                    .removeEventMemberReview(
-                                        event: testEventIP2, user: testUser);
+                                // context
+                                //     .read<CloudFirestoreService>()
+                                //     .removeEventMemberReview(
+                                //         event: testEventIP2, user: testUser);
                               });
                             },
                             child: const Text("Remove member review")),
@@ -885,7 +890,7 @@ class _TestFirestoreState extends State<TestFirestore>
                                 context.read<CloudFirestoreService>().addReport(
                                     report: Report.user(
                                         id: _id.text.trim(),
-                                        reason: [_reason.text.trim()]));
+                                        reason: _reason.text.trim()));
                               });
                             },
                             child: const Text("Add user")),
@@ -897,7 +902,7 @@ class _TestFirestoreState extends State<TestFirestore>
                                 context.read<CloudFirestoreService>().addReport(
                                     report: Report.event(
                                         id: _id.text.trim(),
-                                        reason: [_reason.text.trim()]));
+                                        reason: _reason.text.trim()));
                               });
                             },
                             child: const Text("Add event")),
@@ -1030,7 +1035,9 @@ class _TestFirestoreState extends State<TestFirestore>
                               setState(() {
                                 context
                                     .read<CloudFirestoreService>()
-                                    .updateCategory(category: testCategory2);
+                                    .updateCategory(
+                                        id: testCategory2.id!,
+                                        data: testCategory2.toMap());
                               });
                             },
                             child: const Text("Update")),
@@ -1169,7 +1176,9 @@ class _TestFirestoreState extends State<TestFirestore>
                               setState(() {
                                 context
                                     .read<CloudFirestoreService>()
-                                    .updateRole(role: testRole2);
+                                    .updateRole(
+                                        id: testRole2.id!,
+                                        data: testRole2.toMap());
                               });
                             },
                             child: const Text("Update")),

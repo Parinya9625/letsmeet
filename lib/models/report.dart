@@ -7,16 +7,19 @@ class Report {
   final List<String> reason;
   final String type;
 
-  Report(
-      {required this.id,
-      required this.count,
-      required this.reason,
-      required this.type});
-  Report.user({required this.id, required this.reason})
+  Report({
+    required this.id,
+    required this.count,
+    required this.reason,
+    required this.type,
+  });
+  Report.user({required this.id, required String reason})
       : count = 1,
+        reason = [reason],
         type = "user";
-  Report.event({required this.id, required this.reason})
+  Report.event({required this.id, required String reason})
       : count = 1,
+        reason = [reason],
         type = "event";
 
   factory Report.fromFirestore({required DocumentSnapshot doc}) {

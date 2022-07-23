@@ -141,7 +141,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
 
                       context
                           .read<CloudFirestoreService>()
-                          .updateUserPartial(id: lmUser!.id!, data: {
+                          .updateUser(id: lmUser!.id!, data: {
                         "image": imageUrl,
                         "bio": bioController.text.trim(),
                         "favCategory": categoryController.value
