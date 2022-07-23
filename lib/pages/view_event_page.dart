@@ -257,7 +257,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
                           context.read<CloudFirestoreService>().addReport(
                                 report: Report.event(
                                   id: event.id!,
-                                  reason: [reportOption[selectedReport!]],
+                                  reason: reportOption[selectedReport!],
                                 ),
                               );
                           Navigator.pop(context);
@@ -343,7 +343,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
                           context.read<CloudFirestoreService>().addReport(
                                 report: Report.user(
                                   id: member.id!,
-                                  reason: [reportOption[selectedReport!]],
+                                  reason: reportOption[selectedReport!],
                                 ),
                               );
                           Navigator.pop(context);

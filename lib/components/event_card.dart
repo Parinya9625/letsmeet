@@ -63,7 +63,7 @@ class _EventCardState extends State<EventCard> {
                           context.read<CloudFirestoreService>().addReport(
                                 report: Report.event(
                                   id: widget.event.id!,
-                                  reason: [reportOption[selectedReport!]],
+                                  reason: reportOption[selectedReport!],
                                 ),
                               );
                           Navigator.pop(context);

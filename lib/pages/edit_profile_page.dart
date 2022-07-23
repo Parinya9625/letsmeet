@@ -116,7 +116,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       .toList(),
                 };
 
-                context.read<CloudFirestoreService>().updateUserPartial(
+                context.read<CloudFirestoreService>().updateUser(
                       id: widget.user.id!,
                       data: updateUser,
                     );

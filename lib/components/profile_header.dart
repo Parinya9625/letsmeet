@@ -310,7 +310,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                           context.read<CloudFirestoreService>().addReport(
                                 report: Report.user(
                                   id: widget.user.id!,
-                                  reason: [reportOption[selectedReport!]],
+                                  reason: reportOption[selectedReport!],
                                 ),
                               );
                           Navigator.pop(context);
