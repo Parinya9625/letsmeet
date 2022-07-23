@@ -565,9 +565,12 @@ class _ViewEventPageState extends State<ViewEventPage> {
                     child: Stack(
                       children: [
                         Positioned.fill(
-                          child: CachedNetworkImage(
-                            imageUrl: event.image,
-                            fit: BoxFit.cover,
+                          child: Hero(
+                            tag: event.image,
+                            child: CachedNetworkImage(
+                              imageUrl: event.image,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         if (event.ageRestrict) ...{
@@ -590,20 +593,23 @@ class _ViewEventPageState extends State<ViewEventPage> {
                     child: Wrap(
                       runSpacing: 16,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                event.name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .copyWith(
-                                      fontSize: 28,
-                                    ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  event.name,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline1!
+                                      .copyWith(
+                                        fontSize: 28,
+                                      ),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         Row(
                           children: [
