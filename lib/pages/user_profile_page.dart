@@ -29,8 +29,6 @@ class _UserProfilePageState extends State<UserProfilePage>
     Tab(text: "Joined Events"),
   ];
   TabController? tabController;
-  ScrollController scrollController = ScrollController();
-  bool isExpanded = false;
   late User user;
 
   @override
@@ -38,26 +36,7 @@ class _UserProfilePageState extends State<UserProfilePage>
     tabController =
         TabController(initialIndex: 0, length: tabName.length, vsync: this);
 
-    // TODO (IF CAN FIX): Performance is to slow with this listen
-    scrollController.addListener(() {
-      if (scrollController.offset == 216) {
-        setState(() {
-          isExpanded = true;
-        });
-      } else if (isExpanded) {
-        setState(() {
-          isExpanded = false;
-        });
-      }
-    });
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    scrollController.removeListener(() {});
-    super.dispose();
   }
 
   Widget tabPage({
@@ -214,7 +193,6 @@ class _UserProfilePageState extends State<UserProfilePage>
           }
 
           return NestedScrollView(
-            controller: scrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               return [
@@ -224,30 +202,34 @@ class _UserProfilePageState extends State<UserProfilePage>
                   sliver: SliverAppBar(
                     pinned: true,
                     expandedHeight: 320,
-                    toolbarHeight: kToolbarHeight,
                     forceElevated: true,
-                    title: AnimatedOpacity(
-                      opacity: isExpanded ? 1 : 0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Text("${user.name} ${user.surname}"),
+                    title: LayoutBuilder(
+                      builder: ((context, constraints) {
+                        final FlexibleSpaceBarSettings? settings =
+                            context.dependOnInheritedWidgetOfExactType<
+                                FlexibleSpaceBarSettings>();
+
+                        bool isCollapse = settings == null ||
+                            settings.currentExtent <= settings.minExtent;
+
+                        return AnimatedOpacity(
+                          opacity: isCollapse ? 1 : 0,
+                          duration: const Duration(milliseconds: 200),
+                          child: Text("${user.name} ${user.surname}"),
+                        );
+                      }),
                     ),
-                    flexibleSpace: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                      child: FlexibleSpaceBar(
-                        background: SafeArea(
-                          child: ProfileHeader(
-                            user: user,
-                            isOtherUser: widget.isOtherUser,
-                            onEditPressed: () {
-                              context
-                                  .read<GlobalKey<NavigatorState>>()
-                                  .currentState!
-                                  .pushNamed("/profile/edit");
-                            },
-                          ),
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: SafeArea(
+                        child: ProfileHeader(
+                          user: user,
+                          isOtherUser: widget.isOtherUser,
+                          onEditPressed: () {
+                            context
+                                .read<GlobalKey<NavigatorState>>()
+                                .currentState!
+                                .pushNamed("/profile/edit");
+                          },
                         ),
                       ),
                     ),
