@@ -169,14 +169,11 @@ class _EventCardState extends State<EventCard> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: Hero(
-                    tag: widget.event.image,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: CachedNetworkImage(
-                        imageUrl: widget.event.image,
-                        fit: BoxFit.cover,
-                      ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.event.image,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
