@@ -565,12 +565,9 @@ class _ViewEventPageState extends State<ViewEventPage> {
                     child: Stack(
                       children: [
                         Positioned.fill(
-                          child: Hero(
-                            tag: event.image,
-                            child: CachedNetworkImage(
-                              imageUrl: event.image,
-                              fit: BoxFit.cover,
-                            ),
+                          child: CachedNetworkImage(
+                            imageUrl: event.image,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         if (event.ageRestrict) ...{

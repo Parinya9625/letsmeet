@@ -122,15 +122,30 @@ class CloudFirestoreService {
       User latestUser = User.fromFirestore(doc: doc);
       var recentView = latestUser.recentView;
 
-      recentView.insert(
-          0, _firestore.collection(CollectionPath.events).doc(eventId));
+      if (!recentView.any((event) => event.id == eventId)) {
+        // New event
+        recentView.insert(
+            0, _firestore.collection(CollectionPath.events).doc(eventId));
 
-      int maxRV = 20;
-      recentView = recentView.take(maxRV).toList();
+        int maxRV = 20;
+        recentView = recentView.take(maxRV).toList();
 
-      transaction.update(user.toDocRef(), {
-        "recentView": recentView,
-      });
+        transaction.update(user.toDocRef(), {
+          "recentView": recentView,
+        });
+      } else {
+        // Already in recent view
+        if (recentView.first.id != eventId) {
+          // event not in first index
+          recentView.removeWhere((event) => event.id == eventId);
+          recentView.insert(
+              0, _firestore.collection(CollectionPath.events).doc(eventId));
+
+          transaction.update(user.toDocRef(), {
+            "recentView": recentView,
+          });
+        }
+      }
     });
   }
 

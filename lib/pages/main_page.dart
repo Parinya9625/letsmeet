@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:letsmeet/models/user.dart';
+import 'package:letsmeet/pages/home_page.dart';
 import 'package:letsmeet/pages/user_profile_page.dart';
 import 'package:provider/provider.dart';
 
@@ -87,7 +88,7 @@ class _MainPageState extends State<MainPage> {
           Widget? page;
           switch (settings.name) {
             case "/":
-              page = const TempPage(color: Colors.redAccent);
+              page = const HomePage();
               break;
             case "/search":
               page = const TempPage(color: Colors.green);
@@ -96,6 +97,9 @@ class _MainPageState extends State<MainPage> {
               page = const TempPage(color: Colors.orange);
               break;
             case "/profile":
+              setState(() {
+                selectedPath = settings.name.toString();
+              });
               page = UserProfilePage(userId: user!.id!, isOtherUser: false);
               break;
             default:

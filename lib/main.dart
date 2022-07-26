@@ -58,7 +58,7 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
   late StreamSubscription<User?> streamUserAuthState;
   final navigatorKey = GlobalKey<NavigatorState>();
   final scaffoldMessangerKey = GlobalKey<ScaffoldMessengerState>();
-  List<SingleChildWidget> userProviders = [];
+  List<SingleChildWidget> afterAuthProviders = [];
 
   showBanDialog(Ban ban) {
     scaffoldMessangerKey.currentState!.showMaterialBanner(
@@ -115,12 +115,16 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
     streamUserAuthState = FirebaseAuth.instance.authStateChanges().listen(
       (user) async {
         if (user == null) {
-          // don't login
+          // user don't login
+          setState(() {
+            afterAuthProviders.clear();
+          });
+
           navigatorKey.currentState!.pushReplacementNamed("/welcome");
         } else {
           setState(() {
-            // Add lmUser to provider
-            userProviders.add(
+            afterAuthProviders.addAll([
+              // Add lmUser to provider
               StreamProvider<lm.User?>(
                 create: (context) => FirebaseFirestore.instance
                     .collection("users")
@@ -138,7 +142,38 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
                   surname: "",
                 ),
               ),
-            );
+              // stream available after login
+              StreamProvider<List<Ban>>(
+                create: (context) =>
+                    context.read<CloudFirestoreService>().streamBans,
+                initialData: const [],
+              ),
+              StreamProvider<List<Category>>(
+                create: (context) =>
+                    context.read<CloudFirestoreService>().streamCategories,
+                initialData: const [],
+              ),
+              StreamProvider<List<Report>>(
+                create: (context) =>
+                    context.read<CloudFirestoreService>().streamReports,
+                initialData: const [],
+              ),
+              StreamProvider<List<lm.User>>(
+                create: (context) =>
+                    context.read<CloudFirestoreService>().streamUsers,
+                initialData: const [],
+              ),
+              StreamProvider<List<Event>>(
+                create: (context) =>
+                    context.read<CloudFirestoreService>().streamEvents,
+                initialData: const [],
+              ),
+              StreamProvider<List<Role>>(
+                create: (context) =>
+                    context.read<CloudFirestoreService>().streamRoles,
+                initialData: const [],
+              ),
+            ]);
           });
 
           final userSnapshot = FirebaseFirestore.instance
@@ -197,7 +232,6 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ...userProviders,
         Provider<AuthenticationService>(
           create: (_) => AuthenticationService(FirebaseAuth.instance),
         ),
@@ -212,35 +246,7 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
         Provider<CloudFirestoreService>(
           create: (_) => CloudFirestoreService(FirebaseFirestore.instance),
         ),
-        StreamProvider<List<Ban>>(
-          create: (context) => context.read<CloudFirestoreService>().streamBans,
-          initialData: const [],
-        ),
-        StreamProvider<List<Report>>(
-          create: (context) =>
-              context.read<CloudFirestoreService>().streamReports,
-          initialData: const [],
-        ),
-        StreamProvider<List<lm.User>>(
-          create: (context) =>
-              context.read<CloudFirestoreService>().streamUsers,
-          initialData: const [],
-        ),
-        StreamProvider<List<Event>>(
-          create: (context) =>
-              context.read<CloudFirestoreService>().streamEvents,
-          initialData: const [],
-        ),
-        StreamProvider<List<Category>>(
-          create: (context) =>
-              context.read<CloudFirestoreService>().streamCategories,
-          initialData: const [],
-        ),
-        StreamProvider<List<Role>>(
-          create: (context) =>
-              context.read<CloudFirestoreService>().streamRoles,
-          initialData: const [],
-        ),
+        ...afterAuthProviders,
         Provider<GlobalKey<NavigatorState>>(
           create: (_) => navigatorKey,
         ),
