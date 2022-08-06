@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as path;
 
 class StorageService {
   final FirebaseStorage _firebaseStorage;
@@ -15,10 +16,11 @@ class StorageService {
         .join();
   }
 
-  Future<String> uploadImage({required String userId, required File file}) async {
+  Future<String> uploadImage(
+      {required String userId, required File file}) async {
     final storageRef = _firebaseStorage.ref();
-    final imageRef =
-        storageRef.child("images/$userId/${generateName(30)}.png");
+    final imageRef = storageRef.child(
+        "images/$userId/${generateName(30)}${path.extension(file.path)}");
 
     try {
       await imageRef.putFile(file);
