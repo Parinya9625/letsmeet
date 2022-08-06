@@ -13,6 +13,7 @@ class ChatBubble extends StatefulWidget {
   final bool isContinue;
   final bool showTime;
   final VoidCallback? onTapProfile;
+  final Widget? customProfileAvatar;
 
   const ChatBubble({
     Key? key,
@@ -22,6 +23,7 @@ class ChatBubble extends StatefulWidget {
     this.isContinue = false,
     this.showTime = true,
     this.onTapProfile,
+    this.customProfileAvatar,
   }) : super(key: key);
 
   @override
@@ -70,7 +72,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                       width: 40,
                       height: 40,
                     )
-                  : ClipRRect(
+                  : widget.customProfileAvatar ?? ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: GestureDetector(
                         onTap: widget.onTapProfile,
