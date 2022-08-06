@@ -70,8 +70,8 @@ class _ComponentsPageState extends State<ComponentsPage> {
           const TextField(
             decoration: InputDecoration(hintText: "Enter text..."),
           ),
-          ChatBubble(chat: chat, isSender: true),
-          ChatBubble(chat: chat),
+          ChatBubble(by: user, chat: chat, isSender: true),
+          ChatBubble(by: user, chat: chat),
           ChatGroupCard(event: event, lastChat: chat, onPressed: () {}),
           CheckboxTile(controller: CheckboxTileController()),
           AdminEventCard(event: event),

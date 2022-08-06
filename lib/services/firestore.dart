@@ -177,7 +177,7 @@ class CloudFirestoreService {
       Event latestEvent = Event.fromFirestore(doc: doc);
 
       if (latestEvent.member.length < latestEvent.maxMember) {
-        // Event can join
+        // Can join event
         event.toDocRef().update({
           "member": FieldValue.arrayUnion([user.toDocRef()]),
         });

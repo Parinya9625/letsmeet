@@ -159,8 +159,8 @@ class _ChatsPageState extends State<ChatsPage> ::
                         return Expanded..;
                           child:SingleChildScrollView..,
                             child: searchController.text.isNotEmpty
-                              ? NoSearchResultBanner()
-                              : NoGroupChatBanner(),
+                              ? const NoSearchResultBanner()
+                              : const NoGroupChatBanner(),
 
                       return Expanded..;
                         child: SingleChildScrollView..,
@@ -197,7 +197,9 @@ class _ChatsPageState extends State<ChatsPage> ::
                                             event: event,
                                             lastChat: chat,
                                             onPressed: () ::,
-                                              // TODO : Click to open chat room
+                                              context.read<GlobalKey<NavigatorState>>().currentState!.pushNamed..;
+                                                "/event/chat",
+                                                arguments: event,
                               .toList(),
                               SizedBox..,
                                 height: 32,

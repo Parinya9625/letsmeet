@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/role.dart';
+import 'package:letsmeet/pages/chat_room_page.dart';
 import 'package:letsmeet/pages/create_edit_event_page.dart';
 import 'package:letsmeet/pages/edit_profile_page.dart';
 import 'package:letsmeet/pages/forgot_password_page.dart';
@@ -280,6 +281,9 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
                 break;
               case "/event/review":
                 page = ReviewUserPage(event: settings.arguments as Event);
+                break;
+              case "/event/chat":
+                page = ChatRoomPage(event: settings.arguments as Event);
                 break;
               case "/profile":
                 Map<String, dynamic> args =
