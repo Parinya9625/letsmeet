@@ -23,6 +23,9 @@ class InputField extends StatefulWidget {
   final String? hintText;
   final Widget? icon;
   final VoidCallback? onClear;
+  final Color? backgroundColor;
+  final double elevation;
+  final EdgeInsetsGeometry? contentPadding;
 
   /// By defalut when a [onClear] is specified. it will clear a text
   /// in [controller] first (without having to specify) and then
@@ -54,6 +57,9 @@ class InputField extends StatefulWidget {
     this.icon,
     this.onClear,
     this.preventDefaultClear = false,
+    this.backgroundColor,
+    this.elevation = 1.0,
+    this.contentPadding,
   }) : super(key: key);
 
   @override
@@ -61,8 +67,7 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
-  late TextEditingController controller =
-      widget.controller ?? TextEditingController();
+  TextEditingController controller = TextEditingController();
   late FocusNode focusNode = widget.focusNode ?? FocusNode();
 
   @override
@@ -81,13 +86,12 @@ class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
-      elevation: 1.0,
+      elevation: widget.elevation,
       borderRadius: const BorderRadius.all(
         Radius.circular(16),
       ),
       child: TextFormField(
-        controller: controller,
+        controller: widget.controller ?? controller,
         validator: widget.validator,
         keyboardType: widget.keyboardType,
         obscureText: widget.obscureText,
@@ -102,6 +106,8 @@ class _InputFieldState extends State<InputField> {
         maxLength: widget.maxLength,
         focusNode: focusNode,
         decoration: InputDecoration(
+          contentPadding: widget.contentPadding,
+          fillColor: widget.backgroundColor,
           hintText: widget.hintText,
           prefixIcon: widget.icon,
           suffixIcon:
@@ -111,6 +117,7 @@ class _InputFieldState extends State<InputField> {
                       onPressed: () {
                         if (!widget.preventDefaultClear) {
                           controller.clear();
+                          widget.controller?.clear();
                         }
                         widget.onClear!();
                       },
