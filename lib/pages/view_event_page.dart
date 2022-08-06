@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:letsmeet/components/all.dart';
 import 'package:letsmeet/models/category.dart';
+import 'package:letsmeet/models/chat.dart';
 import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/report.dart';
 import 'package:letsmeet/models/user.dart';
@@ -68,11 +69,21 @@ class _ViewEventPageState extends State<ViewEventPage> {
 
     showLoading();
 
-    await context
+    context
         .read<CloudFirestoreService>()
-        .addEventMember(event: event, user: user!);
+        .addEventMember(event: event, user: user!)
+        .then(
+      (isSuccess) {
+        if (isSuccess) {
+          // Alert in group chat
+          context.read<CloudFirestoreService>().addChat(
+              eventId: widget.event.id!,
+              chat: Chat.createAlert(text: "${user.name} joined the event"));
+        }
 
-    Navigator.pop(context);
+        Navigator.pop(context);
+      },
+    );
   }
 
   bool canJoinEvent() {
@@ -493,7 +504,13 @@ class _ViewEventPageState extends State<ViewEventPage> {
                   icon: const FaIcon(FontAwesomeIcons.comment),
                   tooltip: "Chat",
                   onPressed: () {
-                    // TODO: Group Chat
+                    context
+                        .read<GlobalKey<NavigatorState>>()
+                        .currentState!
+                        .pushNamed(
+                          "/event/chat",
+                          arguments: event,
+                        );
                   },
                 ),
                 PopupMenuButton(
