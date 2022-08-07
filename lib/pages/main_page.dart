@@ -42,6 +42,7 @@ class _MainPageState extends State<MainPage> {
     User? user = context.read<User?>();
 
     return Scaffold(
+      extendBody: true,
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 6,

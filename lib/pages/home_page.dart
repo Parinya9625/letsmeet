@@ -428,30 +428,39 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(
-              top: 32,
-              bottom: 48,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 32,
+                    bottom: 48 + kBottomNavigationBarHeight,
+                  ),
+                  child: Wrap(
+                    runSpacing: 32,
+                    children: [
+                      upcomingEvents(user),
+                      recentViewEvents(user),
+                      Text(
+                        "Explore New Events",
+                        style: Theme.of(context).textTheme.headline1,
+                      ).horizontalPadding(),
+                      ...favCategory
+                          .map((category) => eventSection(category))
+                          .toList(),
+                      ...notFavCategory
+                          .map((category) => eventSection(category))
+                          .toList(),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            child: Wrap(
-              runSpacing: 32,
-              children: [
-                upcomingEvents(user),
-                recentViewEvents(user),
-                Text(
-                  "Explore New Events",
-                  style: Theme.of(context).textTheme.headline1,
-                ).horizontalPadding(),
-                ...favCategory
-                    .map((category) => eventSection(category))
-                    .toList(),
-                ...notFavCategory
-                    .map((category) => eventSection(category))
-                    .toList(),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );

@@ -50,6 +50,9 @@ class _UserProfilePageState extends State<UserProfilePage>
           edgeOffset: 128,
           onRefresh: onRefresh,
           child: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
             key: PageStorageKey<String>(id),
             slivers: [
               SliverOverlapInjector(
@@ -126,7 +129,12 @@ class _UserProfilePageState extends State<UserProfilePage>
               }
 
               return Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  top: 16,
+                  right: 16,
+                  bottom: 32 + kBottomNavigationBarHeight,
+                ),
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   ...listEvent.map((event) {
                     return FutureBuilder(
