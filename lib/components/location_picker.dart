@@ -5,6 +5,7 @@ import 'package:letsmeet/components/controllers/location_picker_controller.dart'
 import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/services/google_place_api.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationPicker extends StatefulWidget {
   final LocationPickerController controller;
@@ -52,10 +53,12 @@ class LocationPickerState extends State<LocationPicker>
         ),
       ),
     );
-    setState(() {
-      moveCamera(widget.controller.lat!, widget.controller.lng!);
-      updateMarker(widget.controller.lat!, widget.controller.lng!);
-    });
+    if (widget.controller.lat != null && widget.controller.lng != null) {
+      setState(() {
+        moveCamera(widget.controller.lat!, widget.controller.lng!);
+        updateMarker(widget.controller.lat!, widget.controller.lng!);
+      });
+    }
   }
 
   bool _isValid = true;
@@ -228,6 +231,9 @@ class _GoogleMapPageState extends State<_GoogleMapPage> {
   );
   Marker? currentMarker;
 
+  // search history
+  SharedPreferences? sharedPref;
+
   Future<void> moveToCurrentLocation() async {
     bool serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
@@ -299,6 +305,8 @@ class _GoogleMapPageState extends State<_GoogleMapPage> {
     GooglePlaceAPI placeApi =
         GooglePlaceAPI(apiKey: "AIzaSyCdC0uYq_dqJ1UsNXgWn9NYQjQL4kGNKnM");
 
+    selectedPlace = null;
+
     PlacesDetailsResponse detail = await placeApi.placeDetail(placeId: placeId);
 
     moveCamera(LatLng(detail.result.geometry.location.lat,
@@ -330,10 +338,68 @@ class _GoogleMapPageState extends State<_GoogleMapPage> {
       setState(() => searchOnStoppedTyping!.cancel());
     }
 
+    // update search history
+    if (value.trim().isNotEmpty) {
+      setSearchHistory(value.trim());
+    }
+
     List<PlaceAutocompletePrediction>? searchResult = await search(value);
     if (searchResult.isNotEmpty) {
       onSelectedPlace(predictions.first.placeId);
     }
+  }
+
+  void setSearchHistory(String value) async {
+    List<String> history = getSearchHistory();
+
+    history.remove(value);
+    history.insert(0, value);
+    // limit history length to 5
+    if (history.length > 5) {
+      history = history.getRange(0, 5).toList();
+    }
+
+    await sharedPref?.setStringList("search-location", history);
+  }
+
+  List<String> getSearchHistory() {
+    return sharedPref?.getStringList("search-location") ?? [];
+  }
+
+  void removeSearchHistory(String value) async {
+    List<String> history = getSearchHistory();
+
+    history.remove(value);
+
+    await sharedPref?.setStringList("search-location", history);
+  }
+
+  void confirmRemoveSearchHistory(String history) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Confirm remove search history"),
+          content: Text('Are you sure you want to remove "$history"'),
+          actions: [
+            TextButton(
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+            ),
+            TextButton(
+              child: const Text("Remove"),
+              onPressed: () async {
+                removeSearchHistory(history);
+
+                Navigator.pop(dialogContext);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -356,13 +422,18 @@ class _GoogleMapPageState extends State<_GoogleMapPage> {
       }
     });
 
+    // load shared pref
+    SharedPreferences.getInstance().then((value) {
+      sharedPref = value;
+    });
+
     super.initState();
   }
 
   @override
   void dispose() {
-    searchBarController.dispose();
     searchBarNode.dispose();
+    searchBarController.dispose();
 
     super.dispose();
   }
@@ -433,23 +504,65 @@ class _GoogleMapPageState extends State<_GoogleMapPage> {
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Column(
                         children: [
-                          for (PlaceAutocompletePrediction place
-                              in predictions) ...{
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: ListTile(
-                                leading: const Icon(Icons.place_rounded),
-                                title: Text(place.description),
-                                onTap: () {
-                                  searchBarController.text = place.description;
-                                  searchBarNode.unfocus();
-
-                                  // test
-                                  onSelectedPlace(place.placeId);
-                                },
+                          if (searchBarController.text.trim().isEmpty) ...{
+                            for (String place in getSearchHistory()) ...{
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: ListTile(
+                                  leading: const Icon(Icons.history_rounded),
+                                  title: Text(place),
+                                  trailing: IconButton(
+                                    onPressed: () {
+                                      // load history to search bar
+                                      searchBarController.text = place;
+                                      searchBarController.selection =
+                                          TextSelection.fromPosition(
+                                        TextPosition(
+                                          offset:
+                                              searchBarController.text.length,
+                                        ),
+                                      );
+                                      onStopTyping(place);
+                                    },
+                                    icon: const Icon(Icons.north_west_rounded),
+                                  ),
+                                  onTap: () {
+                                    // tap history then go to that place immediately
+                                    searchBarController.text = place;
+                                    searchBarNode.unfocus();
+                                    onSearchSubmit(place);
+                                  },
+                                  onLongPress: () {
+                                    // long press to remove selected history
+                                    confirmRemoveSearchHistory(place);
+                                  },
+                                ),
                               ),
-                            )
-                          },
+                            }
+                          } else ...{
+                            for (PlaceAutocompletePrediction place
+                                in predictions) ...{
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: ListTile(
+                                  leading: const Icon(Icons.place_rounded),
+                                  title: Text(place.description),
+                                  onTap: () {
+                                    searchBarController.text =
+                                        place.description;
+                                    searchBarNode.unfocus();
+
+                                    // set search history
+                                    setSearchHistory(place.description.trim());
+
+                                    onSelectedPlace(place.placeId);
+                                  },
+                                ),
+                              )
+                            },
+                          }
                         ],
                       ),
                     ),
