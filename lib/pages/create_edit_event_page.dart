@@ -664,8 +664,12 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                             keyboardType: TextInputType.url,
                             validator: (value) {
                               if (typeController.text.trim() == "Online") {
+                                RegExp urlPattern = RegExp(r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)");
+
                                 if (urlController.text.trim().isEmpty) {
                                   return "Please enter event url\n";
+                                } else if (!urlPattern.hasMatch(urlController.text.trim())) {
+                                  return "Url must start with http:// or https://\n";
                                 }
                               }
                               return null;
