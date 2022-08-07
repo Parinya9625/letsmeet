@@ -443,6 +443,9 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
         ],
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 32),
           child: Column(
@@ -556,6 +559,9 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                                 ).horizontalPadding(),
                                 const SizedBox(height: 8),
                                 SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics(),
+                                  ),
                                   scrollDirection: Axis.horizontal,
                                   child: Wrap(
                                     direction: Axis.horizontal,

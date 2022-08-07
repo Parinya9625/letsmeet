@@ -103,6 +103,9 @@ class _SignUpPageState extends State<SignUpPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
             controller: ScrollController(),
             child: Padding(
               padding: const EdgeInsets.all(32),

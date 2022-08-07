@@ -96,6 +96,9 @@ class _HomePageState extends State<HomePage> {
         ).horizontalPadding(),
         const SizedBox(height: 16),
         SingleChildScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
           scrollDirection: Axis.horizontal,
           child: Wrap(
             spacing: 16,
@@ -155,6 +158,9 @@ class _HomePageState extends State<HomePage> {
                   ).horizontalPadding(),
                   const SizedBox(height: 16),
                   SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
                     scrollDirection: Axis.horizontal,
                     child: Wrap(
                       spacing: 16,
@@ -203,6 +209,9 @@ class _HomePageState extends State<HomePage> {
                     ).horizontalPadding(),
                     const SizedBox(height: 16),
                     SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
                       scrollDirection: Axis.horizontal,
                       child: Wrap(
                         spacing: 16,
@@ -287,6 +296,9 @@ class _HomePageState extends State<HomePage> {
                       )).horizontalPadding(),
                   const SizedBox(height: 16),
                   SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
                     scrollDirection: Axis.horizontal,
                     child: Wrap(
                       spacing: 16,

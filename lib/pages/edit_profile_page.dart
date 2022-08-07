@@ -130,6 +130,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
           controller: ScrollController(),
           child: Padding(
             padding: const EdgeInsets.all(32),

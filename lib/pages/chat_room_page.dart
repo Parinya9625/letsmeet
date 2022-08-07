@@ -197,6 +197,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
                   return Scrollbar(
                     child: ListView.builder(
+                        physics: const BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics(),
+                        ),
                         controller: scrollController,
                         reverse: true,
                         itemCount: listChat.length + waitingChatLength,
@@ -461,6 +464,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             color: Theme.of(context).cardColor,
             elevation: 4,
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
               scrollDirection: Axis.horizontal,
               child: Padding(
                 padding: const EdgeInsets.all(16),

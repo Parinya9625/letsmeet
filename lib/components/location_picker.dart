@@ -426,6 +426,9 @@ class _GoogleMapPageState extends State<_GoogleMapPage> {
                   clipBehavior: Clip.antiAlias,
                   borderRadius: BorderRadius.circular(16),
                   child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Column(

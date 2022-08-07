@@ -575,6 +575,9 @@ class _ViewEventPageState extends State<ViewEventPage> {
               ],
             ),
             body: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
               child: Column(
                 children: [
                   AspectRatio(
