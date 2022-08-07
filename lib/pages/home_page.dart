@@ -128,194 +128,216 @@ class _HomePageState extends State<HomePage> {
 
   Widget upcomingEvents(User user) {
     return FutureBuilder(
-        future: FirebaseFirestore.instance
-            .collection("events")
-            .where("member", arrayContains: user.toDocRef())
-            .where("startTime", isGreaterThanOrEqualTo: DateTime.now())
-            .orderBy("startTime")
-            .get()
-            .then((list) {
-          return list.docs.map((doc) => Event.fromFirestore(doc: doc)).toList();
-        }),
+      future: FirebaseFirestore.instance
+          .collection("events")
+          .where("member", arrayContains: user.toDocRef())
+          .where("startTime", isGreaterThanOrEqualTo: DateTime.now())
+          .orderBy("startTime")
+          .get()
+          .then((list) {
+        return list.docs.map((doc) => Event.fromFirestore(doc: doc)).toList();
+      }),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return ShimmerLoading(
+          isLoading: !snapshot.hasData,
+          placeholder: eventPlaceholder(),
+          builder: (BuildContext context) {
+            List<Event> listEvent = snapshot.data;
+
+            if (listEvent.isEmpty) {
+              return const SizedBox();
+            }
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Your Upcoming Events",
+                  style: Theme.of(context).textTheme.headline1,
+                ).horizontalPadding(),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics(),
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        child: Wrap(
+                          spacing: 16,
+                          children: [
+                            const SizedBox(width: 16),
+                            ...listEvent.map((event) {
+                              return EventCard(
+                                  isSmall: true,
+                                  event: event,
+                                  onPressed: () {
+                                    context
+                                        .read<GlobalKey<NavigatorState>>()
+                                        .currentState!
+                                        .pushNamed("/event", arguments: event);
+                                  });
+                            }).toList(),
+                            const SizedBox(width: 16),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget recentViewEvents(User user) {
+    if (user.recentView.isNotEmpty) {
+      return FutureBuilder(
+        future: user.getRecentView,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           return ShimmerLoading(
             isLoading: !snapshot.hasData,
             placeholder: eventPlaceholder(),
             builder: (BuildContext context) {
               List<Event> listEvent = snapshot.data;
-
-              if (listEvent.isEmpty) {
-                return const SizedBox();
-              }
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Your Upcoming Events",
+                    "Recently Viewed",
                     style: Theme.of(context).textTheme.headline1,
                   ).horizontalPadding(),
                   const SizedBox(height: 16),
-                  SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics(),
-                    ),
-                    scrollDirection: Axis.horizontal,
-                    child: Wrap(
-                      spacing: 16,
-                      children: [
-                        const SizedBox(width: 16),
-                        ...listEvent.map((event) {
-                          return EventCard(
-                              isSmall: true,
-                              event: event,
-                              onPressed: () {
-                                context
-                                    .read<GlobalKey<NavigatorState>>()
-                                    .currentState!
-                                    .pushNamed("/event", arguments: event);
-                              });
-                        }).toList(),
-                        const SizedBox(width: 16),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          scrollDirection: Axis.horizontal,
+                          child: Wrap(
+                            spacing: 16,
+                            children: [
+                              const SizedBox(width: 16),
+                              ...listEvent.map((event) {
+                                return EventCard(
+                                    isSmall: true,
+                                    event: event,
+                                    onPressed: () {
+                                      context
+                                          .read<GlobalKey<NavigatorState>>()
+                                          .currentState!
+                                          .pushNamed("/event",
+                                              arguments: event);
+                                    });
+                              }).toList(),
+                              const SizedBox(width: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               );
             },
           );
-        });
-  }
-
-  Widget recentViewEvents(User user) {
-    if (user.recentView.isNotEmpty) {
-      return FutureBuilder(
-          future: user.getRecentView,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            return ShimmerLoading(
-              isLoading: !snapshot.hasData,
-              placeholder: eventPlaceholder(),
-              builder: (BuildContext context) {
-                List<Event> listEvent = snapshot.data;
-
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Recently Viewed",
-                      style: Theme.of(context).textTheme.headline1,
-                    ).horizontalPadding(),
-                    const SizedBox(height: 16),
-                    SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(
-                        parent: AlwaysScrollableScrollPhysics(),
-                      ),
-                      scrollDirection: Axis.horizontal,
-                      child: Wrap(
-                        spacing: 16,
-                        children: [
-                          const SizedBox(width: 16),
-                          ...listEvent.map((event) {
-                            return EventCard(
-                                isSmall: true,
-                                event: event,
-                                onPressed: () {
-                                  context
-                                      .read<GlobalKey<NavigatorState>>()
-                                      .currentState!
-                                      .pushNamed("/event", arguments: event);
-                                });
-                          }).toList(),
-                          const SizedBox(width: 16),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          });
+        },
+      );
     }
     return const SizedBox();
   }
 
   Widget eventSection(Category category) {
     return FutureBuilder(
-        future: FirebaseFirestore.instance
-            .collection("events")
-            .where("category", isEqualTo: category.toDocRef())
-            .orderBy(
-              "createdTime",
-              descending: true,
-            )
-            .limit(10)
-            .get()
-            .then((list) {
-          return list.docs.map((doc) => Event.fromFirestore(doc: doc)).toList();
-        }),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          return ShimmerLoading(
-            isLoading: !snapshot.hasData,
-            placeholder: eventPlaceholder(),
-            builder: (BuildContext context) {
-              List<Event> listEvent = snapshot.data;
+      future: FirebaseFirestore.instance
+          .collection("events")
+          .where("category", isEqualTo: category.toDocRef())
+          .orderBy(
+            "createdTime",
+            descending: true,
+          )
+          .limit(10)
+          .get()
+          .then((list) {
+        return list.docs.map((doc) => Event.fromFirestore(doc: doc)).toList();
+      }),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return ShimmerLoading(
+          isLoading: !snapshot.hasData,
+          placeholder: eventPlaceholder(),
+          builder: (BuildContext context) {
+            List<Event> listEvent = snapshot.data;
 
-              if (listEvent.isEmpty) {
-                return const SizedBox();
-              }
+            if (listEvent.isEmpty) {
+              return const SizedBox();
+            }
 
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                      onTap: () {
-                        // TODO: Add click function
-                        print("MORE of ${category.name}");
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            category.icon,
-                            color: Theme.of(context).textTheme.headline1!.color,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                              child: Text(
-                            category.name,
-                            style: Theme.of(context).textTheme.headline1,
-                          )),
-                          Text(
-                            "More",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                        ],
-                      )).horizontalPadding(),
-                  const SizedBox(height: 16),
-                  SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics(),
-                    ),
-                    scrollDirection: Axis.horizontal,
-                    child: Wrap(
-                      spacing: 16,
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      // TODO: Add click function
+                      print("MORE of ${category.name}");
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Icon(
+                          category.icon,
+                          color: Theme.of(context).textTheme.headline1!.color,
+                        ),
                         const SizedBox(width: 16),
-                        ...listEvent.map((event) {
-                          return eventCard(event);
-                        }).toList(),
-                        const SizedBox(width: 16),
+                        Expanded(
+                            child: Text(
+                          category.name,
+                          style: Theme.of(context).textTheme.headline1,
+                        )),
+                        Text(
+                          "More",
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
                       ],
+                    )).horizontalPadding(),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics(),
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        child: Wrap(
+                          spacing: 16,
+                          children: [
+                            const SizedBox(width: 16),
+                            ...listEvent.map((event) {
+                              return eventCard(event);
+                            }).toList(),
+                            const SizedBox(width: 16),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              );
-            },
-          );
-        });
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override

@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> ::
               (doc) => Event.fromFirestore(doc: doc)
             .toList();
 
-      builder: (BuildContext context, AsyncSnapshot snapshot) ::
+      builder: (BuildContext context, AsyncSnapshot snapshot) ::,
         return ShimmerLoading..;
           isLoading: !snapshot.hasData,
           placeholder: eventPlaceholder(),
@@ -133,33 +133,36 @@ class _HomePageState extends State<HomePage> ::
                   style: Theme.of(context).textTheme.headline1,
                 .horizontalPadding(),
                 const SizedBox(height: 16),
-                SingleChildScrollView..,
-                  physics: const BouncingScrollPhysics..,
-                    parent: AlwaysScrollableScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  child: Wrap..,
-                    spacing: 16,
-                    children: ,,,
-                      const SizedBox(width: 16),
-                      ...listEvent.map..
-                        (event) ::
-                          return EventCard..;
-                            isSmall: true,
-                            event: event,
-                            onPressed: () ::
-                              context
-                                  .read<GlobalKey<NavigatorState>>()
-                                  .currentState!
-                                  .pushNamed..;
-                                    "/event", arguments: event
-                      .toList(),
-                      const SizedBox(width: 16),
+                Row..,
+                  children: ,,,
+                    Expanded..,
+                      child: SingleChildScrollView..,
+                        physics: const BouncingScrollPhysics..,
+                          parent: AlwaysScrollableScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        child: Wrap..,
+                          spacing: 16,
+                          children: ,,,
+                            const SizedBox(width: 16),
+                            ...listEvent.map..
+                              (event) ::
+                                return EventCard..;
+                                  isSmall: true,
+                                  event: event,
+                                  onPressed: () ::
+                                    context
+                                        .read<GlobalKey<NavigatorState>>()
+                                        .currentState!
+                                        .pushNamed..;
+                                          "/event", arguments: event
+                            .toList(),
+                            const SizedBox(width: 16),
 
   Widget recentViewEvents(User user) ::
     if (user.recentView.isNotEmpty) ::
       return FutureBuilder..;
         future: user.getRecentView,
-        builder: (BuildContext context, AsyncSnapshot snapshot) ::
+        builder: (BuildContext context, AsyncSnapshot snapshot) ::,
           return ShimmerLoading..;
             isLoading: !snapshot.hasData,
             placeholder: eventPlaceholder(),
@@ -175,27 +178,30 @@ class _HomePageState extends State<HomePage> ::
                     style: Theme.of(context).textTheme.headline1,
                   .horizontalPadding(),
                   const SizedBox(height: 16),
-                  SingleChildScrollView..,
-                    physics: const BouncingScrollPhysics..,
-                      parent: AlwaysScrollableScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    child: Wrap..,
-                      spacing: 16,
-                      children: ,,,
-                        const SizedBox(width: 16),
-                        ...listEvent.map..
-                          (event) ::
-                            return EventCard..;
-                              isSmall: true,
-                              event: event,
-                              onPressed: () ::
-                                context
-                                    .read<GlobalKey<NavigatorState>>()
-                                    .currentState!
-                                    .pushNamed..;
-                                      "/event", arguments: event
-                        .toList(),
-                        const SizedBox(width: 16),
+                  Row..,
+                    children: ,,,
+                      Expanded..,
+                        child: SingleChildScrollView..,
+                          physics: const BouncingScrollPhysics..,
+                            parent: AlwaysScrollableScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          child: Wrap..,
+                            spacing: 16,
+                            children: ,,,
+                              const SizedBox(width: 16),
+                              ...listEvent.map..
+                                (event) ::
+                                  return EventCard..;
+                                    isSmall: true,
+                                    event: event,
+                                    onPressed: () ::
+                                      context
+                                          .read<GlobalKey<NavigatorState>>()
+                                          .currentState!
+                                          .pushNamed..;
+                                            "/event", arguments: event
+                              .toList(),
+                              const SizedBox(width: 16),
     return const SizedBox();
 
   Widget eventSection(Category category) ::
@@ -214,7 +220,7 @@ class _HomePageState extends State<HomePage> ::
               (doc) => Event.fromFirestore(doc: doc)
             .toList();
 
-      builder: (BuildContext context, AsyncSnapshot snapshot) ::
+      builder: (BuildContext context, AsyncSnapshot snapshot) ::,
         return ShimmerLoading..;
           isLoading: !snapshot.hasData,
           placeholder: eventPlaceholder(),
@@ -248,19 +254,22 @@ class _HomePageState extends State<HomePage> ::
                         style: Theme.of(context).textTheme.bodyText1,
                 .horizontalPadding(),
                 const SizedBox(height: 16),
-                SingleChildScrollView..,
-                  physics: const BouncingScrollPhysics..,
-                    parent: AlwaysScrollableScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  child: Wrap..,
-                    spacing: 16,
-                    children: ,,,
-                      const SizedBox(width: 16),
-                      ...listEvent.map..
-                        (event) ::
-                          return eventCard(event);
-                      .toList(),
-                      const SizedBox(width: 16),
+                Row..,
+                  children: ,,,
+                    Expanded..,
+                      child: SingleChildScrollView..,
+                        physics: const BouncingScrollPhysics..,
+                          parent: AlwaysScrollableScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        child: Wrap..,
+                          spacing: 16,
+                          children: ,,,
+                            const SizedBox(width: 16),
+                            ...listEvent.map..
+                              (event) ::
+                                return eventCard(event);
+                            .toList(),
+                            const SizedBox(width: 16),
 
   @override
   Widget build(BuildContext context) ::
