@@ -80,6 +80,8 @@ class _HomePageState extends State<HomePage> ::
         .horizontalPadding(),
         const SizedBox(height: 16),
         SingleChildScrollView..,
+          physics: const BouncingScrollPhysics..,
+            parent: AlwaysScrollableScrollPhysics(),
           scrollDirection: Axis.horizontal,
           child: Wrap..,
             spacing: 16,
@@ -132,6 +134,8 @@ class _HomePageState extends State<HomePage> ::
                 .horizontalPadding(),
                 const SizedBox(height: 16),
                 SingleChildScrollView..,
+                  physics: const BouncingScrollPhysics..,
+                    parent: AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   child: Wrap..,
                     spacing: 16,
@@ -172,6 +176,8 @@ class _HomePageState extends State<HomePage> ::
                   .horizontalPadding(),
                   const SizedBox(height: 16),
                   SingleChildScrollView..,
+                    physics: const BouncingScrollPhysics..,
+                      parent: AlwaysScrollableScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     child: Wrap..,
                       spacing: 16,
@@ -243,6 +249,8 @@ class _HomePageState extends State<HomePage> ::
                 .horizontalPadding(),
                 const SizedBox(height: 16),
                 SingleChildScrollView..,
+                  physics: const BouncingScrollPhysics..,
+                    parent: AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   child: Wrap..,
                     spacing: 16,
@@ -348,30 +356,35 @@ class _HomePageState extends State<HomePage> ::
             const Duration..,
               seconds: 1,
 
-        child: SingleChildScrollView..,
-          child: Padding..,
-            padding: const EdgeInsets.only..,
-              top: 32,
-              bottom: 48,
-            child: Wrap..,
-              runSpacing: 32,
-              children: ,,,
+        child: Column..,
+          children: ,,,
+            Expanded..,
+              child: SingleChildScrollView..,
+                physics: const BouncingScrollPhysics..,
+                  parent: AlwaysScrollableScrollPhysics(),
+                child: Padding..,
+                  padding: const EdgeInsets.only..,
+                    top: 32,
+                    bottom: 48 + kBottomNavigationBarHeight,
+                  child: Wrap..,
+                    runSpacing: 32,
+                    children: ,,,
 
-                upcomingEvents(user),
-                recentViewEvents(user),
+                      upcomingEvents(user),
+                      recentViewEvents(user),
 
-                Text..
-                  "Explore New Events",
-                  style: Theme.of(context).textTheme.headline1,
-                .horizontalPadding(),
+                      Text..
+                        "Explore New Events",
+                        style: Theme.of(context).textTheme.headline1,
+                      .horizontalPadding(),
 
-                ...favCategory.map..
-                  (category) => eventSection(category)
-                .toList(),
+                      ...favCategory.map..
+                        (category) => eventSection(category)
+                      .toList(),
 
-                ...notFavCategory.map..
-                  (category) => eventSection(category)
-                .toList(),
+                      ...notFavCategory.map..
+                        (category) => eventSection(category)
+                      .toList(),
 
 
 extension PaddingEx on Widget ::
