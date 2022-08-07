@@ -86,6 +86,7 @@ class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: widget.backgroundColor ?? Theme.of(context).cardColor,
       elevation: widget.elevation,
       borderRadius: const BorderRadius.all(
         Radius.circular(16),
@@ -107,7 +108,7 @@ class _InputFieldState extends State<InputField> {
         focusNode: focusNode,
         decoration: InputDecoration(
           contentPadding: widget.contentPadding,
-          fillColor: widget.backgroundColor,
+          fillColor: widget.backgroundColor ?? Theme.of(context).cardColor,
           hintText: widget.hintText,
           prefixIcon: widget.icon,
           suffixIcon:
