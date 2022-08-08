@@ -443,6 +443,9 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
         ],
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 32),
           child: Column(
@@ -555,27 +558,45 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                                   ],
                                 ).horizontalPadding(),
                                 const SizedBox(height: 8),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing: 8,
-                                    children: [
-                                      const SizedBox(width: 32),
-                                      ...listEvent
-                                          .map(
-                                            (event) => EventCard(
-                                              event: event,
-                                              isSmall: true,
-                                              onPressed: () {
-                                                //TODO: Add
-                                              },
-                                            ),
-                                          )
-                                          .toList(),
-                                      const SizedBox(width: 32),
-                                    ],
-                                  ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        physics: const BouncingScrollPhysics(
+                                          parent: AlwaysScrollableScrollPhysics(),
+                                        ),
+                                        scrollDirection: Axis.horizontal,
+                                        child: Wrap(
+                                          direction: Axis.horizontal,
+                                          spacing: 8,
+                                          children: [
+                                            const SizedBox(width: 32),
+                                            ...listEvent
+                                                .map(
+                                                  (event) => EventCard(
+                                                    event: event,
+                                                    isSmall: true,
+                                                    onPressed: () {
+                                                      // tap event card
+                                                      context
+                                                          .read<
+                                                              GlobalKey<
+                                                                  NavigatorState>>()
+                                                          .currentState!
+                                                          .pushNamed(
+                                                            "/event",
+                                                            arguments: event,
+                                                          );
+                                                    },
+                                                  ),
+                                                )
+                                                .toList(),
+                                            const SizedBox(width: 32),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 24),
                               ],
@@ -664,8 +685,14 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                             keyboardType: TextInputType.url,
                             validator: (value) {
                               if (typeController.text.trim() == "Online") {
+                                RegExp urlPattern = RegExp(
+                                    r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)");
+
                                 if (urlController.text.trim().isEmpty) {
                                   return "Please enter event url\n";
+                                } else if (!urlPattern
+                                    .hasMatch(urlController.text.trim())) {
+                                  return "Url must start with http:// or https://\n";
                                 }
                               }
                               return null;

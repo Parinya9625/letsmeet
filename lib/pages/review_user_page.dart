@@ -75,6 +75,9 @@ class _ReviewUserPageState extends State<ReviewUserPage> {
         child: reviewsController.isEmpty
             ? const ReviewUserEmptyBanner()
             : SingleChildScrollView(
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
                 child: FutureBuilder(
                   future: Future.wait([widget.event.getMember]),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
