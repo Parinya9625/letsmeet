@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letsmeet/services/firestore.dart';
+import 'package:letsmeet/services/search_index.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/user.dart';
 
@@ -18,22 +19,25 @@ class Event {
   final DocumentReference owner;
   final DateTime startTime;
   final String type;
+  final List<String> searchIndex;
 
-  Event(
-      {required this.id,
-      required this.ageRestrict,
-      required this.category,
-      required this.createdTime,
-      required this.description,
-      required this.image,
-      required this.location,
-      required this.maxMember,
-      required this.member,
-      required this.memberReviewed,
-      required this.name,
-      required this.owner,
-      required this.startTime,
-      required this.type});
+  Event({
+    required this.id,
+    required this.ageRestrict,
+    required this.category,
+    required this.createdTime,
+    required this.description,
+    required this.image,
+    required this.location,
+    required this.maxMember,
+    required this.member,
+    required this.memberReviewed,
+    required this.name,
+    required this.owner,
+    required this.startTime,
+    required this.type,
+    required this.searchIndex,
+  });
   Event.createInPerson(
       {required this.ageRestrict,
       required this.category,
@@ -55,7 +59,9 @@ class Event {
           name: locationName,
           geoPoint: geoPoint,
         ),
-        type = "In Person";
+        type = "In Person",
+        searchIndex = getSearchIndex(name);
+
   Event.createOnline(
       {required this.ageRestrict,
       required this.category,
@@ -74,7 +80,8 @@ class Event {
           name: "Online event",
           link: link,
         ),
-        type = "Online";
+        type = "Online",
+        searchIndex = getSearchIndex(name);
 
   Future<Category> get getCategory async =>
       Category.fromFirestore(doc: await category.get());
@@ -105,6 +112,7 @@ class Event {
       owner: data["owner"],
       startTime: data["startTime"].toDate(),
       type: data["type"],
+      searchIndex: List<String>.from(data["searchIndex"] ?? []),
     );
   }
 
@@ -123,6 +131,7 @@ class Event {
       "owner": owner,
       "startTime": startTime,
       "type": type,
+      "searchIndex": searchIndex,
     };
   }
 
