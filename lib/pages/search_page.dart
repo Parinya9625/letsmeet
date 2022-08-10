@@ -7,6 +7,7 @@ import 'package:letsmeet/components/search_filter_category.dart';
 import 'package:letsmeet/components/search_filter_date.dart';
 import 'package:letsmeet/components/search_filter_type.dart';
 import 'package:letsmeet/components/controllers/search_filter_controller.dart';
+import 'package:letsmeet/components/no_event_banner.dart';
 import 'package:letsmeet/models/event.dart';
 
 class SearchPage extends StatefulWidget {
@@ -236,23 +237,31 @@ class SearchPageState extends State<SearchPage> {
                     runSpacing: 8,
                     children: [
                       if (searchResult != null) ...{
-                        ...searchResult!.map(
-                          (doc) {
-                            Event event = Event.fromFirestore(doc: doc);
-                            return SearchEventCard(
-                              event: event,
-                              onPressed: () {
-                                context
-                                    .read<GlobalKey<NavigatorState>>()
-                                    .currentState!
-                                    .pushNamed(
-                                      "/event",
-                                      arguments: event,
-                                    );
-                              },
-                            );
-                          },
-                        ).toList(),
+                        if (searchResult!.isEmpty) ...{
+                          NoEventBanner(
+                            onPressed: () {
+                              newSearch();
+                            },
+                          ),
+                        } else ...{
+                          ...searchResult!.map(
+                            (doc) {
+                              Event event = Event.fromFirestore(doc: doc);
+                              return SearchEventCard(
+                                event: event,
+                                onPressed: () {
+                                  context
+                                      .read<GlobalKey<NavigatorState>>()
+                                      .currentState!
+                                      .pushNamed(
+                                        "/event",
+                                        arguments: event,
+                                      );
+                                },
+                              );
+                            },
+                          ).toList(),
+                        }
                       },
                       if (isLoading && searchQuery != null) ...{
                         const CircularProgressIndicator(),
