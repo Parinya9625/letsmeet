@@ -4,10 +4,16 @@ import 'package:letsmeet/components/search_filter_base.dart';
 
 class TypeSearchFilter extends StatefulWidget {
   final SearchFilterController controller;
+  final VoidCallback? onOpen;
+  final VoidCallback? onClose;
+  final VoidCallback? onApply;
 
   const TypeSearchFilter({
     Key? key,
     required this.controller,
+    this.onOpen,
+    this.onClose,
+    this.onApply,
   }) : super(key: key);
 
   @override
@@ -62,11 +68,14 @@ class _TypeSearchFilterState extends State<TypeSearchFilter> {
       title: "Type",
       value: widget.controller.type ?? "All Type",
       onOpen: () {
+        widget.onOpen?.call();
         selectedValue = widget.controller.type;
       },
+      onClose: widget.onClose,
       onApply: () {
         setState(() {
           widget.controller.type = selectedValue;
+          widget.onApply?.call();
         });
       },
       onClear: () {

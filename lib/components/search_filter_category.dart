@@ -6,10 +6,16 @@ import 'package:provider/provider.dart';
 
 class CategorySearchFilter extends StatefulWidget {
   final SearchFilterController controller;
+  final VoidCallback? onOpen;
+  final VoidCallback? onClose;
+  final VoidCallback? onApply;
 
   const CategorySearchFilter({
     Key? key,
     required this.controller,
+    this.onOpen,
+    this.onClose,
+    this.onApply,
   }) : super(key: key);
 
   @override
@@ -65,11 +71,14 @@ class _CategorySearchFilterState extends State<CategorySearchFilter> {
           ? widget.controller.category!.name
           : "All Category",
       onOpen: () {
+        widget.onOpen?.call();
         selectedValue = widget.controller.category;
       },
+      onClose: widget.onClose,
       onApply: () {
         setState(() {
           widget.controller.category = selectedValue;
+          widget.onApply?.call();
         });
       },
       onClear: () {

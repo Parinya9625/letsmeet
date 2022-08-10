@@ -4,9 +4,16 @@ import 'package:letsmeet/components/search_filter_base.dart';
 
 class DistanceSearchFilter extends StatefulWidget {
   final SearchFilterController controller;
+  final VoidCallback? onOpen;
+  final VoidCallback? onClose;
+  final VoidCallback? onApply;
+
   const DistanceSearchFilter({
     Key? key,
     required this.controller,
+    this.onOpen,
+    this.onClose,
+    this.onApply,
   }) : super(key: key);
 
   @override
@@ -26,11 +33,14 @@ class _DistanceSearchFilterState extends State<DistanceSearchFilter> {
           ? "Within ${widget.controller.distance!.toInt()} km"
           : "All Distance",
       onOpen: () {
+        widget.onOpen?.call();
         selectedValue = widget.controller.distance;
       },
+      onClose: widget.onClose,
       onApply: () {
         setState(() {
           widget.controller.distance = selectedValue;
+          widget.onApply?.call();
         });
       },
       onClear: () {
