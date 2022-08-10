@@ -7,7 +7,6 @@ import 'package:letsmeet/components/search_filter_category.dart';
 import 'package:letsmeet/components/search_filter_date.dart';
 import 'package:letsmeet/components/search_filter_type.dart';
 import 'package:letsmeet/components/controllers/search_filter_controller.dart';
-import 'package:letsmeet/services/search_index.dart';
 import 'package:letsmeet/models/event.dart';
 
 class SearchPage extends StatefulWidget {
@@ -48,7 +47,8 @@ class SearchPageState extends State<SearchPage> {
 
     // category filter
     if (searchFilterController.category != null) {
-      query = query.where("category", isEqualTo: searchFilterController.category!.toDocRef());
+      query = query.where("category",
+          isEqualTo: searchFilterController.category!.toDocRef());
     }
 
     // type filter
@@ -57,10 +57,8 @@ class SearchPageState extends State<SearchPage> {
     }
 
     // search word
-    query = query.where(
-      "searchIndex",
-      arrayContainsAny: currentSearchText.trim().toLowerCase().split(" ")
-    );
+    query = query.where("searchIndex",
+        arrayContainsAny: currentSearchText.trim().toLowerCase().split(" "));
 
     query = query.orderBy("startTime", descending: true);
 
@@ -77,29 +75,25 @@ class SearchPageState extends State<SearchPage> {
     if (!isLoading) {
       isLoading = true;
 
-      searchQuery?.get().then(
-        (docSnap)  {
-          if (docSnap.docs.isNotEmpty) {
-            searchQuery = genSearchQuery(
-              lastDocument: docSnap.docs.last,
-            );
-          }
-          else {
-            searchQuery = null;
-          }
-
-          setState(() {
-            if (searchResult == null) {
-              searchResult = docSnap.docs;
-            }
-            else {
-              searchResult!.addAll(docSnap.docs);
-            }
-
-            isLoading = false;
-          });
+      searchQuery?.get().then((docSnap) {
+        if (docSnap.docs.isNotEmpty) {
+          searchQuery = genSearchQuery(
+            lastDocument: docSnap.docs.last,
+          );
+        } else {
+          searchQuery = null;
         }
-      );
+
+        setState(() {
+          if (searchResult == null) {
+            searchResult = docSnap.docs;
+          } else {
+            searchResult!.addAll(docSnap.docs);
+          }
+
+          isLoading = false;
+        });
+      });
     }
   }
 
@@ -133,8 +127,7 @@ class SearchPageState extends State<SearchPage> {
             });
           },
           onClear: () {},
-        )
-        .horizontalPadding(),
+        ).horizontalPadding(),
 
         // filter
         Row(
@@ -153,22 +146,17 @@ class SearchPageState extends State<SearchPage> {
                     direction: Axis.horizontal,
                     spacing: 8,
                     children: [
-
                       DateSearchFilter(
                         controller: searchFilterController,
                         onOpen: () {
-                          widget.globalSetState(
-                            () {
-                              showBottomNavigationBar = false;
-                            }
-                          );
+                          widget.globalSetState(() {
+                            showBottomNavigationBar = false;
+                          });
                         },
                         onClose: () {
-                          widget.globalSetState(
-                            () {
-                              showBottomNavigationBar = true;
-                            }
-                          );
+                          widget.globalSetState(() {
+                            showBottomNavigationBar = true;
+                          });
                         },
                         onApply: () {
                           newSearch();
@@ -177,18 +165,14 @@ class SearchPageState extends State<SearchPage> {
                       CategorySearchFilter(
                         controller: searchFilterController,
                         onOpen: () {
-                          widget.globalSetState(
-                            () {
-                              showBottomNavigationBar = false;
-                            }
-                          );
+                          widget.globalSetState(() {
+                            showBottomNavigationBar = false;
+                          });
                         },
                         onClose: () {
-                          widget.globalSetState(
-                            () {
-                              showBottomNavigationBar = true;
-                            }
-                          );
+                          widget.globalSetState(() {
+                            showBottomNavigationBar = true;
+                          });
                         },
                         onApply: () {
                           newSearch();
@@ -197,18 +181,14 @@ class SearchPageState extends State<SearchPage> {
                       TypeSearchFilter(
                         controller: searchFilterController,
                         onOpen: () {
-                          widget.globalSetState(
-                            () {
-                              showBottomNavigationBar = false;
-                            }
-                          );
+                          widget.globalSetState(() {
+                            showBottomNavigationBar = false;
+                          });
                         },
                         onClose: () {
-                          widget.globalSetState(
-                            () {
-                              showBottomNavigationBar = true;
-                            }
-                          );
+                          widget.globalSetState(() {
+                            showBottomNavigationBar = true;
+                          });
                         },
                         onApply: () {
                           newSearch();
@@ -216,9 +196,7 @@ class SearchPageState extends State<SearchPage> {
                       ),
                     ],
                   ),
-                )
-
-                .horizontalPadding(),
+                ).horizontalPadding(),
               ),
             ),
           ],
@@ -257,7 +235,6 @@ class SearchPageState extends State<SearchPage> {
                     alignment: WrapAlignment.center,
                     runSpacing: 8,
                     children: [
-
                       if (searchResult != null) ...{
                         ...searchResult!.map(
                           (doc) {
@@ -266,24 +243,22 @@ class SearchPageState extends State<SearchPage> {
                               event: event,
                               onPressed: () {
                                 context
-                                  .read<GlobalKey<NavigatorState>>()
-                                  .currentState!
-                                  .pushNamed(
-                                    "/event", arguments: event,
-                                  );
+                                    .read<GlobalKey<NavigatorState>>()
+                                    .currentState!
+                                    .pushNamed(
+                                      "/event",
+                                      arguments: event,
+                                    );
                               },
                             );
                           },
-                        )
-                        .toList(),
+                        ).toList(),
                       },
-
                       if (isLoading && searchQuery != null) ...{
-                        CircularProgressIndicator(),
+                        const CircularProgressIndicator(),
                       },
                     ],
-                  )
-                  .horizontalPadding(),
+                  ).horizontalPadding(),
                 ),
               ),
             ),
@@ -295,23 +270,21 @@ class SearchPageState extends State<SearchPage> {
 
   @override
   void initState() {
-    resultScrollController.addListener(
-      () {
-        int scrollEnd = resultScrollController.position.maxScrollExtent.toInt();
-        if (resultScrollController.position.pixels.toInt() >= scrollEnd) {
-          if(!isLoading) {
-            search();
-          }
+    resultScrollController.addListener(() {
+      int scrollEnd = resultScrollController.position.maxScrollExtent.toInt();
+      if (resultScrollController.position.pixels.toInt() >= scrollEnd) {
+        if (!isLoading) {
+          search();
         }
       }
-    );
+    });
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return  GestureDetector(
+    return GestureDetector(
       onTap: () {
         searchBarNode.unfocus();
       },
@@ -319,16 +292,16 @@ class SearchPageState extends State<SearchPage> {
         body: SafeArea(
           maintainBottomViewPadding: true,
           child: Padding(
-              padding: const EdgeInsets.only(
-                top: 32,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  topSection(),
-                  resultSection(),
-                ],
-              ),
+            padding: const EdgeInsets.only(
+              top: 32,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                topSection(),
+                resultSection(),
+              ],
+            ),
           ),
         ),
       ),

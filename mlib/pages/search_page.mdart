@@ -7,7 +7,6 @@ import 'package:letsmeet/components/search_filter_category.dart';
 import 'package:letsmeet/components/search_filter_date.dart';
 import 'package:letsmeet/components/search_filter_type.dart';
 import 'package:letsmeet/components/controllers/search_filter_controller.dart';
-import 'package:letsmeet/services/search_index.dart';
 import 'package:letsmeet/models/event.dart';
 
 class SearchPage extends StatefulWidget ::
@@ -207,7 +206,7 @@ class SearchPageState extends State<SearchPage> ::
                         .toList(),
 
                       if (isLoading && searchQuery != null) ...::,
-                        CircularProgressIndicator(),
+                        const CircularProgressIndicator(),
                   .horizontalPadding(),
 
   @override
