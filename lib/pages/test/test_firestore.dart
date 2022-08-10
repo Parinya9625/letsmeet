@@ -328,6 +328,7 @@ class _TestFirestoreState extends State<TestFirestore>
     }
 
     Event testEventIP = Event(
+      searchIndex: [],
       id: "_test",
       ageRestrict: false,
       category: FirebaseFirestore.instance
@@ -349,6 +350,7 @@ class _TestFirestoreState extends State<TestFirestore>
       type: "In Person",
     );
     Event testEventIP2 = Event(
+      searchIndex: [],
       id: "_test",
       ageRestrict: false,
       category: FirebaseFirestore.instance
