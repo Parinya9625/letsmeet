@@ -8,6 +8,7 @@ import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/components/interest_category_selector.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/services/firestore.dart';
+import 'package:letsmeet/services/search_index.dart';
 import 'package:letsmeet/services/storage.dart';
 import 'package:provider/provider.dart';
 
@@ -114,6 +115,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   "favCategory": categoryController.value
                       .map((category) => category.toDocRef())
                       .toList(),
+                  "searchIndex": getSearchIndex(
+                      "${nameController.text.trim()} ${surnameController.text.trim()}"),
                 };
 
                 context.read<CloudFirestoreService>().updateUser(
