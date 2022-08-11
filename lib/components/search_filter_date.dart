@@ -6,10 +6,16 @@ import 'package:letsmeet/components/search_filter_base.dart';
 
 class DateSearchFilter extends StatefulWidget {
   final SearchFilterController controller;
+  final VoidCallback? onOpen;
+  final VoidCallback? onClose;
+  final VoidCallback? onApply;
 
   const DateSearchFilter({
     Key? key,
     required this.controller,
+    this.onOpen,
+    this.onClose,
+    this.onApply,
   }) : super(key: key);
 
   @override
@@ -22,21 +28,37 @@ class _DateSearchFilterState extends State<DateSearchFilter> {
 
   Future<DateTimeRange?> showDatePicker(DateTimeRange? value) async {
     DateTimeRange? date = await showDateRangePicker(
-        context: context,
-        initialDateRange: value,
-        firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(const Duration(days: 365)),
-        builder: (BuildContext context, Widget? child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: Theme.of(context).colorScheme.copyWith(
-                    primary: Theme.of(context).primaryColor,
-                    onPrimary: Theme.of(context).textTheme.headline1!.color,
-                  ),
-            ),
-            child: child!,
-          );
-        });
+      context: context,
+      initialDateRange: value,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: Theme.of(context).primaryColor,
+                  onPrimary: Theme.of(context).textTheme.headline1!.color,
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (date != null) {
+      DateTimeRange newDate = DateTimeRange(
+        start: date.start,
+        end: DateTime(
+          date.end.year,
+          date.end.month,
+          date.end.day,
+          23,
+          59,
+          59,
+        ),
+      );
+      return newDate;
+    }
 
     return date;
   }
@@ -56,6 +78,7 @@ class _DateSearchFilterState extends State<DateSearchFilter> {
           ? dateFormat(widget.controller.dateRange!)
           : "All Date",
       onOpen: () {
+        widget.onOpen?.call();
         selectedValue = widget.controller.dateRange;
         if (widget.controller.dateRange != null) {
           selectedValueText.text = dateFormat(widget.controller.dateRange!);
@@ -63,9 +86,11 @@ class _DateSearchFilterState extends State<DateSearchFilter> {
           selectedValueText.clear();
         }
       },
+      onClose: widget.onClose,
       onApply: () {
         setState(() {
           widget.controller.dateRange = selectedValue;
+          widget.onApply?.call();
         });
       },
       onClear: () {

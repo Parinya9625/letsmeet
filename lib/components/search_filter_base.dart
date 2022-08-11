@@ -7,6 +7,7 @@ class BaseSearchFilter extends StatefulWidget {
   final VoidCallback? onOpen;
   final VoidCallback? onApply;
   final VoidCallback? onClear;
+  final VoidCallback? onClose;
 
   const BaseSearchFilter({
     Key? key,
@@ -16,6 +17,7 @@ class BaseSearchFilter extends StatefulWidget {
     this.onOpen,
     this.onApply,
     this.onClear,
+    this.onClose,
   }) : super(key: key);
 
   @override
@@ -23,8 +25,8 @@ class BaseSearchFilter extends StatefulWidget {
 }
 
 class _BaseSearchFilterState extends State<BaseSearchFilter> {
-  void showFilterOption() {
-    showModalBottomSheet(
+  void showFilterOption() async {
+    await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -77,9 +79,7 @@ class _BaseSearchFilterState extends State<BaseSearchFilter> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        if (widget.onApply != null) {
-                          widget.onApply!();
-                        }
+                        widget.onApply?.call();
                         Navigator.pop(context);
                       },
                       child: const Text("APPLY"),
@@ -92,6 +92,8 @@ class _BaseSearchFilterState extends State<BaseSearchFilter> {
         );
       },
     );
+
+    widget.onClose?.call();
   }
 
   @override
@@ -100,9 +102,7 @@ class _BaseSearchFilterState extends State<BaseSearchFilter> {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          if (widget.onOpen != null) {
-            widget.onOpen!();
-          }
+          widget.onOpen?.call();
           showFilterOption();
         },
         child: Padding(
