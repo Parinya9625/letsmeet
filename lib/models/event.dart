@@ -60,7 +60,7 @@ class Event {
           geoPoint: geoPoint,
         ),
         type = "In Person",
-        searchIndex = getSearchIndex(name);
+        searchIndex = getSearchIndex("$name $locationName");
 
   Event.createOnline(
       {required this.ageRestrict,
