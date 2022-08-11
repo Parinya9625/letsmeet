@@ -3,6 +3,7 @@ import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/role.dart';
+import 'package:letsmeet/services/search_index.dart';
 
 class UserRating {
   final int r1;
@@ -68,6 +69,7 @@ class User {
   final DocumentReference role;
   final String surname;
   final bool isFinishSetup;
+  final List<String> searchIndex;
 
   User({
     required this.id,
@@ -82,6 +84,7 @@ class User {
     required this.role,
     required this.surname,
     required this.isFinishSetup,
+    required this.searchIndex,
   });
   User.create({
     required this.birthday,
@@ -98,7 +101,8 @@ class User {
         isFinishSetup = false,
         role = FirebaseFirestore.instance
             .collection(CollectionPath.roles)
-            .doc("user");
+            .doc("user"),
+        searchIndex = getSearchIndex("$name $surname");
   User.createWithID({
     required this.id,
     required this.birthday,
@@ -114,7 +118,8 @@ class User {
         isFinishSetup = false,
         role = FirebaseFirestore.instance
             .collection(CollectionPath.roles)
-            .doc("user");
+            .doc("user"),
+        searchIndex = getSearchIndex("$name $surname");
 
   Future<Role> get getRole async => Role.fromFirestore(doc: await role.get());
 
@@ -140,6 +145,7 @@ class User {
       role: data["role"],
       surname: data["surname"],
       isFinishSetup: data["isFinishSetup"] ?? true,
+      searchIndex: List<String>.from(data["searchIndex"] ?? []),
     );
   }
 
@@ -160,6 +166,7 @@ class User {
       "role": role,
       "surname": surname,
       "isFinishSetup": isFinishSetup,
+      "searchIndex": searchIndex,
     };
   }
 }
