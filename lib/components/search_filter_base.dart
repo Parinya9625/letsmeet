@@ -50,25 +50,29 @@ class _BaseSearchFilterState extends State<BaseSearchFilter> {
                     style: Theme.of(context).textTheme.headline1,
                   ),
                   const Spacer(),
-                  TextButton(
-                    onPressed: widget.onClear,
-                    style: Theme.of(context).textButtonTheme.style!.copyWith(
-                      overlayColor: MaterialStateProperty.resolveWith(
-                        (states) {
-                          if (states.contains(MaterialState.disabled)) {
-                            return Colors.transparent;
-                          }
-                          return Theme.of(context).errorColor.withOpacity(0.1);
-                        },
+                  if (widget.onClear != null) ...{
+                    TextButton(
+                      onPressed: widget.onClear,
+                      style: Theme.of(context).textButtonTheme.style!.copyWith(
+                        overlayColor: MaterialStateProperty.resolveWith(
+                          (states) {
+                            if (states.contains(MaterialState.disabled)) {
+                              return Colors.transparent;
+                            }
+                            return Theme.of(context)
+                                .errorColor
+                                .withOpacity(0.1);
+                          },
+                        ),
+                      ),
+                      child: Text(
+                        "Clear",
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                              color: Theme.of(context).errorColor,
+                            ),
                       ),
                     ),
-                    child: Text(
-                      "Clear",
-                      style: Theme.of(context).textTheme.headline1!.copyWith(
-                            color: Theme.of(context).errorColor,
-                          ),
-                    ),
-                  ),
+                  },
                 ],
               ),
               // const SizedBox(height: 4),

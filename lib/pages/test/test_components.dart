@@ -51,6 +51,7 @@ class _ComponentsPageState extends State<ComponentsPage> {
     role: FirebaseFirestore.instance.collection("roles").doc("user"),
     surname: "surname",
     isFinishSetup: true,
+    searchIndex: [],
   );
 
   @override

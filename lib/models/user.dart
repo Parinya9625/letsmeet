@@ -3,6 +3,7 @@ import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/role.dart';
+import 'package:letsmeet/services/search_index.dart';
 
 class UserRating {
   final int r1;
@@ -68,6 +69,7 @@ class User {
   final DocumentReference role;
   final String surname;
   final bool isFinishSetup;
+  final List<String> searchIndex;
 
   User({
     required this.id,
@@ -82,6 +84,7 @@ class User {
     required this.role,
     required this.surname,
     required this.isFinishSetup,
+    required this.searchIndex,
   });
   User.create({
     required this.birthday,
@@ -98,7 +101,8 @@ class User {
         isFinishSetup = false,
         role = FirebaseFirestore.instance
             .collection(CollectionPath.roles)
-            .doc("user");
+            .doc("user"),
+        searchIndex = getSearchIndex("$name $surname");
   User.createWithID({
     required this.id,
     required this.birthday,
@@ -114,15 +118,23 @@ class User {
         isFinishSetup = false,
         role = FirebaseFirestore.instance
             .collection(CollectionPath.roles)
-            .doc("user");
+            .doc("user"),
+        searchIndex = getSearchIndex("$name $surname");
 
   Future<Role> get getRole async => Role.fromFirestore(doc: await role.get());
 
   Future<List<Category>> get getFavCategory => Future.wait(favCategory
       .map((ref) async => Category.fromFirestore(doc: await ref.get())));
 
-  Future<List<Event>> get getRecentView => Future.wait(
-      recentView.map((ref) async => Event.fromFirestore(doc: await ref.get())));
+  Future<List<Event?>> get getRecentView {
+    var rv = recentView.map((ref) async {
+      var doc = await ref.get();
+
+      return doc.exists ? Event.fromFirestore(doc: doc) : null;
+    });
+
+    return Future.wait(rv);
+  }
 
   factory User.fromFirestore({required DocumentSnapshot doc}) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -140,6 +152,7 @@ class User {
       role: data["role"],
       surname: data["surname"],
       isFinishSetup: data["isFinishSetup"] ?? true,
+      searchIndex: List<String>.from(data["searchIndex"] ?? []),
     );
   }
 
@@ -160,6 +173,7 @@ class User {
       "role": role,
       "surname": surname,
       "isFinishSetup": isFinishSetup,
+      "searchIndex": searchIndex,
     };
   }
 }

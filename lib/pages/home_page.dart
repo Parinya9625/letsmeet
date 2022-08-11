@@ -10,9 +10,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:letsmeet/components/badge.dart';
 import 'package:letsmeet/components/event_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:letsmeet/components/controllers/search_filter_controller.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  const HomePage({
+    Key? key,
+    required this.navigatorKey,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -204,7 +210,9 @@ class _HomePageState extends State<HomePage> {
             isLoading: !snapshot.hasData,
             placeholder: eventPlaceholder(),
             builder: (BuildContext context) {
-              List<Event> listEvent = snapshot.data;
+              List<Event?> listEvent = snapshot.data;
+              // keep only exists event
+              listEvent.remove(null);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -230,7 +238,7 @@ class _HomePageState extends State<HomePage> {
                               ...listEvent.map((event) {
                                 return EventCard(
                                     isSmall: true,
-                                    event: event,
+                                    event: event!,
                                     onPressed: () {
                                       context
                                           .read<GlobalKey<NavigatorState>>()
@@ -287,8 +295,13 @@ class _HomePageState extends State<HomePage> {
               children: [
                 GestureDetector(
                     onTap: () {
-                      // TODO: Add click function
-                      print("MORE of ${category.name}");
+                      // More in this category
+                      widget.navigatorKey.currentState!.pushNamed(
+                        "/search",
+                        arguments: SearchFilterController(
+                          category: category,
+                        ),
+                      );
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,

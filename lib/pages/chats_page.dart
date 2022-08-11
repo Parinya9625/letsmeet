@@ -19,6 +19,7 @@ class ChatsPage extends StatefulWidget {
 
 class _ChatsPageState extends State<ChatsPage> {
   TextEditingController searchController = TextEditingController();
+  FocusNode searchBarNode = FocusNode();
   // popup menu option
   bool _isHideEndedEvent = true;
 
@@ -96,209 +97,218 @@ class _ChatsPageState extends State<ChatsPage> {
     );
   }
 
+  List<Widget> topSection() {
+    return [
+      Padding(
+          padding: const EdgeInsets.only(
+            left: 32,
+            right: 16,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                  child: Text(
+                "Chats",
+                style: Theme.of(context).textTheme.headlineLarge,
+              )),
+              chatsPopupMenu(),
+            ],
+          )),
+      Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 32,
+        ),
+        child: InputField(
+          controller: searchController,
+          focusNode: searchBarNode,
+          icon: const Icon(
+            Icons.search_rounded,
+          ),
+          hintText: "Search by event name",
+          onChanged: (String value) {
+            setState(() {});
+          },
+          onClear: () {
+            setState(() {});
+          },
+        ),
+      ).horizontalPadding(),
+    ];
+  }
+
+  Widget chatSection(User? user) {
+    return Expanded(
+      child: RefreshIndicator(
+        onRefresh: () {
+          setState(() {});
+
+          return Future.delayed(
+            const Duration(
+              seconds: 1,
+            ),
+          );
+        },
+        child: Column(
+          children: [
+            StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("events")
+                  .where(
+                    "member",
+                    arrayContains: user?.toDocRef(),
+                  )
+                  .orderBy(
+                    "startTime",
+                  )
+                  .snapshots()
+                  .map((events) => events.docs
+                      .map((doc) => Event.fromFirestore(
+                            doc: doc,
+                          ))
+                      .toList()),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return ShimmerLoading(
+                  isLoading: !snapshot.hasData,
+                  placeholder: Wrap(
+                    runSpacing: 8,
+                    children: [
+                      placeholder(),
+                    ],
+                  ),
+                  builder: (BuildContext context) {
+                    List<Event> listEvent = snapshot.data;
+
+                    // hide ended event
+                    if (_isHideEndedEvent) {
+                      listEvent = listEvent
+                          .where((event) => !event.startTime
+                              .difference(DateTime.now().subtract(
+                                // Add 3 more day before hide
+                                const Duration(days: 3),
+                              ))
+                              .isNegative)
+                          .toList();
+                    }
+
+                    // search by event name
+                    if (searchController.text.isNotEmpty) {
+                      listEvent = listEvent
+                          .where((event) => event.name.toLowerCase().contains(
+                              searchController.text.toLowerCase().trim()))
+                          .toList();
+                    }
+
+                    // empty group chat
+                    if (listEvent.isEmpty) {
+                      return Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          child: searchController.text.isNotEmpty
+                              ? const NoSearchResultBanner()
+                              : const NoGroupChatBanner(),
+                        ),
+                      );
+                    }
+
+                    return Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics(),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 16 + kBottomNavigationBarHeight,
+                          ),
+                          child: Wrap(
+                            runSpacing: 8,
+                            children: [
+                              ...listEvent.map((event) {
+                                return StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection("events")
+                                        .doc(event.id)
+                                        .collection("chats")
+                                        .orderBy(
+                                          "sendTime",
+                                          descending: true,
+                                        )
+                                        .limit(1)
+                                        .snapshots()
+                                        .map((chats) => chats.docs
+                                            .map((doc) => Chat.fromFirestore(
+                                                  doc: doc,
+                                                ))
+                                            .toList()),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot snapshot) {
+                                      return ShimmerLoading(
+                                        isLoading: !snapshot.hasData,
+                                        placeholder: placeholder(),
+                                        builder: (BuildContext context) {
+                                          Chat? chat = snapshot.data.isNotEmpty
+                                              ? snapshot.data.first
+                                              : null;
+
+                                          return ChatGroupCard(
+                                            event: event,
+                                            lastChat: chat,
+                                            onPressed: () {
+                                              context
+                                                  .read<
+                                                      GlobalKey<
+                                                          NavigatorState>>()
+                                                  .currentState!
+                                                  .pushNamed(
+                                                    "/event/chat",
+                                                    arguments: event,
+                                                  );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    });
+                              }).toList(),
+                              SizedBox(
+                                height: 32,
+                                child: Container(),
+                              ),
+                            ],
+                          ).horizontalPadding(),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     User? user = context.read<User?>();
 
-    return Scaffold(
-      body: SafeArea(
-        maintainBottomViewPadding: true,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                  padding: const EdgeInsets.only(
-                    left: 32,
-                    right: 16,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Text(
-                        "Chats",
-                        style: Theme.of(context).textTheme.headlineLarge,
-                      )),
-                      chatsPopupMenu(),
-                    ],
-                  )),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 32,
-                ),
-                child: InputField(
-                  controller: searchController,
-                  icon: const Icon(
-                    Icons.search_rounded,
-                  ),
-                  hintText: "Search by event name",
-                  onChanged: (String value) {
-                    setState(() {});
-                  },
-                  onClear: () {
-                    setState(() {});
-                  },
-                ),
-              ).horizontalPadding(),
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () {
-                    setState(() {});
-
-                    return Future.delayed(
-                      const Duration(
-                        seconds: 1,
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection("events")
-                            .where(
-                              "member",
-                              arrayContains: user?.toDocRef(),
-                            )
-                            .orderBy(
-                              "startTime",
-                            )
-                            .snapshots()
-                            .map((events) => events.docs
-                                .map((doc) => Event.fromFirestore(
-                                      doc: doc,
-                                    ))
-                                .toList()),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          return ShimmerLoading(
-                            isLoading: !snapshot.hasData,
-                            placeholder: Wrap(
-                              runSpacing: 8,
-                              children: [
-                                placeholder(),
-                              ],
-                            ),
-                            builder: (BuildContext context) {
-                              List<Event> listEvent = snapshot.data;
-
-                              // hide ended event
-                              if (_isHideEndedEvent) {
-                                listEvent = listEvent
-                                    .where((event) => !event.startTime
-                                        .difference(DateTime.now().subtract(
-                                          // Add 3 more day before hide
-                                          const Duration(days: 3),
-                                        ))
-                                        .isNegative)
-                                    .toList();
-                              }
-
-                              // search by event name
-                              if (searchController.text.isNotEmpty) {
-                                listEvent = listEvent
-                                    .where((event) => event.name
-                                        .toLowerCase()
-                                        .contains(searchController.text
-                                            .toLowerCase()
-                                            .trim()))
-                                    .toList();
-                              }
-
-                              // empty group chat
-                              if (listEvent.isEmpty) {
-                                return Expanded(
-                                  child: SingleChildScrollView(
-                                    physics: const BouncingScrollPhysics(
-                                      parent: AlwaysScrollableScrollPhysics(),
-                                    ),
-                                    child: searchController.text.isNotEmpty
-                                        ? const NoSearchResultBanner()
-                                        : const NoGroupChatBanner(),
-                                  ),
-                                );
-                              }
-
-                              return Expanded(
-                                child: SingleChildScrollView(
-                                  physics: const BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics(),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      bottom: 16 + kBottomNavigationBarHeight,
-                                    ),
-                                    child: Wrap(
-                                      runSpacing: 8,
-                                      children: [
-                                        ...listEvent.map((event) {
-                                          return StreamBuilder(
-                                              stream: FirebaseFirestore.instance
-                                                  .collection("events")
-                                                  .doc(event.id)
-                                                  .collection("chats")
-                                                  .orderBy(
-                                                    "sendTime",
-                                                    descending: true,
-                                                  )
-                                                  .limit(1)
-                                                  .snapshots()
-                                                  .map((chats) => chats.docs
-                                                      .map((doc) =>
-                                                          Chat.fromFirestore(
-                                                            doc: doc,
-                                                          ))
-                                                      .toList()),
-                                              builder: (BuildContext context,
-                                                  AsyncSnapshot snapshot) {
-                                                return ShimmerLoading(
-                                                  isLoading: !snapshot.hasData,
-                                                  placeholder: placeholder(),
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    Chat? chat = snapshot
-                                                            .data.isNotEmpty
-                                                        ? snapshot.data.first
-                                                        : null;
-
-                                                    return ChatGroupCard(
-                                                      event: event,
-                                                      lastChat: chat,
-                                                      onPressed: () {
-                                                        context
-                                                            .read<
-                                                                GlobalKey<
-                                                                    NavigatorState>>()
-                                                            .currentState!
-                                                            .pushNamed(
-                                                              "/event/chat",
-                                                              arguments: event,
-                                                            );
-                                                      },
-                                                    );
-                                                  },
-                                                );
-                                              });
-                                        }).toList(),
-                                        SizedBox(
-                                          height: 32,
-                                          child: Container(),
-                                        ),
-                                      ],
-                                    ).horizontalPadding(),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+    return GestureDetector(
+      onTap: () {
+        searchBarNode.unfocus();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          maintainBottomViewPadding: true,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...topSection(),
+                chatSection(user),
+              ],
+            ),
           ),
         ),
       ),
