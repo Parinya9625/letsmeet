@@ -32,7 +32,10 @@ class _MainPageState extends State<MainPage> {
       icon: icon,
       color: isSelectedPath(path),
       onPressed: (() {
-        navigatorKey.currentState!.pushReplacementNamed(path);
+        setState(() {
+          selectedPath = path;
+          navigatorKey.currentState!.pushReplacementNamed(path);
+        });
       }),
     );
   }
@@ -104,9 +107,6 @@ class _MainPageState extends State<MainPage> {
                   page = HomePage(
                     navigatorKey: navigatorKey,
                   );
-                  setState(() {
-                    selectedPath = settings.name!;
-                  });
                   break;
                 case "/search":
                   page = SearchPage(
