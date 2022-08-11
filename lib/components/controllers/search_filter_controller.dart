@@ -7,6 +7,16 @@ class SearchFilterController extends ChangeNotifier {
   Category? _category;
   double? _distance;
 
+  SearchFilterController({
+    DateTimeRange? dateRange,
+    String? type,
+    Category? category,
+    double? distance,
+  })  : _dateRange = dateRange,
+        _type = type,
+        _category = category,
+        _distance = distance;
+
   DateTimeRange? get dateRange => _dateRange;
   String? get type => _type;
   Category? get category => _category;
