@@ -32,10 +32,7 @@ class _MainPageState extends State<MainPage> {
       icon: icon,
       color: isSelectedPath(path),
       onPressed: (() {
-        setState(() {
-          selectedPath = path;
-          navigatorKey.currentState!.pushReplacementNamed(path);
-        });
+        navigatorKey.currentState!.pushReplacementNamed(path);
       }),
     );
   }
@@ -104,7 +101,12 @@ class _MainPageState extends State<MainPage> {
               Widget? page;
               switch (settings.name) {
                 case "/":
-                  page = const HomePage();
+                  page = HomePage(
+                    navigatorKey: navigatorKey,
+                  );
+                  setState(() {
+                    selectedPath = settings.name!;
+                  });
                   break;
                 case "/search":
                   page = SearchPage(
@@ -112,15 +114,21 @@ class _MainPageState extends State<MainPage> {
                     globalSetState: globalSetState,
                     searchFilter: settings.arguments as SearchFilterController?,
                   );
+                  setState(() {
+                    selectedPath = settings.name!;
+                  });
                   break;
                 case "/chats":
                   page = const ChatsPage();
+                  setState(() {
+                    selectedPath = settings.name!;
+                  });
                   break;
                 case "/profile":
-                  setState(() {
-                    selectedPath = settings.name.toString();
-                  });
                   page = UserProfilePage(userId: user!.id!, isOtherUser: false);
+                  setState(() {
+                    selectedPath = settings.name!;
+                  });
                   break;
                 default:
                   page = const TempPage(color: Colors.black);
