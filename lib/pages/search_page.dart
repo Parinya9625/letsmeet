@@ -283,6 +283,10 @@ class SearchPageState extends State<SearchPage> {
   void initState() {
     searchFilterController = widget.searchFilter ?? SearchFilterController();
 
+    if (widget.searchFilter != null) {
+      newSearch();
+    }
+
     resultScrollController.addListener(() {
       int scrollEnd = resultScrollController.position.maxScrollExtent.toInt();
       if (resultScrollController.position.pixels.toInt() >= scrollEnd) {
