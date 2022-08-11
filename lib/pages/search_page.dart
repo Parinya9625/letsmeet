@@ -3,12 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/components/search_event_card.dart';
+import 'package:letsmeet/components/search_user_card.dart';
 import 'package:letsmeet/components/search_filter_category.dart';
 import 'package:letsmeet/components/search_filter_date.dart';
 import 'package:letsmeet/components/search_filter_type.dart';
+import 'package:letsmeet/components/search_filter_mode.dart';
 import 'package:letsmeet/components/controllers/search_filter_controller.dart';
 import 'package:letsmeet/components/no_event_banner.dart';
 import 'package:letsmeet/models/event.dart';
+import 'package:letsmeet/models/user.dart';
 
 class SearchPage extends StatefulWidget {
   final StateSetter globalSetState;
@@ -37,41 +40,57 @@ class SearchPageState extends State<SearchPage> {
   bool isLoading = false;
 
   Query genSearchQuery({QueryDocumentSnapshot? lastDocument}) {
-    Query query = FirebaseFirestore.instance.collection("events");
+    Query? query;
 
-    // date filter
-    if (searchFilterController.dateRange != null) {
-      query = query.where(
-        "startTime",
-        isGreaterThanOrEqualTo: searchFilterController.dateRange!.start,
-        isLessThanOrEqualTo: searchFilterController.dateRange!.end,
-      );
+    if (searchFilterController.mode == "Event") {
+      query = FirebaseFirestore.instance.collection("events");
+
+      // date filter
+      if (searchFilterController.dateRange != null) {
+        query = query.where(
+          "startTime",
+          isGreaterThanOrEqualTo: searchFilterController.dateRange!.start,
+          isLessThanOrEqualTo: searchFilterController.dateRange!.end,
+        );
+      }
+
+      // category filter
+      if (searchFilterController.category != null) {
+        query = query.where("category",
+            isEqualTo: searchFilterController.category!.toDocRef());
+      }
+
+      // type filter
+      if (searchFilterController.type != null) {
+        query = query.where("type", isEqualTo: searchFilterController.type!);
+      }
+
+      // search word
+      if (currentSearchText.trim().isNotEmpty) {
+        query = query.where("searchIndex",
+            arrayContainsAny:
+                currentSearchText.trim().toLowerCase().split(" "));
+      }
+
+      query = query.orderBy("startTime", descending: true);
+    } else if (searchFilterController.mode == "User") {
+      query = FirebaseFirestore.instance.collection("users");
+
+      // search word
+      if (currentSearchText.trim().isNotEmpty) {
+        query = query.where("searchIndex",
+            arrayContainsAny:
+                currentSearchText.trim().toLowerCase().split(" "));
+      }
+
+      query = query.orderBy("createdTime", descending: true);
     }
-
-    // category filter
-    if (searchFilterController.category != null) {
-      query = query.where("category",
-          isEqualTo: searchFilterController.category!.toDocRef());
-    }
-
-    // type filter
-    if (searchFilterController.type != null) {
-      query = query.where("type", isEqualTo: searchFilterController.type!);
-    }
-
-    // search word
-    if (currentSearchText.trim().isNotEmpty) {
-      query = query.where("searchIndex",
-          arrayContainsAny: currentSearchText.trim().toLowerCase().split(" "));
-    }
-
-    query = query.orderBy("startTime", descending: true);
 
     if (lastDocument != null) {
-      query = query.startAfterDocument(lastDocument);
+      query = query!.startAfterDocument(lastDocument);
     }
 
-    query = query.limit(10);
+    query = query!.limit(10);
 
     return query;
   }
@@ -123,7 +142,7 @@ class SearchPageState extends State<SearchPage> {
           icon: const Icon(
             Icons.search_rounded,
           ),
-          hintText: "Search by event name, location",
+          hintText: "Search by name, location",
           onSubmitted: (value) {
             setState(() {
               newSearch();
@@ -149,7 +168,7 @@ class SearchPageState extends State<SearchPage> {
                     direction: Axis.horizontal,
                     spacing: 8,
                     children: [
-                      DateSearchFilter(
+                      ModeSearchFilter(
                         controller: searchFilterController,
                         onOpen: () {
                           widget.globalSetState(() {
@@ -165,37 +184,62 @@ class SearchPageState extends State<SearchPage> {
                           newSearch();
                         },
                       ),
-                      CategorySearchFilter(
-                        controller: searchFilterController,
-                        onOpen: () {
-                          widget.globalSetState(() {
-                            showBottomNavigationBar = false;
-                          });
-                        },
-                        onClose: () {
-                          widget.globalSetState(() {
-                            showBottomNavigationBar = true;
-                          });
-                        },
-                        onApply: () {
-                          newSearch();
-                        },
+                      Visibility(
+                        visible: searchFilterController.mode == "Event",
+                        child: DateSearchFilter(
+                          controller: searchFilterController,
+                          onOpen: () {
+                            widget.globalSetState(() {
+                              showBottomNavigationBar = false;
+                            });
+                          },
+                          onClose: () {
+                            widget.globalSetState(() {
+                              showBottomNavigationBar = true;
+                            });
+                          },
+                          onApply: () {
+                            newSearch();
+                          },
+                        ),
                       ),
-                      TypeSearchFilter(
-                        controller: searchFilterController,
-                        onOpen: () {
-                          widget.globalSetState(() {
-                            showBottomNavigationBar = false;
-                          });
-                        },
-                        onClose: () {
-                          widget.globalSetState(() {
-                            showBottomNavigationBar = true;
-                          });
-                        },
-                        onApply: () {
-                          newSearch();
-                        },
+                      Visibility(
+                        visible: searchFilterController.mode == "Event",
+                        child: CategorySearchFilter(
+                          controller: searchFilterController,
+                          onOpen: () {
+                            widget.globalSetState(() {
+                              showBottomNavigationBar = false;
+                            });
+                          },
+                          onClose: () {
+                            widget.globalSetState(() {
+                              showBottomNavigationBar = true;
+                            });
+                          },
+                          onApply: () {
+                            newSearch();
+                          },
+                        ),
+                      ),
+                      Visibility(
+                        visible: searchFilterController.mode == "Event",
+                        child: TypeSearchFilter(
+                          controller: searchFilterController,
+                          onOpen: () {
+                            widget.globalSetState(() {
+                              showBottomNavigationBar = false;
+                            });
+                          },
+                          onClose: () {
+                            widget.globalSetState(() {
+                              showBottomNavigationBar = true;
+                            });
+                          },
+                          onApply: () {
+                            newSearch();
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -246,23 +290,44 @@ class SearchPageState extends State<SearchPage> {
                             },
                           ),
                         } else ...{
-                          ...searchResult!.map(
-                            (doc) {
-                              Event event = Event.fromFirestore(doc: doc);
-                              return SearchEventCard(
-                                event: event,
-                                onPressed: () {
-                                  context
-                                      .read<GlobalKey<NavigatorState>>()
-                                      .currentState!
-                                      .pushNamed(
-                                        "/event",
-                                        arguments: event,
-                                      );
-                                },
-                              );
-                            },
-                          ).toList(),
+                          if (searchFilterController.mode == "Event") ...{
+                            ...searchResult!.map(
+                              (doc) {
+                                Event event = Event.fromFirestore(doc: doc);
+                                return SearchEventCard(
+                                  event: event,
+                                  onPressed: () {
+                                    context
+                                        .read<GlobalKey<NavigatorState>>()
+                                        .currentState!
+                                        .pushNamed(
+                                          "/event",
+                                          arguments: event,
+                                        );
+                                  },
+                                );
+                              },
+                            ).toList(),
+                          } else if (searchFilterController.mode == "User") ...{
+                            ...searchResult!.map(
+                              (doc) {
+                                User? me = context.read<User?>();
+                                User user = User.fromFirestore(doc: doc);
+                                return SearchUserCard(
+                                  user: user,
+                                  onPressed: () {
+                                    context
+                                        .read<GlobalKey<NavigatorState>>()
+                                        .currentState!
+                                        .pushNamed("/profile", arguments: {
+                                      "userId": user.id,
+                                      "isOtherUser": user.id != me!.id,
+                                    });
+                                  },
+                                );
+                              },
+                            ).toList(),
+                          }
                         }
                       },
                       if (isLoading && searchQuery != null) ...{
