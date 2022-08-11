@@ -319,7 +319,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                   style: Theme.of(context).textTheme.headline3,
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      // TODO: Terms of Service
+                                      Navigator.pushNamed(
+                                          context, "/signup/tos");
                                     },
                                 ),
                                 const TextSpan(text: "."),
