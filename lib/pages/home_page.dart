@@ -210,7 +210,9 @@ class _HomePageState extends State<HomePage> {
             isLoading: !snapshot.hasData,
             placeholder: eventPlaceholder(),
             builder: (BuildContext context) {
-              List<Event> listEvent = snapshot.data;
+              List<Event?> listEvent = snapshot.data;
+              // keep only exists event
+              listEvent.remove(null);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -236,7 +238,7 @@ class _HomePageState extends State<HomePage> {
                               ...listEvent.map((event) {
                                 return EventCard(
                                     isSmall: true,
-                                    event: event,
+                                    event: event!,
                                     onPressed: () {
                                       context
                                           .read<GlobalKey<NavigatorState>>()
