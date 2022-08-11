@@ -12,10 +12,12 @@ import 'package:letsmeet/models/event.dart';
 
 class SearchPage extends StatefulWidget {
   final StateSetter globalSetState;
+  final SearchFilterController? searchFilter;
 
   const SearchPage({
     Key? key,
     required this.globalSetState,
+    this.searchFilter,
   }) : super(key: key);
 
   @override
@@ -26,7 +28,7 @@ class SearchPageState extends State<SearchPage> {
   TextEditingController searchBarController = TextEditingController();
   String currentSearchText = "";
   FocusNode searchBarNode = FocusNode();
-  SearchFilterController searchFilterController = SearchFilterController();
+  late SearchFilterController searchFilterController;
   bool showBottomNavigationBar = true;
 
   ScrollController resultScrollController = ScrollController();
@@ -58,8 +60,10 @@ class SearchPageState extends State<SearchPage> {
     }
 
     // search word
-    query = query.where("searchIndex",
-        arrayContainsAny: currentSearchText.trim().toLowerCase().split(" "));
+    if (currentSearchText.trim().isNotEmpty) {
+      query = query.where("searchIndex",
+          arrayContainsAny: currentSearchText.trim().toLowerCase().split(" "));
+    }
 
     query = query.orderBy("startTime", descending: true);
 
@@ -99,15 +103,13 @@ class SearchPageState extends State<SearchPage> {
   }
 
   void newSearch() {
-    if (searchBarController.text.trim().isNotEmpty) {
-      setState(() {
-        isLoading = false;
-        currentSearchText = searchBarController.text.trim();
-        searchResult?.clear();
-        searchQuery = genSearchQuery();
-        search();
-      });
-    }
+    setState(() {
+      isLoading = false;
+      currentSearchText = searchBarController.text.trim();
+      searchResult = null;
+      searchQuery = genSearchQuery();
+      search();
+    });
   }
 
   Widget topSection() {
@@ -121,7 +123,7 @@ class SearchPageState extends State<SearchPage> {
           icon: const Icon(
             Icons.search_rounded,
           ),
-          hintText: "Search by event name",
+          hintText: "Search by event name, location",
           onSubmitted: (value) {
             setState(() {
               newSearch();
@@ -279,6 +281,8 @@ class SearchPageState extends State<SearchPage> {
 
   @override
   void initState() {
+    searchFilterController = widget.searchFilter ?? SearchFilterController();
+
     resultScrollController.addListener(() {
       int scrollEnd = resultScrollController.position.maxScrollExtent.toInt();
       if (resultScrollController.position.pixels.toInt() >= scrollEnd) {
