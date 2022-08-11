@@ -97,45 +97,62 @@ class _MainPageState extends State<MainPage> {
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
-          body: Navigator(
-            key: navigatorKey,
-            initialRoute: "/",
-            onGenerateRoute: (settings) {
-              Widget? page;
-              switch (settings.name) {
-                case "/":
-                  page = HomePage(
-                    navigatorKey: navigatorKey,
-                  );
-                  break;
-                case "/search":
-                  page = SearchPage(
-                    key: searchPageKey,
-                    globalSetState: globalSetState,
-                    searchFilter: settings.arguments as SearchFilterController?,
-                  );
-                  setState(() {
-                    selectedPath = settings.name!;
-                  });
-                  break;
-                case "/chats":
-                  page = const ChatsPage();
-                  setState(() {
-                    selectedPath = settings.name!;
-                  });
-                  break;
-                case "/profile":
-                  page = UserProfilePage(userId: user!.id!, isOtherUser: false);
-                  setState(() {
-                    selectedPath = settings.name!;
-                  });
-                  break;
-                default:
-                  page = const TempPage(color: Colors.black);
+          body: WillPopScope(
+            onWillPop: () async {
+              // page route not home "/"
+              if (selectedPath != "/") {
+                // go back to home first
+                setState(() {
+                  navigatorKey.currentState!.pushReplacementNamed("/");
+                  selectedPath = "/";
+                });
+                return false;
               }
-
-              return RouteTransition(page);
+              // if route is home then quit app
+              return true;
             },
+            child: Navigator(
+              key: navigatorKey,
+              initialRoute: "/",
+              onGenerateRoute: (settings) {
+                Widget? page;
+                switch (settings.name) {
+                  case "/":
+                    page = HomePage(
+                      navigatorKey: navigatorKey,
+                    );
+                    break;
+                  case "/search":
+                    page = SearchPage(
+                      key: searchPageKey,
+                      globalSetState: globalSetState,
+                      searchFilter:
+                          settings.arguments as SearchFilterController?,
+                    );
+                    setState(() {
+                      selectedPath = settings.name!;
+                    });
+                    break;
+                  case "/chats":
+                    page = const ChatsPage();
+                    setState(() {
+                      selectedPath = settings.name!;
+                    });
+                    break;
+                  case "/profile":
+                    page =
+                        UserProfilePage(userId: user!.id!, isOtherUser: false);
+                    setState(() {
+                      selectedPath = settings.name!;
+                    });
+                    break;
+                  default:
+                    page = const TempPage(color: Colors.black);
+                }
+
+                return RouteTransition(page);
+              },
+            ),
           ),
         );
       },
