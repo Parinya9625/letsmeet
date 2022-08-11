@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:letsmeet/components/controllers/search_filter_controller.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/pages/chats_page.dart';
 import 'package:letsmeet/pages/home_page.dart';
@@ -45,7 +46,8 @@ class _MainPageState extends State<MainPage> {
 
     return StatefulBuilder(
       builder: (context, globalSetState) {
-        bool isShowBottomNav = searchPageKey.currentState?.showBottomNavigationBar ?? true;
+        bool isShowBottomNav =
+            searchPageKey.currentState?.showBottomNavigationBar ?? true;
 
         return Scaffold(
           extendBody: true,
@@ -108,6 +110,7 @@ class _MainPageState extends State<MainPage> {
                   page = SearchPage(
                     key: searchPageKey,
                     globalSetState: globalSetState,
+                    searchFilter: settings.arguments as SearchFilterController?,
                   );
                   break;
                 case "/chats":
