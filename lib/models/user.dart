@@ -126,8 +126,15 @@ class User {
   Future<List<Category>> get getFavCategory => Future.wait(favCategory
       .map((ref) async => Category.fromFirestore(doc: await ref.get())));
 
-  Future<List<Event>> get getRecentView => Future.wait(
-      recentView.map((ref) async => Event.fromFirestore(doc: await ref.get())));
+  Future<List<Event?>> get getRecentView {
+    var rv = recentView.map((ref) async {
+      var doc = await ref.get();
+
+      return doc.exists ? Event.fromFirestore(doc: doc) : null;
+    });
+
+    return Future.wait(rv);
+  }
 
   factory User.fromFirestore({required DocumentSnapshot doc}) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
