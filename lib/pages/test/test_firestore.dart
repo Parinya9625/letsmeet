@@ -111,6 +111,7 @@ class _TestFirestoreState extends State<TestFirestore>
       role: FirebaseFirestore.instance.collection("roles").doc("user"),
       surname: "User",
       isFinishSetup: true,
+      searchIndex: [],
     );
     User testUser2 = User(
       id: "_test",
@@ -125,6 +126,7 @@ class _TestFirestoreState extends State<TestFirestore>
       role: FirebaseFirestore.instance.collection("roles").doc("user"),
       surname: "(Update)",
       isFinishSetup: true,
+      searchIndex: [],
     );
 
     return Padding(
@@ -384,6 +386,7 @@ class _TestFirestoreState extends State<TestFirestore>
       role: FirebaseFirestore.instance.collection("roles").doc("user"),
       surname: "User",
       isFinishSetup: true,
+      searchIndex: [],
     );
 
     TextEditingController _chat = TextEditingController();
