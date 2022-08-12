@@ -189,7 +189,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> ::
 
                       User? chatBy = listUserCache[listChat[realIndex].by?.id];
                       bool isNextDay = realIndex == lastIndex || DateFormat.yMd().format(listChat[realIndex + 1].sendTime) != DateFormat.yMd().format(listChat[realIndex].sendTime);
-                      bool isContinue = realIndex != lastIndex && listChat[realIndex].by != null && listChat[realIndex + 1].by!.id == listChat[realIndex].by!.id;
+                      bool isContinue = realIndex != lastIndex && listChat[realIndex].by != null && listChat[realIndex + 1].by?.id == listChat[realIndex].by?.id;
 
                       Random random = Random();
 
