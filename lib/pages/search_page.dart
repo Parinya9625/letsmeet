@@ -9,7 +9,7 @@ import 'package:letsmeet/components/search_filter_date.dart';
 import 'package:letsmeet/components/search_filter_type.dart';
 import 'package:letsmeet/components/search_filter_mode.dart';
 import 'package:letsmeet/components/controllers/search_filter_controller.dart';
-import 'package:letsmeet/components/no_event_banner.dart';
+import 'package:letsmeet/components/no_search_result_banner.dart';
 import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/user.dart';
 
@@ -284,11 +284,7 @@ class SearchPageState extends State<SearchPage> {
                     children: [
                       if (searchResult != null) ...{
                         if (searchResult!.isEmpty) ...{
-                          NoEventBanner(
-                            onPressed: () {
-                              newSearch();
-                            },
-                          ),
+                          const NoSearchResultBanner(),
                         } else ...{
                           if (searchFilterController.mode == "Event") ...{
                             ...searchResult!.map(

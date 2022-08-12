@@ -122,7 +122,8 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
             afterAuthProviders.clear();
           });
 
-          navigatorKey.currentState!.pushReplacementNamed("/welcome");
+          navigatorKey.currentState!
+              .pushNamedAndRemoveUntil("/welcome", (route) => false);
         } else {
           setState(() {
             afterAuthProviders.addAll([

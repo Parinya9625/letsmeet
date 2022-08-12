@@ -174,7 +174,7 @@ class _ChatsPageState extends State<ChatsPage> {
                     children: [
                       placeholder(),
                     ],
-                  ),
+                  ).horizontalPadding(),
                   builder: (BuildContext context) {
                     List<Event> listEvent = snapshot.data;
 

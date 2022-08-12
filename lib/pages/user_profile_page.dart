@@ -217,8 +217,12 @@ class _UserProfilePageState extends State<UserProfilePage>
                             context.dependOnInheritedWidgetOfExactType<
                                 FlexibleSpaceBarSettings>();
 
+                        // !! ISSUE IN MY Samsung A53 5G DEVICE !!
+                        // ?? BUT Samsung S8 WORK FINE ??
+                        // Fix : use "minExtend + 1" because device with notch
+                        // don't work when use only minExtend.
                         bool isCollapse = settings == null ||
-                            settings.currentExtent <= settings.minExtent;
+                            settings.currentExtent <= settings.minExtent + 1;
 
                         return AnimatedOpacity(
                           opacity: isCollapse ? 1 : 0,

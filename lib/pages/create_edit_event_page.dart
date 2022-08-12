@@ -238,7 +238,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
     if (selectedTime != null) {
       setState(() {
         time = selectedTime;
-        timeController.text = "${time!.hour}:${time!.minute}";
+        timeController.text = "${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}";
       });
     }
   }

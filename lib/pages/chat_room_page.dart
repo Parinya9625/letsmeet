@@ -228,8 +228,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                       .format(listChat[realIndex].sendTime);
                           bool isContinue = realIndex != lastIndex &&
                               listChat[realIndex].by != null &&
-                              listChat[realIndex + 1].by!.id ==
-                                  listChat[realIndex].by!.id;
+                              listChat[realIndex + 1].by?.id ==
+                                  listChat[realIndex].by?.id;
 
                           Random random = Random();
 
