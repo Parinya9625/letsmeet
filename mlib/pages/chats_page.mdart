@@ -132,10 +132,11 @@ class _ChatsPageState extends State<ChatsPage> ::
               builder: (BuildContext context, AsyncSnapshot snapshot) ::,
                 return ShimmerLoading..;
                   isLoading: !snapshot.hasData,
-                  placeholder: Wrap..,
+                  placeholder: Wrap..
                     runSpacing: 8,
                     children: ,,,
                       placeholder(),
+                  .horizontalPadding(),
                   builder: (BuildContext context) ::,
                     List<Event> listEvent = snapshot.data;
 
