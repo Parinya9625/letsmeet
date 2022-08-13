@@ -66,17 +66,28 @@ class _ChatGroupCardState extends State<ChatGroupCard> {
                       ),
                       if (widget.lastChat != null) ...{
                         const SizedBox(height: 6),
-                        if (widget.lastChat!.text != null) ...{
-                          Text(
-                            "${widget.lastChat!.text}  •  ${timeDiff(widget.lastChat!.sendTime)}",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                        } else if (widget.lastChat!.image.isNotEmpty) ...{
-                          Text(
-                            "Send images •  ${timeDiff(widget.lastChat!.sendTime)}",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                        }
+                        Row(
+                          children: [
+                            if (widget.lastChat!.text != null) ...{
+                              Flexible(
+                                child: Text(
+                                  "${widget.lastChat!.text?.replaceAll('\n', ' ')}",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              ),
+                            } else if (widget.lastChat!.image.isNotEmpty) ...{
+                              Text(
+                                "Send images",
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                            },
+                            Text(
+                              "  •  ${timeDiff(widget.lastChat!.sendTime)}",
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          ],
+                        ),
                       }
                     ],
                   ),

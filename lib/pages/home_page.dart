@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/user.dart';
@@ -29,11 +31,13 @@ class _HomePageState extends State<HomePage> {
     return EventCard(
         isSmall: true,
         event: event,
-        onPressed: () {
-          context
+        onPressed: () async {
+          await context
               .read<GlobalKey<NavigatorState>>()
               .currentState!
               .pushNamed("/event", arguments: event);
+
+          setState(() {});
 
           context.read<CloudFirestoreService>().addUserRecentView(
                 user: context.read<User?>()!,
@@ -177,14 +181,17 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(width: 16),
                             ...listEvent.map((event) {
                               return EventCard(
-                                  isSmall: true,
-                                  event: event,
-                                  onPressed: () {
-                                    context
-                                        .read<GlobalKey<NavigatorState>>()
-                                        .currentState!
-                                        .pushNamed("/event", arguments: event);
-                                  });
+                                isSmall: true,
+                                event: event,
+                                onPressed: () async {
+                                  await context
+                                      .read<GlobalKey<NavigatorState>>()
+                                      .currentState!
+                                      .pushNamed("/event", arguments: event);
+
+                                  setState(() {});
+                                },
+                              );
                             }).toList(),
                             const SizedBox(width: 16),
                           ],
@@ -211,8 +218,11 @@ class _HomePageState extends State<HomePage> {
             placeholder: eventPlaceholder(),
             builder: (BuildContext context) {
               List<Event?> listEvent = snapshot.data;
-              // keep only exists event
-              listEvent.remove(null);
+
+              // all recent view event got delete
+              if (listEvent.every((event) => event == null)) {
+                return const SizedBox();
+              }
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -235,18 +245,25 @@ class _HomePageState extends State<HomePage> {
                             spacing: 16,
                             children: [
                               const SizedBox(width: 16),
-                              ...listEvent.map((event) {
-                                return EventCard(
+                              for (Event? event in listEvent) ...{
+                                if (event != null) ...{
+                                  EventCard(
                                     isSmall: true,
-                                    event: event!,
-                                    onPressed: () {
-                                      context
+                                    event: event,
+                                    onPressed: () async {
+                                      await context
                                           .read<GlobalKey<NavigatorState>>()
                                           .currentState!
-                                          .pushNamed("/event",
-                                              arguments: event);
-                                    });
-                              }).toList(),
+                                          .pushNamed(
+                                            "/event",
+                                            arguments: event,
+                                          );
+
+                                      setState(() {});
+                                    },
+                                  ),
+                                },
+                              },
                               const SizedBox(width: 16),
                             ],
                           ),
