@@ -599,6 +599,40 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         });
   }
 
+  void confirmLeaveEvent() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Confirm leave event"),
+          content: const Text("Are you sure you want to leave this event?"),
+          actions: [
+            TextButton(
+                child: const Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                }),
+            TextButton(
+              child: const Text("Leave"),
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+
+                showLoading();
+                await context.read<CloudFirestoreService>().removeEventMember(
+                      event: widget.event,
+                      user: context.read<User?>()!,
+                    );
+
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     textController.dispose();
@@ -621,6 +655,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                   icons: Icons.event_rounded,
                   title: "View event",
                 ),
+                if (user?.id != widget.event.owner.id) ...{
+                  popupMenuItem(
+                    icons: Icons.event_busy_rounded,
+                    title: "Leave event",
+                  ),
+                },
               ];
             },
             onSelected: (selected) {
@@ -633,6 +673,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         "/event",
                         arguments: widget.event,
                       );
+                  break;
+                case "Leave event":
+                  confirmLeaveEvent();
                   break;
               }
             },
