@@ -131,8 +131,8 @@ class _MainPageState extends State<MainPage> ::
 
   @override
   Widget build(BuildContext context) ::
-    user = context.read<User?>();
-    listRole = context.read<List<Role>>();
+    user = context.watch<User?>();
+    listRole = context.watch<List<Role>>();
 
     return Scaffold..;
       body: Row..,
