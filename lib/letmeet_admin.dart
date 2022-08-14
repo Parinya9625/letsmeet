@@ -200,7 +200,7 @@ class _LetsMeetAdminState extends State<LetsMeetAdmin> {
               // check admin permission
               if (role.permission.isAdmin) {
                 navigatorKey.currentState!
-                    .pushNamedAndRemoveUntil("/", (route) => false);
+                    .pushNamedAndRemoveUntil("/home", (route) => false);
                 userStream.cancel();
               } else {
                 FirebaseAuth.instance.signOut();
@@ -268,14 +268,14 @@ class _LetsMeetAdminState extends State<LetsMeetAdmin> {
           title: 'LetsMeet Admin',
           theme: lightTheme,
           routes: {
-            "/startup": (context) => const LoadingPage(),
+            "/": (context) => const LoadingPage(),
             "/signin": (context) => const SignInPage(),
-            "/": (context) => const MainPage(),
+            "/home": (context) => const MainPage(),
           },
           onGenerateRoute: (settings) {
             return null;
           },
-          initialRoute: "/startup",
+          initialRoute: "/",
         ),
       ),
     );
