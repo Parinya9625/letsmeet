@@ -13,9 +13,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // TODO : change recaptcha key
+
   await FirebaseAppCheck.instance.activate(
-    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
+    webRecaptchaSiteKey: '6LdVsnQhAAAAANXtgq6HgQxLpfh-fQQo9RFNipKO',
   );
 
   usePathUrlStrategy();
