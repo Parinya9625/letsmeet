@@ -12,6 +12,7 @@ import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:letsmeet/pages/admin/sign_in_page.dart';
+import 'package:letsmeet/pages/admin/main_page.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/report.dart';
@@ -199,7 +200,7 @@ class _LetsMeetAdminState extends State<LetsMeetAdmin> {
               // check admin permission
               if (role.permission.isAdmin) {
                 navigatorKey.currentState!
-                    .pushNamedAndRemoveUntil("/admin", (route) => false);
+                    .pushNamedAndRemoveUntil("/", (route) => false);
                 userStream.cancel();
               } else {
                 FirebaseAuth.instance.signOut();
@@ -231,6 +232,7 @@ class _LetsMeetAdminState extends State<LetsMeetAdmin> {
     super.initState();
   }
 
+  @override
   void dispose() {
     streamUserAuthState.cancel();
     super.dispose();
@@ -268,7 +270,7 @@ class _LetsMeetAdminState extends State<LetsMeetAdmin> {
           routes: {
             "/startup": (context) => const LoadingPage(),
             "/signin": (context) => const SignInPage(),
-            "/admin": (context) => const AdminPage(),
+            "/": (context) => const MainPage(),
           },
           onGenerateRoute: (settings) {
             return null;
@@ -285,32 +287,9 @@ class LoadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: CircularProgressIndicator.adaptive(),
-      ),
-    );
-  }
-}
-
-class AdminPage extends StatelessWidget {
-  const AdminPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Text("ADMIN"),
-            ElevatedButton(
-              onPressed: () {
-                context.read<AuthenticationService>().signOut();
-              },
-              child: Text("Sign out"),
-            ),
-          ],
-        ),
       ),
     );
   }

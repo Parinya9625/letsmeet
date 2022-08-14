@@ -123,28 +123,25 @@ class _SignInPageState extends State<SignInPage> {
               Row(
                 children: [
                   Expanded(
-                    child: SizedBox(
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            showLoading();
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          showLoading();
 
-                            AuthenticationResult result = await context
-                                .read<AuthenticationService>()
-                                .signIn(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim(),
-                                );
+                          AuthenticationResult result = await context
+                              .read<AuthenticationService>()
+                              .signIn(
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim(),
+                              );
 
-                            if (result != AuthenticationResult.success) {
-                              Navigator.pop(context);
-                              showErrorDialog(result.message);
-                            }
+                          if (result != AuthenticationResult.success) {
+                            Navigator.pop(context);
+                            showErrorDialog(result.message);
                           }
-                        },
-                        child: const Text("SIGN IN"),
-                      ),
+                        }
+                      },
+                      child: const Text("SIGN IN"),
                     ),
                   ),
                 ],

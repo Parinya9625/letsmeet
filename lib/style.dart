@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 //* -- Main Style --
 // main color                         >  Theme.of(context).primaryColor
@@ -88,10 +89,16 @@ ThemeData lightTheme = ThemeData(
       insets: const EdgeInsets.symmetric(horizontal: 32),
     ),
   ),
+  drawerTheme: DrawerThemeData(
+    backgroundColor: _card,
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(vertical: 16, horizontal: 24)),
+        kIsWeb
+            ? const EdgeInsets.all(24)
+            : const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      ),
       elevation: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.disabled)) {
           return 0;
