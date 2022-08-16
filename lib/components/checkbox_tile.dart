@@ -5,10 +5,15 @@ class CheckboxTile extends StatefulWidget {
   final CheckboxTileController controller;
   final Widget? title;
   final String? errorText;
+  final double? elevation;
 
-  const CheckboxTile(
-      {Key? key, required this.controller, this.title, this.errorText})
-      : super(key: key);
+  const CheckboxTile({
+    Key? key,
+    required this.controller,
+    this.title,
+    this.errorText,
+    this.elevation,
+  }) : super(key: key);
 
   @override
   State<CheckboxTile> createState() => CheckboxTileState();
@@ -27,6 +32,7 @@ class CheckboxTileState extends State<CheckboxTile> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: widget.elevation,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
