@@ -32,6 +32,61 @@ Color _description = const Color.fromRGBO(106, 106, 106, 1);
 // Color _highlight = _debug;
 // Color _green = _debug;
 
+TextTheme appTextTheme = TextTheme(
+  headlineLarge: TextStyle(
+    color: _title,
+    fontWeight: FontWeight.w500,
+    fontSize: 36,
+  ),
+  headline1: TextStyle(
+    color: _title,
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  ),
+  headline2: TextStyle(
+    color: _title,
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+  ),
+  //? link
+  headline3: TextStyle(
+    color: _main,
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  ),
+  bodyText1: TextStyle(
+    fontWeight: FontWeight.normal,
+    color: _subtitle,
+  ),
+);
+
+TextTheme webTextTheme = TextTheme(
+  headlineLarge: TextStyle(
+    color: _title,
+    fontWeight: FontWeight.w500,
+    fontSize: 36,
+  ),
+  headline1: TextStyle(
+    color: _title,
+    fontWeight: FontWeight.w500,
+    fontSize: 20,
+  ),
+  headline2: TextStyle(
+    color: _title,
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  ),
+  headline3: TextStyle(
+    color: _main,
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  ),
+  bodyText1: TextStyle(
+    fontWeight: FontWeight.normal,
+    color: _subtitle,
+  ),
+);
+
 ThemeData lightTheme = ThemeData(
   primaryColor: _main,
   errorColor: _error,
@@ -39,38 +94,7 @@ ThemeData lightTheme = ThemeData(
     primary: _main,
     secondary: _main,
   ),
-  textTheme: TextTheme(
-    headlineLarge: TextStyle(
-      color: _title,
-      fontWeight: FontWeight.w500,
-      fontSize: 36,
-    ),
-    headline1: TextStyle(
-      color: _title,
-      fontWeight: FontWeight.w500,
-      fontSize: 16,
-    ),
-    headline2: TextStyle(
-      color: _title,
-      fontWeight: FontWeight.w500,
-      fontSize: 14,
-    ),
-    //? link
-    headline3: TextStyle(
-      color: _main,
-      fontWeight: FontWeight.w500,
-      fontSize: 16,
-    ),
-    bodyText1: TextStyle(
-      fontWeight: FontWeight.normal,
-      color: _subtitle,
-    ),
-  ),
-  textSelectionTheme: TextSelectionThemeData(
-    cursorColor: _main,
-    selectionColor: _main,
-    selectionHandleColor: _main,
-  ),
+  textTheme: kIsWeb ? webTextTheme : appTextTheme,
   disabledColor: _disable,
   iconTheme: IconThemeData(color: _subtitle),
   scaffoldBackgroundColor: _background,
