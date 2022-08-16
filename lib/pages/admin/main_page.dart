@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:letsmeet/pages/admin/roles_page.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/models/role.dart';
@@ -60,7 +61,7 @@ class _MainPageState extends State<MainPage> {
                 children: [
                   Text(
                     "${user?.name} ${user?.surname}",
-                    style: Theme.of(context).textTheme.headline1!.copyWith(
+                    style: Theme.of(context).textTheme.headline2!.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -180,7 +181,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     user = context.watch<User?>();
-    listRole = context.watch<List<Role>>();
+    listRole = context.watch<List<Role>?>() ?? [];
 
     return Scaffold(
       body: Row(
@@ -194,6 +195,9 @@ class _MainPageState extends State<MainPage> {
                   Widget? page;
                   // TODO : Add Page
                   switch (settings.name) {
+                    case "/roles":
+                      page = const RolesPage();
+                      break;
                     default:
                       page = TempPage(
                         title: "${settings.name}",
