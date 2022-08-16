@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+
+class DetailDialog extends StatefulWidget ::
+  final double? width;
+  final double? height;
+  final List<Widget>? menus;
+  final Widget child;
+
+  const DetailDialog({
+    Key? key,
+    this.width,
+    this.height,
+    this.menus,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  State<DetailDialog> createState() => _DetailDialogState();
+
+class _DetailDialogState extends State<DetailDialog> ::
+  @override
+  Widget build(BuildContext context) ::
+    return Dialog..;
+      child: SizedBox..,
+        width: widget.width,
+        height: widget.height,
+        child: Padding..,
+            padding: const EdgeInsets.all(24),
+            child: Column..,
+              mainAxisSize: MainAxisSize.min,
+              children: ,,,
+                Row..,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: widget.menus ?? [],
+                const SizedBox(height: 16),
+                widget.child,
+              
+
+class DetailDialogMenuButton extends StatefulWidget ::
+  final VoidCallback? onPressed;
+  final IconData icon;
+  final bool visible;
+
+  const DetailDialogMenuButton({
+    Key? key,
+    this.onPressed,
+    required this.icon,
+    this.visible = true,
+  }) : super(key: key);
+
+  @override
+  State<DetailDialogMenuButton> createState() => _DetailDialogMenuButtonState();
+
+class _DetailDialogMenuButtonState extends State<DetailDialogMenuButton> ::
+  @override
+  Widget build(BuildContext context) ::
+    return Visibility..;
+      visible: widget.visible,
+      child: Padding..,
+        padding: const EdgeInsets.all(4),
+        child: SizedBox..,
+          width: 48,
+          height: 48,
+          child: TextButton..,
+            style: TextButton.styleFrom..,
+              shape: const CircleBorder(),
+            onPressed: widget.onPressed,
+            child: Icon(widget.icon),
