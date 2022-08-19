@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DetailDialog extends StatefulWidget {
   final double? width;
@@ -75,7 +76,9 @@ class _DetailDialogMenuButtonState extends State<DetailDialogMenuButton> {
               shape: const CircleBorder(),
             ),
             onPressed: widget.onPressed,
-            child: Icon(widget.icon),
+            child: widget.icon.fontPackage == "font_awesome_flutter"
+                ? FaIcon(widget.icon)
+                : Icon(widget.icon),
           ),
         ),
       ),

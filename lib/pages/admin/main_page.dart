@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:letsmeet/pages/admin/roles_page.dart';
+import 'package:letsmeet/pages/admin/categories_page.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/models/role.dart';
@@ -31,28 +32,31 @@ class _MainPageState extends State<MainPage> {
   Widget profileHeader() {
     return ShimmerLoading(
       isLoading: user == null || listRole.isEmpty,
-      placeholder: Container(),
+      placeholder: Container(
+      ),
       builder: (BuildContext context) {
-        Role role = listRole.firstWhere((role) => role.id == user?.role.id,
-            orElse: () => Role.create(
-                  name: "",
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.white,
-                  permission: UserPermission(),
-                ));
+        Role role = listRole.firstWhere(
+          (role) => role.id == user?.role.id,
+          orElse: () => Role.create(
+            name: "",
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.white,
+            permission: UserPermission(),
+          )
+        );
 
         return Row(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: user!.image.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: user!.image,
-                      fit: BoxFit.cover,
-                      width: 64,
-                      height: 64,
-                    )
-                  : null,
+                ? CachedNetworkImage(
+                    imageUrl: user!.image,
+                    fit: BoxFit.cover,
+                    width: 64,
+                    height: 64,
+                )
+                : null,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -62,8 +66,8 @@ class _MainPageState extends State<MainPage> {
                   Text(
                     "${user?.name} ${user?.surname}",
                     style: Theme.of(context).textTheme.headline2!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Badge(
@@ -81,38 +85,29 @@ class _MainPageState extends State<MainPage> {
   }
 
   List<Widget> drawerMenu() {
-    List<Map<String, dynamic>> menus = [
+    List<Map<String,dynamic>> menus = [
       {"path": "/users", "icon": Icons.person_rounded, "label": "Users"},
       {"path": "/events", "icon": Icons.event_rounded, "label": "Events"},
       {"path": "/reports", "icon": Icons.report_rounded, "label": "Reports"},
       {"path": "/bans", "icon": Icons.block_rounded, "label": "Bans"},
-      {
-        "path": "/categories",
-        "icon": Icons.category_rounded,
-        "label": "Categories"
-      },
-      {
-        "path": "/roles",
-        "icon": Icons.manage_accounts_rounded,
-        "label": "Roles"
-      },
+      {"path": "/categories", "icon": Icons.category_rounded, "label": "Categories"},
+      {"path": "/roles", "icon": Icons.manage_accounts_rounded, "label": "Roles"},
     ];
 
-    return menus
-        .map(
-          (menu) => drawerButton(
-            foregroundColor: isSelectedPath(menu["path"]),
-            icon: menu["icon"],
-            label: menu["label"],
-            onPressed: () {
-              setState(() {
-                selectedPath = menu["path"];
-                navigatorKey.currentState!.pushNamed(menu["path"]);
-              });
-            },
-          ),
-        )
-        .toList();
+    return menus.map(
+      (menu) => drawerButton(
+        foregroundColor: isSelectedPath(menu["path"]),
+        icon: menu["icon"],
+        label: menu["label"],
+        onPressed: () {
+          setState(() {
+            selectedPath = menu["path"];
+            navigatorKey.currentState!.pushNamed(menu["path"]);
+          });
+        },
+      ),
+    )
+    .toList();
   }
 
   Widget drawerButton({
@@ -124,8 +119,7 @@ class _MainPageState extends State<MainPage> {
     return TextButton(
       style: TextButton.styleFrom(
         padding: const EdgeInsets.all(24),
-        primary:
-            foregroundColor ?? Theme.of(context).textTheme.bodyText1!.color,
+        primary: foregroundColor ?? Theme.of(context).textTheme.bodyText1!.color,
       ),
       onPressed: onPressed,
       child: Row(
@@ -190,22 +184,26 @@ class _MainPageState extends State<MainPage> {
           appDrawer(),
           Expanded(
             child: Navigator(
-                key: navigatorKey,
-                onGenerateRoute: (settings) {
-                  Widget? page;
-                  // TODO : Add Page
-                  switch (settings.name) {
-                    case "/roles":
-                      page = const RolesPage();
-                      break;
-                    default:
-                      page = TempPage(
-                        title: "${settings.name}",
-                      );
-                  }
+              key: navigatorKey,
+              onGenerateRoute: (settings) {
+                Widget? page;
+                // TODO : Add Page
+                switch (settings.name) {
+                  case "/categories":
+                    page = const CategoriesPage();
+                    break;
+                  case "/roles":
+                    page = const RolesPage();
+                    break;
+                  default:
+                    page = TempPage(
+                      title: "${settings.name}",
+                    );
+                }
 
-                  return RouteTransition(page);
-                }),
+                return RouteTransition(page);
+              }
+            ),
           ),
         ],
       ),
