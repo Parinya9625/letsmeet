@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letsmeet/services/firestore.dart';
 
@@ -45,5 +47,15 @@ class Report {
       "reason": reason,
       "type": type,
     };
+  }
+
+  Map<String, int> reasonToMap() {
+    Map<String, int> map = {};
+
+    for (var r in reason) {
+      map[r] = map.containsKey(r) ? map[r]! + 1 : 1;
+    }
+
+    return SplayTreeMap.from(map, (k1, k2) => map[k2]! > map[k1]! ? 1 : -1);
   }
 }
