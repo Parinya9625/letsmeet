@@ -1,6 +1,6 @@
 {
-    "name": "letsmeet",
-    "short_name": "letsmeet",
+    "name": "LetsMeet",
+    "short_name": "LetsMeet",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
