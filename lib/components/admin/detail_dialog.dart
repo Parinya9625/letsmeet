@@ -47,13 +47,15 @@ class _DetailDialogState extends State<DetailDialog> {
 
 class DetailDialogMenuButton extends StatefulWidget {
   final VoidCallback? onPressed;
-  final IconData icon;
+  final IconData? icon;
+  final Widget? child;
   final bool visible;
 
   const DetailDialogMenuButton({
     Key? key,
     this.onPressed,
-    required this.icon,
+    this.icon,
+    this.child,
     this.visible = true,
   }) : super(key: key);
 
@@ -69,17 +71,32 @@ class _DetailDialogMenuButtonState extends State<DetailDialogMenuButton> {
       child: Padding(
         padding: const EdgeInsets.all(4),
         child: SizedBox(
-          width: 48,
+          width: widget.child == null ? 48 : null,
           height: 48,
-          child: TextButton(
-            style: TextButton.styleFrom(
-              shape: const CircleBorder(),
-            ),
-            onPressed: widget.onPressed,
-            child: widget.icon.fontPackage == "font_awesome_flutter"
-                ? FaIcon(widget.icon)
-                : Icon(widget.icon),
-          ),
+          child: widget.child != null
+              ? TextButton(
+                  style: TextButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                  onPressed: widget.onPressed,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                    ),
+                    child: widget.child!,
+                  ),
+                )
+              : TextButton(
+                  style: TextButton.styleFrom(
+                    shape: const CircleBorder(),
+                  ),
+                  onPressed: widget.onPressed,
+                  child: widget.icon?.fontPackage == "font_awesome_flutter"
+                      ? FaIcon(widget.icon)
+                      : Icon(widget.icon),
+                ),
         ),
       ),
     );

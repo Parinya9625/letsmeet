@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/models/category.dart';
@@ -40,6 +41,16 @@ class UserRating {
     };
   }
 
+  Map<String, int> reverseMap() {
+    return {
+      "5": r5,
+      "4": r4,
+      "3": r3,
+      "2": r2,
+      "1": r1,
+    };
+  }
+
   int amount() {
     return r1 + r2 + r3 + r4 + r5;
   }
@@ -53,6 +64,14 @@ class UserRating {
       return 0;
     }
     return total() / amount();
+  }
+
+  int min() {
+    return [r1, r2, r3, r4, r5].reduce(math.min);
+  }
+
+  int max() {
+    return [r1, r2, r3, r4, r5].reduce(math.max);
   }
 }
 
