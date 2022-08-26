@@ -84,6 +84,7 @@ TextTheme webTextTheme = TextTheme(
   bodyText1: TextStyle(
     fontWeight: FontWeight.normal,
     color: _subtitle,
+    fontSize: 16,
   ),
 );
 
