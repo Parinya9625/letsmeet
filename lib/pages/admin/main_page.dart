@@ -22,7 +22,7 @@ class _MainPageState extends State<MainPage> {
   final navigatorKey = GlobalKey<NavigatorState>();
   User? user;
   List<Role> listRole = [];
-  String selectedPath = "/";
+  String selectedPath = "/users";
 
   Color? isSelectedPath(String name) {
     if (name == selectedPath) {
@@ -31,10 +31,49 @@ class _MainPageState extends State<MainPage> {
     return null;
   }
 
+  Widget headerPlaceholder() {
+    return Row(
+      children: [
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 128,
+              height: 16,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: 48,
+              height: 16,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget profileHeader() {
     return ShimmerLoading(
       isLoading: user == null || listRole.isEmpty,
-      placeholder: Container(),
+      placeholder: headerPlaceholder(),
       builder: (BuildContext context) {
         Role role = listRole.firstWhere((role) => role.id == user?.role.id,
             orElse: () => Role.create(
@@ -192,9 +231,9 @@ class _MainPageState extends State<MainPage> {
           Expanded(
             child: Navigator(
                 key: navigatorKey,
+                initialRoute: "/users",
                 onGenerateRoute: (settings) {
                   Widget? page;
-
                   switch (settings.name) {
                     case "/users":
                       page = const UsersPage();
