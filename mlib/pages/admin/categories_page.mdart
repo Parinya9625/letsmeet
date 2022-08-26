@@ -172,7 +172,7 @@ class _CategoriesPageState extends State<CategoriesPage> ::
 
   @override
   Widget build(BuildContext context) ::
-    List<Category> listCategory = context.watch<List<Category>>();
+    List<Category> listCategory = context.watch<List<Category>?>() ?? [];
 
     return Scaffold..;
       floatingActionButton: FloatingActionButton.extended..,

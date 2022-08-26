@@ -16,40 +16,37 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
-
-  void confirmRemoveCategory(BuildContext detailContext, Category category) async {
+  void confirmRemoveCategory(
+      BuildContext detailContext, Category category) async {
     showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text("Confirm remove category"),
-          content: Text('Are you sure you want to remove "${category.name}"'),
-          actions: [
-            TextButton(
-              child: const Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              }
-            ),
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: const Text("Confirm remove category"),
+            content: Text('Are you sure you want to remove "${category.name}"'),
+            actions: [
+              TextButton(
+                  child: const Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  }),
+              TextButton(
+                  child: const Text("Remove"),
+                  onPressed: () {
+                    context.read<CloudFirestoreService>().removeCategory(
+                          id: category.id!,
+                        );
 
-            TextButton(
-              child: const Text("Remove"),
-              onPressed: () {
-                context.read<CloudFirestoreService>().removeCategory(
-                  id: category.id!,
-                );
-
-                Navigator.pop(dialogContext);
-                Navigator.pop(detailContext);
-              }
-            ),
-          ],
-        );
-      }
-    );
+                    Navigator.pop(dialogContext);
+                    Navigator.pop(detailContext);
+                  }),
+            ],
+          );
+        });
   }
 
-  void categoryDialog({required Category category, bool addNewCategory = false}) {
+  void categoryDialog(
+      {required Category category, bool addNewCategory = false}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -57,15 +54,17 @@ class _CategoriesPageState extends State<CategoriesPage> {
         Category oldCategory = category;
         Category currentCategory = category;
 
-        IconsPickerController iconController = IconsPickerController(value: currentCategory.icon);
-        TextEditingController nameController = TextEditingController(text: currentCategory.name);
+        IconsPickerController iconController =
+            IconsPickerController(value: currentCategory.icon);
+        TextEditingController nameController =
+            TextEditingController(text: currentCategory.name);
 
         return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return DetailDialog(
-              width: 512,
-              menus: [
-                DetailDialogMenuButton(
+            builder: (BuildContext context, StateSetter setState) {
+          return DetailDialog(
+            width: 512,
+            menus: [
+              DetailDialogMenuButton(
                   icon: Icons.arrow_back_rounded,
                   visible: isEditing && !addNewCategory,
                   onPressed: () {
@@ -75,17 +74,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       iconController.value = currentCategory.icon;
                       nameController.text = currentCategory.name;
                     });
-                  }
+                  }),
+              Visibility(
+                visible: isEditing,
+                child: const Expanded(
+                  child: SizedBox(),
                 ),
-
-                Visibility(
-                  visible: isEditing,
-                  child: const Expanded(
-                    child: SizedBox(),
-                  ),
-                ),
-
-                DetailDialogMenuButton(
+              ),
+              DetailDialogMenuButton(
                   icon: Icons.done_rounded,
                   visible: isEditing && !addNewCategory,
                   onPressed: () {
@@ -98,103 +94,91 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       );
                       oldCategory = currentCategory;
                     });
+                  }),
+              DetailDialogMenuButton(
+                icon: Icons.save_rounded,
+                visible: !isEditing || addNewCategory,
+                onPressed: () {
+                  if (addNewCategory) {
+                    currentCategory = Category(
+                      id: category.id,
+                      name: nameController.text.trim(),
+                      icon: iconController.value!,
+                    );
+                    context.read<CloudFirestoreService>().addCategory(
+                          category: currentCategory,
+                        );
+                  } else {
+                    context.read<CloudFirestoreService>().updateCategory(
+                          id: currentCategory.id!,
+                          data: currentCategory.toMap(),
+                        );
                   }
-                ),
-
-                DetailDialogMenuButton(
-                  icon: Icons.save_rounded,
-                  visible: !isEditing || addNewCategory,
-                  onPressed: () {
-                    if (addNewCategory) {
-                      currentCategory = Category(
-                        id: category.id,
-                        name: nameController.text.trim(),
-                        icon: iconController.value!,
-                      );
-                      context.read<CloudFirestoreService>().addCategory(
-                        category: currentCategory,
-                      );
-                    }
-                    else {
-                      context.read<CloudFirestoreService>().updateCategory(
-                        id: currentCategory.id!,
-                        data: currentCategory.toMap(),
-                      );
-                    }
-                    Navigator.pop(context);
-                  },
-                ),
-
-                DetailDialogMenuButton(
+                  Navigator.pop(context);
+                },
+              ),
+              DetailDialogMenuButton(
                   icon: Icons.edit_rounded,
                   visible: !isEditing && !addNewCategory,
                   onPressed: () {
                     setState(() {
                       isEditing = true;
                     });
-                  }
+                  }),
+              DetailDialogMenuButton(
+                icon: Icons.delete_rounded,
+                visible: !isEditing && !addNewCategory,
+                onPressed: () {
+                  confirmRemoveCategory(context, category);
+                },
+              ),
+              DetailDialogMenuButton(
+                icon: Icons.close_rounded,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+            child: Row(
+              children: [
+                // icon
+                AbsorbPointer(
+                  absorbing: !isEditing,
+                  child: IconsPicker(
+                    controller: iconController,
+                  ),
                 ),
 
-                DetailDialogMenuButton(
-                  icon: Icons.delete_rounded,
-                  visible: !isEditing && !addNewCategory,
-                  onPressed: () {
-                    confirmRemoveCategory(context, category);
-                  },
-                ),
+                const SizedBox(width: 16),
 
-                DetailDialogMenuButton(
-                  icon: Icons.close_rounded,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                // name
+                Flexible(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Name",
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
+                      const SizedBox(height: 16),
+                      InputField(
+                        controller: nameController,
+                        elevation: 0,
+                        backgroundColor: Theme.of(context).disabledColor,
+                        readOnly: !isEditing,
+                        onChanged: (value) {
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
-
-              child: Row(
-                children: [
-                  // icon
-                  AbsorbPointer(
-                    absorbing: !isEditing,
-                    child: IconsPicker(
-                      controller: iconController,
-                    ),
-                  ),
-
-                  const SizedBox(width: 16),
-
-                  // name
-                  Flexible(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Name",
-                          style: Theme.of(context).textTheme.headline2,
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        InputField(
-                          controller: nameController,
-                          elevation: 0,
-                          backgroundColor: Theme.of(context).disabledColor,
-                          readOnly: !isEditing,
-                          onChanged: (value) {
-                            setState(() {
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-        );
+            ),
+          );
+        });
       },
     );
   }
@@ -235,7 +219,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Category> listCategory = context.watch<List<Category>>();
+    List<Category> listCategory = context.watch<List<Category>?>() ?? [];
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -267,9 +251,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 24),
-
               GridView.count(
                 shrinkWrap: true,
                 crossAxisCount: ResponsiveValue(
