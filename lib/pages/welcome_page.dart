@@ -8,16 +8,30 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  List<String> listBGImage = [
+    "lib/assets/images/welcome_bg_1.jpg",
+    "lib/assets/images/welcome_bg_2.jpg",
+    "lib/assets/images/welcome_bg_3.jpg",
+    "lib/assets/images/welcome_bg_4.jpg",
+    "lib/assets/images/welcome_bg_5.jpg",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    listBGImage.shuffle();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
           width: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-              // TODO:  Temp BG
-              image: AssetImage('lib/assets/images/WelcomeBG.png'),
+              image: AssetImage(listBGImage.first),
               fit: BoxFit.cover,
             ),
           ),
