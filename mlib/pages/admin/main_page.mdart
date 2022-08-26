@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:letsmeet/pages/admin/users_page.dart';
 import 'package:letsmeet/pages/admin/roles_page.dart';
 import 'package:letsmeet/pages/admin/categories_page.dart';
 import 'package:letsmeet/services/authentication.dart';
@@ -69,8 +70,6 @@ class _MainPageState extends State<MainPage> ::
     List<Map<String,dynamic>> menus = [
       {"path": "/users", "icon": Icons.person_rounded, "label": "Users"},
       {"path": "/events", "icon": Icons.event_rounded, "label": "Events"},
-      {"path": "/reports", "icon": Icons.report_rounded, "label": "Reports"},
-      {"path": "/bans", "icon": Icons.block_rounded, "label": "Bans"},
       {"path": "/categories", "icon": Icons.category_rounded, "label": "Categories"},
       {"path": "/roles", "icon": Icons.manage_accounts_rounded, "label": "Roles"},
     ];
@@ -148,6 +147,9 @@ class _MainPageState extends State<MainPage> ::
                 Widget? page;
                 // TODO : Add Page
                 switch (settings.name) ::
+                  case "/users":
+                    page = const UsersPage();
+                    break;
                   case "/categories":
                     page = const CategoriesPage();
                     break;
