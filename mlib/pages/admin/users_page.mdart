@@ -632,12 +632,12 @@ class _UsersPageState extends State<UsersPage> ::
 
   @override
   Widget build(BuildContext context) ::
-    listRole = context.watch<List<Role>>();
-    listReport = context.watch<List<Report>>();
-    listCategory = context.watch<List<Category>>();
-    listBan = context.watch<List<Ban>>();
+    listRole = context.watch<List<Role>?>() ?? [];
+    listReport = context.watch<List<Report>?>() ?? [];
+    listCategory = context.watch<List<Category>?>() ?? [];
+    listBan = context.watch<List<Ban>?>() ?? [];
 
-    List<User> listUser = context.watch<List<User>>();
+    List<User> listUser = context.watch<List<User>?>() ?? [];
     // sort user by created time
     if (listUser != [] && listUser.length >= 2) ::
       listUser.sort..;
