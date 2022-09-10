@@ -24,19 +24,27 @@ class UserProfilePage extends StatefulWidget {
 
 class _UserProfilePageState extends State<UserProfilePage>
     with SingleTickerProviderStateMixin {
-  List<Tab> tabName = const [
-    Tab(text: "My Events"),
-    Tab(text: "Joined Events"),
-  ];
+  int myEventsAmount = 0;
+  int joinedEventsAmount = 0;
+  List<Tab> tabName = [];
   TabController? tabController;
   late User user;
 
   @override
   void initState() {
+    updateTabName();
+
     tabController =
         TabController(initialIndex: 0, length: tabName.length, vsync: this);
 
     super.initState();
+  }
+
+  void updateTabName() {
+    tabName = [
+      Tab(text: "My Events ($myEventsAmount)"),
+      Tab(text: "Joined Events ($joinedEventsAmount)"),
+    ];
   }
 
   Widget tabPage({
@@ -269,10 +277,19 @@ class _UserProfilePageState extends State<UserProfilePage>
                       .where("owner", isEqualTo: user.toDocRef())
                       .snapshots()
                       .map(
-                        (events) => events.docs
-                            .map((doc) => Event.fromFirestore(doc: doc))
-                            .toList(),
-                      ),
+                    (events) {
+                      if (myEventsAmount != events.docs.length) {
+                        setState(() {
+                          myEventsAmount = events.docs.length;
+                          updateTabName();
+                        });
+                      }
+
+                      return events.docs
+                          .map((doc) => Event.fromFirestore(doc: doc))
+                          .toList();
+                    },
+                  ),
                 ),
                 eventTab(
                   id: "joinedEvent",
@@ -282,10 +299,19 @@ class _UserProfilePageState extends State<UserProfilePage>
                       .where("member", arrayContains: user.toDocRef())
                       .snapshots()
                       .map(
-                        (events) => events.docs
-                            .map((doc) => Event.fromFirestore(doc: doc))
-                            .toList(),
-                      ),
+                    (events) {
+                      if (joinedEventsAmount != events.docs.length) {
+                        setState(() {
+                          joinedEventsAmount = events.docs.length;
+                          updateTabName();
+                        });
+                      }
+
+                      return events.docs
+                          .map((doc) => Event.fromFirestore(doc: doc))
+                          .toList();
+                    },
+                  ),
                 ),
               ],
             ),
