@@ -164,42 +164,61 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text(
                   "Your Upcoming Events",
-                  style: Theme.of(context).textTheme.headline1,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20,
+                  ),
                 ).horizontalPadding(),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(
-                          parent: AlwaysScrollableScrollPhysics(),
-                        ),
-                        scrollDirection: Axis.horizontal,
-                        child: Wrap(
-                          spacing: 16,
-                          children: [
-                            const SizedBox(width: 16),
-                            ...listEvent.map((event) {
-                              return EventCard(
-                                isSmall: true,
-                                event: event,
-                                onPressed: () async {
-                                  await context
-                                      .read<GlobalKey<NavigatorState>>()
-                                      .currentState!
-                                      .pushNamed("/event", arguments: event);
-
-                                  setState(() {});
-                                },
-                              );
-                            }).toList(),
-                            const SizedBox(width: 16),
-                          ],
+                if (listEvent.length == 1) ...{
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                          ),
+                          child: eventCard(listEvent.first),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                } else ...{
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          scrollDirection: Axis.horizontal,
+                          child: Wrap(
+                            spacing: 16,
+                            children: [
+                              const SizedBox(width: 16),
+                              ...listEvent.map((event) {
+                                return EventCard(
+                                  isSmall: true,
+                                  event: event,
+                                  onPressed: () async {
+                                    await context
+                                        .read<GlobalKey<NavigatorState>>()
+                                        .currentState!
+                                        .pushNamed("/event", arguments: event);
+
+                                    setState(() {});
+                                  },
+                                );
+                              }).toList(),
+                              const SizedBox(width: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                },
               ],
             );
           },
@@ -233,44 +252,59 @@ class _HomePageState extends State<HomePage> {
                     style: Theme.of(context).textTheme.headline1,
                   ).horizontalPadding(),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(
-                            parent: AlwaysScrollableScrollPhysics(),
-                          ),
-                          scrollDirection: Axis.horizontal,
-                          child: Wrap(
-                            spacing: 16,
-                            children: [
-                              const SizedBox(width: 16),
-                              for (Event? event in listEvent) ...{
-                                if (event != null) ...{
-                                  EventCard(
-                                    isSmall: true,
-                                    event: event,
-                                    onPressed: () async {
-                                      await context
-                                          .read<GlobalKey<NavigatorState>>()
-                                          .currentState!
-                                          .pushNamed(
-                                            "/event",
-                                            arguments: event,
-                                          );
-
-                                      setState(() {});
-                                    },
-                                  ),
-                                },
-                              },
-                              const SizedBox(width: 16),
-                            ],
+                  if (listEvent.length == 1) ...{
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                            ),
+                            child: eventCard(listEvent.first!),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  } else ...{
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(
+                              parent: AlwaysScrollableScrollPhysics(),
+                            ),
+                            scrollDirection: Axis.horizontal,
+                            child: Wrap(
+                              spacing: 16,
+                              children: [
+                                const SizedBox(width: 16),
+                                for (Event? event in listEvent) ...{
+                                  if (event != null) ...{
+                                    EventCard(
+                                      isSmall: true,
+                                      event: event,
+                                      onPressed: () async {
+                                        await context
+                                            .read<GlobalKey<NavigatorState>>()
+                                            .currentState!
+                                            .pushNamed(
+                                              "/event",
+                                              arguments: event,
+                                            );
+
+                                        setState(() {});
+                                      },
+                                    ),
+                                  },
+                                },
+                                const SizedBox(width: 16),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  },
                 ],
               );
             },
@@ -340,28 +374,43 @@ class _HomePageState extends State<HomePage> {
                       ],
                     )).horizontalPadding(),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(
-                          parent: AlwaysScrollableScrollPhysics(),
-                        ),
-                        scrollDirection: Axis.horizontal,
-                        child: Wrap(
-                          spacing: 16,
-                          children: [
-                            const SizedBox(width: 16),
-                            ...listEvent.map((event) {
-                              return eventCard(event);
-                            }).toList(),
-                            const SizedBox(width: 16),
-                          ],
+                if (listEvent.length == 1) ...{
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                          ),
+                          child: eventCard(listEvent.first),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                } else ...{
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          scrollDirection: Axis.horizontal,
+                          child: Wrap(
+                            spacing: 16,
+                            children: [
+                              const SizedBox(width: 16),
+                              ...listEvent.map((event) {
+                                return eventCard(event);
+                              }).toList(),
+                              const SizedBox(width: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                },
               ],
             );
           },
