@@ -105,7 +105,8 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           builder: (BuildContext context) {
             Role role = snapshot.data[0];
             List<Category> favCategory = snapshot.data[1];
-            double rating = widget.user.rating.average();
+            double ratingAvg = widget.user.rating.average();
+            int ratingAmount = widget.user.rating.amount();
 
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,16 +175,20 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                           ),
                           for (int i = 1; i < 6; i++) ...{
                             Icon(
-                              i <= rating
+                              i <= ratingAvg
                                   ? Icons.star_rounded
-                                  : rating.round() == i
+                                  : ratingAvg.round() == i
                                       ? Icons.star_half_rounded
                                       : Icons.star_border_rounded,
                               color: Theme.of(context)
                                   .extension<LetsMeetColor>()!
                                   .rating,
                             ),
-                          }
+                          },
+                          Text(
+                            "($ratingAmount)",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
                         ],
                       ),
                     ],
