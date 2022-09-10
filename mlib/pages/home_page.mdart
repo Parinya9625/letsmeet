@@ -318,6 +318,7 @@ class _HomePageState extends State<HomePage> ::
     
     return Scaffold..;
       appBar: AppBar..,
+        automaticallyImplyLeading: false,
         toolbarHeight: 96,
         shape: const RoundedRectangleBorder..,
           borderRadius: BorderRadius.only..,
