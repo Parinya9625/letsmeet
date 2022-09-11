@@ -5,7 +5,9 @@ import 'package:letsmeet/components/no_event_banner.dart';
 import 'package:letsmeet/components/profile_header.dart';
 import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/event.dart';
+import 'package:letsmeet/models/report.dart';
 import 'package:letsmeet/models/user.dart';
+import 'package:letsmeet/services/firestore.dart';
 import 'package:provider/provider.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -181,6 +183,102 @@ class _UserProfilePageState extends State<UserProfilePage>
     );
   }
 
+  List<String> reportOption = [
+    "Suspicious or spam",
+    "They're pretending to be me or someone else",
+    "Often create fake event",
+  ]..sort();
+
+  Future<void> showReportDialog() {
+    int? selectedReport;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Report user"),
+              actions: [
+                TextButton(
+                  child: const Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  onPressed: selectedReport != null
+                      ? () {
+                          context.read<CloudFirestoreService>().addReport(
+                                report: Report.user(
+                                  id: user.id!,
+                                  reason: reportOption[selectedReport!],
+                                ),
+                              );
+                          Navigator.pop(context);
+                        }
+                      : null,
+                  child: const Text("Submit"),
+                ),
+              ],
+              contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (int i = 0; i < reportOption.length; i++) ...{
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      leading: Radio<int>(
+                        value: i,
+                        groupValue: selectedReport,
+                        onChanged: (int? value) {
+                          setState(() {
+                            selectedReport = value;
+                          });
+                        },
+                      ),
+                      title: Text(
+                        reportOption[i],
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.headline1!.color,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          selectedReport = i;
+                        });
+                      },
+                    ),
+                  }
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  PopupMenuItem<String> popupMenuItem(
+      {required IconData icons, required String title}) {
+    return PopupMenuItem<String>(
+      value: title,
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(
+          icons,
+          color: Theme.of(context).textTheme.headline1!.color,
+        ),
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.headline1,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,8 +315,30 @@ class _UserProfilePageState extends State<UserProfilePage>
                       NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                   sliver: SliverAppBar(
                     pinned: true,
-                    expandedHeight: 320,
+                    expandedHeight: widget.isOtherUser ? 240 : 320,
                     forceElevated: true,
+                    actions: [
+                      if (widget.isOtherUser) ...{
+                        PopupMenuButton(
+                          position: PopupMenuPosition.under,
+                          itemBuilder: (context) {
+                            return [
+                              popupMenuItem(
+                                icons: Icons.flag_rounded,
+                                title: "Report",
+                              ),
+                            ];
+                          },
+                          onSelected: (selected) {
+                            switch (selected) {
+                              case "Report":
+                                showReportDialog();
+                                break;
+                            }
+                          },
+                        ),
+                      },
+                    ],
                     title: LayoutBuilder(
                       builder: ((context, constraints) {
                         final FlexibleSpaceBarSettings? settings =
