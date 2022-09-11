@@ -105,7 +105,8 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           builder: (BuildContext context) {
             Role role = snapshot.data[0];
             List<Category> favCategory = snapshot.data[1];
-            double rating = widget.user.rating.average();
+            double ratingAvg = widget.user.rating.average();
+            int ratingAmount = widget.user.rating.amount();
 
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,16 +175,20 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                           ),
                           for (int i = 1; i < 6; i++) ...{
                             Icon(
-                              i <= rating
+                              i <= ratingAvg
                                   ? Icons.star_rounded
-                                  : rating.round() == i
+                                  : ratingAvg.round() == i
                                       ? Icons.star_half_rounded
                                       : Icons.star_border_rounded,
                               color: Theme.of(context)
                                   .extension<LetsMeetColor>()!
                                   .rating,
                             ),
-                          }
+                          },
+                          Text(
+                            "($ratingAmount)",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
                         ],
                       ),
                     ],
@@ -200,30 +205,14 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   Widget userMenu() {
     return Row(
       children: [
-        if (widget.isOtherUser) ...{
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                showReportDialog();
-              },
-              style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                    backgroundColor: MaterialStateProperty.all(
-                      Theme.of(context).errorColor,
-                    ),
-                  ),
-              child: const Text("REPORT"),
-            ),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: widget.onEditPressed,
+            child: const Text("EDIT PROFILE"),
           ),
-        } else ...{
-          Expanded(
-            child: ElevatedButton(
-              onPressed: widget.onEditPressed,
-              child: const Text("EDIT PROFILE"),
-            ),
-          ),
-          const SizedBox(width: 8),
-          popupMenu(),
-        }
+        ),
+        const SizedBox(width: 8),
+        popupMenu(),
       ],
     );
   }
@@ -282,84 +271,6 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     );
   }
 
-  List<String> reportOption = [
-    "Suspicious or spam",
-    "They're pretending to be me or someone else",
-    "Often create fake event",
-  ]..sort();
-
-  Future<void> showReportDialog() {
-    int? selectedReport;
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text("Report user"),
-              actions: [
-                TextButton(
-                  child: const Text("Cancel"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                TextButton(
-                  onPressed: selectedReport != null
-                      ? () {
-                          context.read<CloudFirestoreService>().addReport(
-                                report: Report.user(
-                                  id: widget.user.id!,
-                                  reason: reportOption[selectedReport!],
-                                ),
-                              );
-                          Navigator.pop(context);
-                        }
-                      : null,
-                  child: const Text("Submit"),
-                ),
-              ],
-              contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (int i = 0; i < reportOption.length; i++) ...{
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      leading: Radio<int>(
-                        value: i,
-                        groupValue: selectedReport,
-                        onChanged: (int? value) {
-                          setState(() {
-                            selectedReport = value;
-                          });
-                        },
-                      ),
-                      title: Text(
-                        reportOption[i],
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.headline1!.color,
-                        ),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          selectedReport = i;
-                        });
-                      },
-                    ),
-                  }
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -370,8 +281,10 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         children: [
           userData(),
           const SizedBox(height: 16),
-          userMenu(),
-          const SizedBox(height: 16),
+          if (!widget.isOtherUser) ...{
+            userMenu(),
+            const SizedBox(height: 16),
+          },
         ],
       ),
     );

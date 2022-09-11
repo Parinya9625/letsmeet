@@ -90,8 +90,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
     return !event.startTime.difference(DateTime.now()).isNegative &&
         event.member.length < event.maxMember &&
         !event.member.any((member) => member.id == context.read<User?>()!.id) &&
-        event.owner.id != context.read<User?>()!.id &&
-        (!event.ageRestrict || isUserOver20());
+        event.owner.id != context.read<User?>()!.id;
   }
 
   bool canReviewUser() {
@@ -1009,9 +1008,11 @@ class _ViewEventPageState extends State<ViewEventPage> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: () async {
-                                    joinEvent();
-                                  },
+                                  onPressed: (!event.ageRestrict || (event.ageRestrict && isUserOver20()))
+                                    ? () async {
+                                      joinEvent();
+                                    }
+                                    : null,
                                   child: const Text("JOIN"),
                                 ),
                               ),
