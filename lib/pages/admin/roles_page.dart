@@ -417,9 +417,10 @@ class _RolesPageState extends State<RolesPage> {
                 shrinkWrap: true,
                 crossAxisCount: ResponsiveValue(
                   context: context,
-                  small: 2,
-                  medium: 3,
-                  large: 5,
+                  small: 1,
+                  medium: 2,
+                  large: 3,
+                  extraLarge: 5,
                 ),
                 mainAxisSpacing: 8.0,
                 crossAxisSpacing: 8.0,
@@ -428,6 +429,7 @@ class _RolesPageState extends State<RolesPage> {
                   small: 3 / 1,
                   medium: 4 / 1,
                   large: 4 / 1,
+                  extraLarge: 4 / 1,
                 ),
                 children: [
                   for (Role role in listRole) ...{

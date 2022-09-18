@@ -779,7 +779,12 @@ class _UsersPageState extends State<UsersPage> {
     return Row(
       children: [
         Expanded(
-          flex: 3,
+          flex: ResponsiveValue(
+            context: context,
+            extraLarge: 3,
+            large: 3,
+            medium: 2,
+          ),
           child: Text(
             "Users",
             style: Theme.of(context).textTheme.headlineLarge,
@@ -787,7 +792,12 @@ class _UsersPageState extends State<UsersPage> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          flex: 1,
+          flex: ResponsiveValue(
+            context: context,
+            extraLarge: 1,
+            large: 2,
+            medium: 2,
+          ),
           child: Card(
             clipBehavior: Clip.antiAlias,
             child: DropdownButton(
@@ -905,16 +915,18 @@ class _UsersPageState extends State<UsersPage> {
                 crossAxisCount: ResponsiveValue(
                   context: context,
                   small: 1,
-                  medium: 2,
-                  large: 3,
+                  medium: 1,
+                  large: 2,
+                  extraLarge: 3,
                 ),
                 mainAxisSpacing: 8.0,
                 crossAxisSpacing: 8.0,
                 childAspectRatio: ResponsiveValue(
                   context: context,
                   small: 4 / 1,
-                  medium: 3 / 1,
+                  medium: 4 / 1,
                   large: 5 / 1,
+                  extraLarge: 5 / 1,
                 ),
                 children: [
                   for (User user in listUser) ...{
