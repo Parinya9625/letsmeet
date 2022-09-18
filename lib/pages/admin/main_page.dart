@@ -10,6 +10,7 @@ import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/components/badge.dart';
+import 'package:letsmeet/components/admin/responsive_layout.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -23,6 +24,17 @@ class _MainPageState extends State<MainPage> {
   User? user;
   List<Role> listRole = [];
   String selectedPath = "/users";
+  List<String> pathName = ["/users", "/events", "/categories", "/roles"];
+  List<Map<String, dynamic>> menus = [
+    {"path": "/users", "icon": Icons.person_rounded, "label": "Users"},
+    {"path": "/events", "icon": Icons.event_rounded, "label": "Events"},
+    {
+      "path": "/categories",
+      "icon": Icons.category_rounded,
+      "label": "Categories"
+    },
+    {"path": "/roles", "icon": Icons.manage_accounts_rounded, "label": "Roles"},
+  ];
 
   Color? isSelectedPath(String name) {
     if (name == selectedPath) {
@@ -123,21 +135,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   List<Widget> drawerMenu() {
-    List<Map<String, dynamic>> menus = [
-      {"path": "/users", "icon": Icons.person_rounded, "label": "Users"},
-      {"path": "/events", "icon": Icons.event_rounded, "label": "Events"},
-      {
-        "path": "/categories",
-        "icon": Icons.category_rounded,
-        "label": "Categories"
-      },
-      {
-        "path": "/roles",
-        "icon": Icons.manage_accounts_rounded,
-        "label": "Roles"
-      },
-    ];
-
     return menus
         .map(
           (menu) => drawerButton(
@@ -179,41 +176,117 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget appDrawer() {
-    return Drawer(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // user header
-            profileHeader(),
+    return ResponsiveLayout(
+      extraLarge: Drawer(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // user header
+              profileHeader(),
 
-            // menu
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 24,
-                ),
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    runSpacing: 16,
-                    children: drawerMenu(),
+              // menu
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 24,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Wrap(
+                      runSpacing: 16,
+                      children: drawerMenu(),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // sign out
-            drawerButton(
-              icon: Icons.logout_rounded,
-              label: "Sign out",
-              foregroundColor: Theme.of(context).errorColor,
-              onPressed: () {
-                context.read<AuthenticationService>().signOut();
-              },
-            ),
-          ],
+              // sign out
+              drawerButton(
+                icon: Icons.logout_rounded,
+                label: "Sign out",
+                foregroundColor: Theme.of(context).errorColor,
+                onPressed: () {
+                  context.read<AuthenticationService>().signOut();
+                },
+              ),
+            ],
+          ),
         ),
+      ),
+      medium: NavigationRail(
+        selectedIndex: pathName.indexOf(selectedPath),
+        labelType: NavigationRailLabelType.selected,
+        leading: ShimmerLoading(
+          isLoading: user == null,
+          placeholder: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8,
+            ),
+            child: Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.black,
+              ),
+            ),
+          ),
+          builder: (BuildContext context) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: user!.image.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: user!.image,
+                        fit: BoxFit.cover,
+                        width: 64,
+                        height: 64,
+                      )
+                    : null,
+              ),
+            );
+          },
+        ),
+        trailing: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 8,
+          ),
+          child: IconButton(
+            icon: Icon(Icons.logout_rounded),
+            color: Theme.of(context).errorColor,
+            onPressed: () {
+              context.read<AuthenticationService>().signOut();
+            },
+          ),
+        ),
+        onDestinationSelected: (int index) {
+          setState(() {
+            selectedPath = pathName[index];
+            navigatorKey.currentState!.pushNamed(pathName[index]);
+          });
+        },
+        destinations: menus
+            .map((menu) => NavigationRailDestination(
+                  icon: Icon(
+                    menu["icon"],
+                    color: Theme.of(context).textTheme.bodyText1!.color,
+                  ),
+                  selectedIcon: Icon(
+                    menu["icon"],
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  label: Text(
+                    menu["label"],
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
