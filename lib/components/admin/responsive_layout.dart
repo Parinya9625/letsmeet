@@ -6,13 +6,16 @@ dynamic ResponsiveValue({
   dynamic small,
   dynamic medium,
   dynamic large,
+  dynamic extraLarge,
 }) {
-  if (ResponsiveLayout.isLargeSize(context)) {
-    return large;
+  if (ResponsiveLayout.isExtraLargeSize(context)) {
+    return extraLarge;
+  } else if (ResponsiveLayout.isLargeSize(context)) {
+    return large ?? extraLarge;
   } else if (ResponsiveLayout.isMediumSize(context)) {
-    return medium ?? large;
+    return medium ?? large ?? extraLarge;
   } else if (ResponsiveLayout.isSmallSize(context)) {
-    return small ?? medium ?? large;
+    return small ?? medium ?? large ?? extraLarge;
   }
 }
 
@@ -20,6 +23,7 @@ class ResponsiveLayout extends StatelessWidget {
   final Widget? small;
   final Widget? medium;
   final Widget? large;
+  final Widget? extraLarge;
   final bool autoUseLargerSize;
 
   const ResponsiveLayout({
@@ -27,6 +31,7 @@ class ResponsiveLayout extends StatelessWidget {
     this.small,
     this.medium,
     this.large,
+    this.extraLarge,
     this.autoUseLargerSize = true,
   }) : super(key: key);
 
@@ -40,7 +45,12 @@ class ResponsiveLayout extends StatelessWidget {
   }
 
   static bool isLargeSize(BuildContext context) {
-    return MediaQuery.of(context).size.width > 1024;
+    return MediaQuery.of(context).size.width > 1024 &&
+        MediaQuery.of(context).size.width < 1440;
+  }
+
+  static bool isExtraLargeSize(BuildContext context) {
+    return MediaQuery.of(context).size.width >= 1440;
   }
 
   Widget placeholder() {
@@ -52,14 +62,18 @@ class ResponsiveLayout extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         if (autoUseLargerSize) {
-          if (isLargeSize(context)) {
-            return large ?? placeholder();
+          if (isExtraLargeSize(context)) {
+            return extraLarge ?? placeholder();
+          } else if (isLargeSize(context)) {
+            return large ?? extraLarge ?? placeholder();
           } else if (isMediumSize(context)) {
-            return medium ?? large ?? placeholder();
+            return medium ?? large ?? extraLarge ?? placeholder();
           }
-          return small ?? medium ?? large ?? placeholder();
+          return small ?? medium ?? large ?? extraLarge ?? placeholder();
         } else {
-          if (isLargeSize(context)) {
+          if (isExtraLargeSize(context)) {
+            return extraLarge ?? placeholder();
+          } else if (isLargeSize(context)) {
             return large ?? placeholder();
           } else if (isMediumSize(context)) {
             return medium ?? placeholder();
