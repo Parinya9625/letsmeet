@@ -575,7 +575,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                   onPressed: () {
                     Navigator.pop(dialogContext);
                   }),
-              TextButton(
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).errorColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
                   child: const Text("Kick"),
                   onPressed: () async {
                     Navigator.pop(dialogContext);
@@ -612,7 +617,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 onPressed: () {
                   Navigator.pop(dialogContext);
                 }),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).errorColor,
+                padding: const EdgeInsets.all(0),
+                elevation: 0,
+              ),
               child: const Text("Leave"),
               onPressed: () async {
                 Navigator.pop(dialogContext);

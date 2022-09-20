@@ -138,7 +138,12 @@ class _ViewEventPageState extends State<ViewEventPage> {
                 Navigator.pop(dialogContext);
               },
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).errorColor,
+                padding: const EdgeInsets.all(0),
+                elevation: 0,
+              ),
               child: const Text("Leave"),
               onPressed: () async {
                 Navigator.pop(dialogContext);
@@ -171,7 +176,12 @@ class _ViewEventPageState extends State<ViewEventPage> {
                 Navigator.pop(dialogContext);
               },
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).errorColor,
+                padding: const EdgeInsets.all(0),
+                elevation: 0,
+              ),
               child: const Text("Close"),
               onPressed: () async {
                 Navigator.pop(dialogContext);
@@ -206,7 +216,12 @@ class _ViewEventPageState extends State<ViewEventPage> {
                 Navigator.pop(dialogContext);
               },
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).errorColor,
+                padding: const EdgeInsets.all(0),
+                elevation: 0,
+              ),
               child: const Text("Kick"),
               onPressed: () async {
                 Navigator.pop(dialogContext);
@@ -261,7 +276,12 @@ class _ViewEventPageState extends State<ViewEventPage> {
                     Navigator.pop(context);
                   },
                 ),
-                TextButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).errorColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
                   onPressed: selectedReport != null
                       ? () {
                           context.read<CloudFirestoreService>().addReport(
@@ -347,7 +367,12 @@ class _ViewEventPageState extends State<ViewEventPage> {
                     Navigator.pop(context);
                   },
                 ),
-                TextButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).errorColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
                   onPressed: selectedReport != null
                       ? () {
                           context.read<CloudFirestoreService>().addReport(
@@ -1008,11 +1033,12 @@ class _ViewEventPageState extends State<ViewEventPage> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: (!event.ageRestrict || (event.ageRestrict && isUserOver20()))
-                                    ? () async {
-                                      joinEvent();
-                                    }
-                                    : null,
+                                  onPressed: (!event.ageRestrict ||
+                                          (event.ageRestrict && isUserOver20()))
+                                      ? () async {
+                                          joinEvent();
+                                        }
+                                      : null,
                                   child: const Text("JOIN"),
                                 ),
                               ),
