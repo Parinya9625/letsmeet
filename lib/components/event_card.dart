@@ -57,7 +57,12 @@ class _EventCardState extends State<EventCard> {
                     Navigator.pop(context);
                   },
                 ),
-                TextButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).errorColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
                   onPressed: selectedReport != null
                       ? () {
                           context.read<CloudFirestoreService>().addReport(
