@@ -32,7 +32,12 @@ class _RolesPageState extends State<RolesPage> {
                 Navigator.pop(dialogContext);
               },
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).errorColor,
+                padding: const EdgeInsets.all(0),
+                elevation: 0,
+              ),
               child: const Text("Remove"),
               onPressed: () {
                 context.read<CloudFirestoreService>().removeRole(

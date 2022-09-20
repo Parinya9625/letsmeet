@@ -52,7 +52,12 @@ class _UsersPageState extends State<UsersPage> {
                   onPressed: () {
                     Navigator.pop(dialogContext);
                   }),
-              TextButton(
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).errorColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
                   child: const Text("Confirm"),
                   onPressed: () {
                     context.read<CloudFirestoreService>().removeReport(
@@ -111,7 +116,12 @@ class _UsersPageState extends State<UsersPage> {
                   onPressed: () {
                     Navigator.pop(dialogContext);
                   }),
-              TextButton(
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).errorColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
                   child: const Text("Ban"),
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
@@ -149,7 +159,12 @@ class _UsersPageState extends State<UsersPage> {
                   onPressed: () {
                     Navigator.pop(dialogContext);
                   }),
-              TextButton(
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).errorColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
                   child: const Text("Unban"),
                   onPressed: () {
                     context.read<CloudFirestoreService>().removeBan(
