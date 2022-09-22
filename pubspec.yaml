@@ -60,6 +60,7 @@ dependencies:
   url_launcher: ^6.1.5
   shared_preferences: ^2.0.15
   flutter_colorpicker: ^1.0.3
+  flutter_launcher_icons: ^0.10.0
 
 dev_dependencies:
   flutter_test:
@@ -113,3 +114,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_icons:
+  image_path: "lib/assets/images/icon/letsmeet-icon.png"
+  adaptive_icon_background: "lib/assets/images/icon/letsmeet-icon-background.png"
+  adaptive_icon_foreground: "lib/assets/images/icon/letsmeet-icon-foreground.png"
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "lib/assets/images/icon/letsmeet-icon.png"
+    background_color: "#00A0B9"
+    theme_color: "#00A0B9"
+  
