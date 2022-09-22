@@ -40,8 +40,14 @@ class _WelcomePageState extends State<WelcomePage> {
             child: Column(
               children: [
                 const Spacer(),
-                // TODO: Temp App logo
-                Image.asset('lib/assets/images/google_icon.png'),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    'lib/assets/images/icon/letsmeet-icon.png',
+                    width: 128,
+                    height: 128,
+                  ),
+                ),
                 const Spacer(flex: 3),
                 Row(
                   children: [

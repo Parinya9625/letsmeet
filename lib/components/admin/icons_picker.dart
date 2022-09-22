@@ -124,7 +124,7 @@ class _IconsPickerState extends State<IconsPicker> {
                         Navigator.pop(context);
                       },
                       style: TextButton.styleFrom(
-                        primary: Theme.of(context).iconTheme.color,
+                        foregroundColor: Theme.of(context).iconTheme.color,
                       ),
                       child: icon.fontPackage == "font_awesome_flutter"
                           ? FaIcon(icon)
