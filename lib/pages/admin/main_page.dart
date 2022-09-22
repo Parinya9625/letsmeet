@@ -161,7 +161,7 @@ class _MainPageState extends State<MainPage> {
     return TextButton(
       style: TextButton.styleFrom(
         padding: const EdgeInsets.all(24),
-        primary:
+        foregroundColor:
             foregroundColor ?? Theme.of(context).textTheme.bodyText1!.color,
       ),
       onPressed: onPressed,
