@@ -69,14 +69,17 @@ class Role {
 
 class UserPermission {
   final bool isAdmin;
+  final bool isDeveloper;
 
   UserPermission({
     this.isAdmin = false,
+    this.isDeveloper = false,
   });
 
   factory UserPermission.fromMap({required Map<String, dynamic> map}) {
     return UserPermission(
       isAdmin: map["isAdmin"] ?? false,
+      isDeveloper: map["isDeveloper"] ?? false,
     );
   }
 

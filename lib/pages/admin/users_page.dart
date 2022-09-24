@@ -183,6 +183,9 @@ class _UsersPageState extends State<UsersPage> {
     showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
+          User currentUser = context.read<User?>()!;
+          int cupLevel = getPermissionLevel(getRole(currentUser.role.id));
+
           return DetailDialog(
             width: 512,
             menus: [
@@ -201,19 +204,21 @@ class _UsersPageState extends State<UsersPage> {
               childAspectRatio: 2 / 1,
               children: [
                 for (Role role in listRole) ...{
-                  GestureDetector(
-                    onTap: () {
-                      context
-                          .read<CloudFirestoreService>()
-                          .updateUser(id: user.id!, data: {
-                        "role": role.toDocRef(),
-                      });
+                  if (cupLevel <= getPermissionLevel(role)) ...{
+                    GestureDetector(
+                      onTap: () {
+                        context
+                            .read<CloudFirestoreService>()
+                            .updateUser(id: user.id!, data: {
+                          "role": role.toDocRef(),
+                        });
 
-                      Navigator.pop(dialogContext);
-                      Navigator.pop(detailContext);
-                    },
-                    child: roleCard(role),
-                  ),
+                        Navigator.pop(dialogContext);
+                        Navigator.pop(detailContext);
+                      },
+                      child: roleCard(role),
+                    ),
+                  },
                 },
               ],
             ),
@@ -253,6 +258,16 @@ class _UsersPageState extends State<UsersPage> {
     return listBan.firstWhereOrNull(
       (ban) => ban.id == id,
     );
+  }
+
+  int getPermissionLevel(Role role) {
+    int permissionLevel = role.permission.isDeveloper
+        ? 0
+        : role.permission.isAdmin
+            ? 1
+            : 999;
+
+    return permissionLevel;
   }
 
   Widget roleCard(Role role) {
@@ -643,12 +658,21 @@ class _UsersPageState extends State<UsersPage> {
         Report? isReported = getReport(user.id!);
         Ban? isBaned = getBan(user.id!);
 
+        // Current login user
+        User currentUser = context.read<User?>()!;
+        Role cuRole = getRole(currentUser.role.id);
+        int cupLevel = getPermissionLevel(cuRole);
+
+        // User in dialog
+        Role uRole = getRole(user.role.id);
+        int upLevel = getPermissionLevel(uRole);
+
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return DetailDialog(
               width: 512 + 256 + 128,
               menus: [
-                if (isBaned == null) ...{
+                if (isBaned == null && cupLevel <= upLevel) ...{
                   DetailDialogMenuButton(
                     child: Row(
                       children: const [
@@ -690,18 +714,20 @@ class _UsersPageState extends State<UsersPage> {
                     },
                   ),
                 } else ...{
-                  DetailDialogMenuButton(
-                    child: Row(
-                      children: const [
-                        Icon(Icons.block_rounded),
-                        SizedBox(width: 16),
-                        Text("Ban"),
-                      ],
+                  if (cupLevel <= upLevel) ...{
+                    DetailDialogMenuButton(
+                      child: Row(
+                        children: const [
+                          Icon(Icons.block_rounded),
+                          SizedBox(width: 16),
+                          Text("Ban"),
+                        ],
+                      ),
+                      onPressed: () {
+                        confirmBanUser(context, user);
+                      },
                     ),
-                    onPressed: () {
-                      confirmBanUser(context, user);
-                    },
-                  ),
+                  },
                 },
                 DetailDialogMenuButton(
                   icon: Icons.close_rounded,

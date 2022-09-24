@@ -127,6 +127,8 @@ class _RolesPageState extends State<RolesPage> {
         Color backgroundColor = currentRole.backgroundColor;
         CheckboxTileController isAdminController =
             CheckboxTileController(value: currentRole.permission.isAdmin);
+        CheckboxTileController isDeveloperController =
+            CheckboxTileController(value: currentRole.permission.isDeveloper);
 
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -145,6 +147,8 @@ class _RolesPageState extends State<RolesPage> {
                       foregroundColor = currentRole.foregroundColor;
                       backgroundColor = currentRole.backgroundColor;
                       isAdminController.value = currentRole.permission.isAdmin;
+                      isDeveloperController.value =
+                          currentRole.permission.isDeveloper;
                     });
                   }),
               Visibility(
@@ -166,6 +170,7 @@ class _RolesPageState extends State<RolesPage> {
                         backgroundColor: backgroundColor,
                         permission: UserPermission(
                           isAdmin: isAdminController.value ?? false,
+                          isDeveloper: isDeveloperController.value ?? false,
                         ),
                       );
                       oldRole = currentRole;
@@ -183,6 +188,7 @@ class _RolesPageState extends State<RolesPage> {
                       backgroundColor: backgroundColor,
                       permission: UserPermission(
                         isAdmin: isAdminController.value ?? false,
+                        isDeveloper: isDeveloperController.value ?? false,
                       ),
                     );
                     context.read<CloudFirestoreService>().addRole(
@@ -209,7 +215,7 @@ class _RolesPageState extends State<RolesPage> {
                 icon: Icons.delete_rounded,
                 visible: !isEditing &&
                     !addNewRole &&
-                    !["user", "admin"].contains(role.id),
+                    !["user", "admin", "developer"].contains(role.id),
                 onPressed: () {
                   confirmRemoveRole(context, role);
                 },
@@ -347,6 +353,11 @@ class _RolesPageState extends State<RolesPage> {
                         controller: isAdminController,
                         elevation: 0,
                         title: const Text("isAdmin"),
+                      ),
+                      CheckboxTile(
+                        controller: isDeveloperController,
+                        elevation: 0,
+                        title: const Text("isDeveloper"),
                       ),
                     ],
                   ),
