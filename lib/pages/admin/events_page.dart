@@ -69,7 +69,7 @@ class _EventsPageState extends State<EventsPage> {
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).errorColor,
-                    padding: const EdgeInsets.all(0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     elevation: 0,
                   ),
                   child: const Text("Confirm"),
@@ -102,7 +102,7 @@ class _EventsPageState extends State<EventsPage> {
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).errorColor,
-                    padding: const EdgeInsets.all(0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     elevation: 0,
                   ),
                   child: const Text("Confirm"),
