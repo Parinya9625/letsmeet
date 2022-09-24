@@ -524,19 +524,21 @@ class _ViewEventPageState extends State<ViewEventPage> {
                     },
                   ),
                 },
-                IconButton(
-                  icon: const FaIcon(FontAwesomeIcons.comment),
-                  tooltip: "Chat",
-                  onPressed: () {
-                    context
-                        .read<GlobalKey<NavigatorState>>()
-                        .currentState!
-                        .pushNamed(
-                          "/event/chat",
-                          arguments: event,
-                        );
-                  },
-                ),
+                if (event.member.any((member) => member.id == user!.id)) ...{
+                  IconButton(
+                    icon: const FaIcon(FontAwesomeIcons.comment),
+                    tooltip: "Chat",
+                    onPressed: () {
+                      context
+                          .read<GlobalKey<NavigatorState>>()
+                          .currentState!
+                          .pushNamed(
+                            "/event/chat",
+                            arguments: event,
+                          );
+                    },
+                  ),
+                },
                 PopupMenuButton(
                   position: PopupMenuPosition.under,
                   itemBuilder: (context) {
@@ -756,41 +758,55 @@ class _ViewEventPageState extends State<ViewEventPage> {
                             ),
                           ),
                         },
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          runSpacing: 16,
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.calendar_month_rounded,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .headline1!
-                                      .color,
+                            Icon(
+                              Icons.calendar_month_rounded,
+                              color:
+                                  Theme.of(context).textTheme.headline1!.color,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  "Date",
+                                  style: Theme.of(context).textTheme.headline1,
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: Text(
-                                      "Date & Time",
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                             Text(
-                              DateFormat("EEEE, dd MMMM y • HH:mm")
+                              DateFormat("EEEE, dd MMMM y")
                                   .format(event.startTime),
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ],
                         ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.schedule_rounded,
+                              color:
+                                  Theme.of(context).textTheme.headline1!.color,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  "Time",
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              DateFormat("HH:mm").format(event.startTime),
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          ],
+                        ),
                         Wrap(
-                          alignment: WrapAlignment.center,
+                          alignment: WrapAlignment.start,
                           runSpacing: 16,
                           children: [
                             Row(
@@ -815,41 +831,39 @@ class _ViewEventPageState extends State<ViewEventPage> {
                                 ),
                               ],
                             ),
-                            Text(
-                              event.description,
-                              style: Theme.of(context).textTheme.bodyText1,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Text(
+                                event.description,
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
                             ),
                           ],
                         ),
                         if (event.type == "Online" &&
                             event.member
                                 .any((member) => member.id == user!.id)) ...{
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            runSpacing: 16,
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.language_rounded,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headline1!
-                                        .color,
+                              Icon(
+                                Icons.language_rounded,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .color,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Text(
+                                    "Link",
+                                    style:
+                                        Theme.of(context).textTheme.headline1,
                                   ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16),
-                                      child: Text(
-                                        "Link",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                               GestureDetector(
                                 onTap: () async {
@@ -867,14 +881,31 @@ class _ViewEventPageState extends State<ViewEventPage> {
                                     );
                                   }
                                 },
-                                child: Text(
-                                  event.location.link!,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline3!
-                                      .copyWith(
-                                          decoration: TextDecoration.underline),
+                                child: Tooltip(
+                                  message: event.location.link!,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.open_in_new_rounded,
+                                        size: 18,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .headline3!
+                                            .color,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "Open in Browser",
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline3!
+                                            .copyWith(
+                                                decoration:
+                                                    TextDecoration.underline),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
