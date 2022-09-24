@@ -187,7 +187,7 @@ class _UsersPageState extends State<UsersPage> {
           int cupLevel = getPermissionLevel(getRole(currentUser.role.id));
 
           return DetailDialog(
-            width: 512,
+            width: 512 + 128,
             menus: [
               DetailDialogMenuButton(
                 icon: Icons.close_rounded,
@@ -201,7 +201,7 @@ class _UsersPageState extends State<UsersPage> {
               crossAxisCount: 3,
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
-              childAspectRatio: 2 / 1,
+              childAspectRatio: 3 / 1,
               children: [
                 for (Role role in listRole) ...{
                   if (cupLevel <= getPermissionLevel(role)) ...{
