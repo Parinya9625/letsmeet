@@ -293,11 +293,13 @@ class _RolesPageState extends State<RolesPage> ::
                         const SizedBox(height: 16),
 
                         CheckboxTile..,
+                          disable: ["user", "admin", "developer"].contains(role.id),
                           controller: isAdminController,
                           elevation: 0,
                           title: const Text("isAdmin"),
 
                         CheckboxTile..,
+                          disable: ["user", "admin", "developer"].contains(role.id),
                           controller: isDeveloperController,
                           elevation: 0,
                           title: const Text("isDeveloper"),

@@ -6,6 +6,7 @@ class CheckboxTile extends StatefulWidget {
   final Widget? title;
   final String? errorText;
   final double? elevation;
+  final bool disable;
 
   const CheckboxTile({
     Key? key,
@@ -13,6 +14,7 @@ class CheckboxTile extends StatefulWidget {
     this.title,
     this.errorText,
     this.elevation,
+    this.disable = false,
   }) : super(key: key);
 
   @override
@@ -35,12 +37,14 @@ class CheckboxTileState extends State<CheckboxTile> {
       elevation: widget.elevation,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          setState(() {
-            _isValid = true;
-            widget.controller.value = !widget.controller.value!;
-          });
-        },
+        onTap: widget.disable
+            ? null
+            : () {
+                setState(() {
+                  _isValid = true;
+                  widget.controller.value = !widget.controller.value!;
+                });
+              },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -54,16 +58,21 @@ class CheckboxTileState extends State<CheckboxTile> {
                     visualDensity:
                         const VisualDensity(vertical: -2, horizontal: -2),
                     value: widget.controller.value,
-                    onChanged: (value) {
-                      setState(() {
-                        _isValid = true;
-                        widget.controller.value = value;
-                      });
-                    },
-                    fillColor: !_isValid
+                    onChanged: widget.disable
+                        ? null
+                        : (value) {
+                            setState(() {
+                              _isValid = true;
+                              widget.controller.value = value;
+                            });
+                          },
+                    fillColor: widget.disable
                         ? MaterialStateProperty.all(
-                            Theme.of(context).errorColor)
-                        : null,
+                            Theme.of(context).disabledColor)
+                        : !_isValid
+                            ? MaterialStateProperty.all(
+                                Theme.of(context).errorColor)
+                            : null,
                   ),
                   Expanded(
                     child: Padding(
