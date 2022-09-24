@@ -13,11 +13,13 @@ import 'package:provider/provider.dart';
 class UserProfilePage extends StatefulWidget {
   final String userId;
   final bool isOtherUser;
+  final bool automaticallyImplyLeading;
 
   const UserProfilePage({
     Key? key,
     required this.isOtherUser,
     required this.userId,
+    this.automaticallyImplyLeading = true,
   }) : super(key: key);
 
   @override
@@ -322,6 +324,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                     pinned: true,
                     expandedHeight: widget.isOtherUser ? 240 : 320,
                     forceElevated: true,
+                    automaticallyImplyLeading: widget.automaticallyImplyLeading,
                     actions: [
                       if (widget.isOtherUser) ...{
                         PopupMenuButton(

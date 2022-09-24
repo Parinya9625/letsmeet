@@ -140,8 +140,11 @@ class _MainPageState extends State<MainPage> {
                     });
                     break;
                   case "/profile":
-                    page =
-                        UserProfilePage(userId: user!.id!, isOtherUser: false);
+                    page = UserProfilePage(
+                      userId: user!.id!,
+                      isOtherUser: false,
+                      automaticallyImplyLeading: false,
+                    );
                     setState(() {
                       selectedPath = settings.name!;
                     });
