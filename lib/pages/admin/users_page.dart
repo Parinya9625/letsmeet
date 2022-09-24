@@ -580,9 +580,18 @@ class _UsersPageState extends State<UsersPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    reason.key,
-                    style: Theme.of(context).textTheme.headline2,
+                  Row(
+                    children: [
+                      Text(
+                        reason.key,
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
+                      const Spacer(),
+                      Text(
+                        "${reason.value}",
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   ClipRRect(
