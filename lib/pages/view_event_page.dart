@@ -729,6 +729,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
                           ),
                           const SizedBox(height: 16),
                           Material(
+                            color: Theme.of(context).cardColor,
                             elevation: 2,
                             borderRadius: BorderRadius.circular(16),
                             clipBehavior: Clip.antiAlias,

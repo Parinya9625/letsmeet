@@ -322,7 +322,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                       NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                   sliver: SliverAppBar(
                     pinned: true,
-                    expandedHeight: widget.isOtherUser ? 240 : 320,
+                    expandedHeight: widget.isOtherUser ? 280 : 320,
                     forceElevated: true,
                     automaticallyImplyLeading: widget.automaticallyImplyLeading,
                     actions: [

@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:letsmeet/components/badge.dart';
 import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/category.dart';
-import 'package:letsmeet/models/report.dart';
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/models/user.dart';
-import 'package:collection/collection.dart';
 import 'package:letsmeet/services/authentication.dart';
-import 'package:letsmeet/services/firestore.dart';
+import 'package:letsmeet/services/theme_provider.dart';
 import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
 
@@ -32,6 +30,7 @@ class ProfileHeader extends StatefulWidget {
 
 enum _PopupMenuValue {
   signout,
+  chooseTheme,
 }
 
 class _ProfileHeaderState extends State<ProfileHeader> {
@@ -148,10 +147,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 6),
-                      Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 8,
-                        runSpacing: 8,
+                      Row(
                         children: [
                           if (favCategory.isNotEmpty) ...{
                             Text(
@@ -159,9 +155,20 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                               style: Theme.of(context).textTheme.headline2,
                             ),
                           },
-                          for (Category category in favCategory) ...{
-                            Icon(category.icon),
-                          }
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (Category category in favCategory) ...{
+                                    Icon(category.icon),
+                                    const SizedBox(width: 8),
+                                  }
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 6),
@@ -217,6 +224,78 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     );
   }
 
+  void chooseThemeDialog() async {
+    List themes = [
+      {"title": "Light", "value": ThemeMode.light},
+      {"title": "Dark", "value": ThemeMode.dark},
+      {"title": "System default", "value": ThemeMode.system},
+    ];
+    ThemeProvider themeProvider = context.read<ThemeProvider>();
+    ThemeMode? selectedThemeMode = themeProvider.mode;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Choose theme"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...themes.map((theme) {
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      leading: Radio<ThemeMode>(
+                        value: theme["value"],
+                        groupValue: selectedThemeMode,
+                        onChanged: (ThemeMode? mode) {
+                          setState(() {
+                            selectedThemeMode = mode;
+                          });
+                        },
+                      ),
+                      title: Text(theme["title"]),
+                      onTap: () {
+                        setState(() {
+                          selectedThemeMode = theme["value"];
+                        });
+                      },
+                    );
+                  }).toList(),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  child: const Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
+                  child: const Text("Ok"),
+                  onPressed: () async {
+                    themeProvider.mode = selectedThemeMode!;
+
+                    Navigator.pop(dialogContext);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget popupMenu() {
     GlobalKey<PopupMenuButtonState<_PopupMenuValue>> key = GlobalKey();
 
@@ -224,6 +303,20 @@ class _ProfileHeaderState extends State<ProfileHeader> {
       key: key,
       position: PopupMenuPosition.under,
       itemBuilder: (context) => [
+        PopupMenuItem(
+          value: _PopupMenuValue.chooseTheme,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              Icons.palette_rounded,
+              color: Theme.of(context).textTheme.headline1!.color,
+            ),
+            title: Text(
+              "Choose theme",
+              style: Theme.of(context).textTheme.headline1,
+            ),
+          ),
+        ),
         PopupMenuItem(
           value: _PopupMenuValue.signout,
           child: ListTile(
@@ -247,6 +340,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             {
               context.read<AuthenticationService>().signOut();
             }
+            break;
+          case _PopupMenuValue.chooseTheme:
+            chooseThemeDialog();
             break;
         }
       },

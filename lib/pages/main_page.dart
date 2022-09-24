@@ -54,6 +54,7 @@ class _MainPageState extends State<MainPage> {
           bottomNavigationBar: Visibility(
             visible: isShowBottomNav,
             child: BottomAppBar(
+              color: Theme.of(context).cardColor,
               shape: const CircularNotchedRectangle(),
               notchMargin: 6,
               child: Padding(

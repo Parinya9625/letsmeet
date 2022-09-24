@@ -93,6 +93,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
       bool isSelected = false,
     }) {
       return Material(
+        color: Theme.of(context).cardColor,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: onPressed,
@@ -151,6 +152,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
       bool isSelected = false,
     }) {
       return Material(
+        color: Theme.of(context).cardColor,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: onPressed,
@@ -238,7 +240,8 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
     if (selectedTime != null) {
       setState(() {
         time = selectedTime;
-        timeController.text = "${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}";
+        timeController.text =
+            "${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}";
       });
     }
   }
@@ -563,7 +566,8 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                                     Expanded(
                                       child: SingleChildScrollView(
                                         physics: const BouncingScrollPhysics(
-                                          parent: AlwaysScrollableScrollPhysics(),
+                                          parent:
+                                              AlwaysScrollableScrollPhysics(),
                                         ),
                                         scrollDirection: Axis.horizontal,
                                         child: Wrap(

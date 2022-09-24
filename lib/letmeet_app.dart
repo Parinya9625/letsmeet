@@ -24,6 +24,7 @@ import 'package:letsmeet/pages/welcome_page.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/services/storage.dart';
+import 'package:letsmeet/services/theme_provider.dart';
 import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -39,11 +40,12 @@ class LetsMeetApp extends StatefulWidget {
   State<LetsMeetApp> createState() => _LetsMeetAppState();
 }
 
-class _LetsMeetAppState extends State<LetsMeetApp> {
+class _LetsMeetAppState extends State<LetsMeetApp> with WidgetsBindingObserver {
   late StreamSubscription<User?> streamUserAuthState;
   final navigatorKey = GlobalKey<NavigatorState>();
   final scaffoldMessangerKey = GlobalKey<ScaffoldMessengerState>();
   List<SingleChildWidget> afterAuthProviders = [];
+  bool isLightMode = true;
 
   showBanDialog(Ban ban) {
     scaffoldMessangerKey.currentState!.showMaterialBanner(
@@ -96,6 +98,11 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
 
   @override
   void initState() {
+    // System light / dark mode
+    WidgetsBinding.instance.addObserver(this);
+    isLightMode =
+        WidgetsBinding.instance.window.platformBrightness == Brightness.light;
+
     // Check if user login and update page to user state
     streamUserAuthState = FirebaseAuth.instance.authStateChanges().listen(
       (user) async {
@@ -210,8 +217,19 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
   @override
   void dispose() {
     streamUserAuthState.cancel();
-
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    if (mounted) {
+      setState(() {
+        isLightMode = WidgetsBinding.instance.window.platformBrightness ==
+            Brightness.light;
+      });
+    }
+    super.didChangePlatformBrightness();
   }
 
   @override
@@ -237,60 +255,92 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
           create: (_) => navigatorKey,
         ),
       ],
-      child: Shimmer(
-        child: MaterialApp(
-          navigatorKey: navigatorKey,
-          scaffoldMessengerKey: scaffoldMessangerKey,
-          title: 'LetsMeet',
-          theme: lightTheme,
-          routes: {
-            "/startup": (context) => const LoadingPage(),
-            "/welcome": (context) => const WelcomePage(),
-            "/signup": (context) => const SignUpPage(),
-            "/signup/tos": (context) => const TOSPage(),
-            "/signup/setup": (context) => const SetupProfilePage(),
-            "/signin": (context) => const SignInPage(),
-            "/signin/forgot": (context) => const ForgotPasswordPage(),
-            "/": (context) => const MainPage(),
-            "/event/create": (context) => const CreateEditEventPage(),
-            "/profile/edit": (context) =>
-                EditProfilePage(user: context.read<lm.User?>()!),
+      child: ChangeNotifierProvider(
+        create: (_) => ThemeProvider(),
+        child: Consumer<ThemeProvider>(
+          builder: (context, themeProvider, child) {
+            return Shimmer(
+              linearGradient: LinearGradient(
+                colors: themeProvider.mode == ThemeMode.light ||
+                        (themeProvider.mode == ThemeMode.system && isLightMode)
+                    ? [
+                        lightBase.shimmerBase,
+                        lightBase.shimmerRun,
+                        lightBase.shimmerBase,
+                      ]
+                    : [
+                        darkBase.shimmerBase,
+                        darkBase.shimmerRun,
+                        darkBase.shimmerBase,
+                      ],
+                stops: const [0.1, 0.3, 0.4],
+                begin: const Alignment(-1.0, -0.3),
+                end: const Alignment(1.0, 0.3),
+                tileMode: TileMode.clamp,
+              ),
+              child: materialApp(
+                themeMode: themeProvider.mode,
+              ),
+            );
           },
-          onGenerateRoute: (settings) {
-            Widget? page;
-            switch (settings.name) {
-              case "/event":
-                page = ViewEventPage(event: settings.arguments as Event);
-                break;
-              case "/event/edit":
-                page = CreateEditEventPage(event: settings.arguments as Event?);
-                break;
-              case "/event/review":
-                page = ReviewUserPage(event: settings.arguments as Event);
-                break;
-              case "/event/chat":
-                page = ChatRoomPage(event: settings.arguments as Event);
-                break;
-              case "/profile":
-                Map<String, dynamic> args =
-                    settings.arguments as Map<String, dynamic>;
-
-                page = UserProfilePage(
-                  isOtherUser: args["isOtherUser"],
-                  userId: args["userId"],
-                );
-                break;
-            }
-
-            if (page != null) {
-              return MaterialPageRoute(builder: (context) => page!);
-            }
-            return null;
-          },
-          initialRoute: "/startup",
-          // home: kIsWeb ? const ForWeb() : const ForMobile(),
         ),
       ),
+    );
+  }
+
+  Widget materialApp({ThemeMode themeMode = ThemeMode.system}) {
+    return MaterialApp(
+      navigatorKey: navigatorKey,
+      scaffoldMessengerKey: scaffoldMessangerKey,
+      title: 'LetsMeet',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
+      routes: {
+        "/startup": (context) => const LoadingPage(),
+        "/welcome": (context) => const WelcomePage(),
+        "/signup": (context) => const SignUpPage(),
+        "/signup/tos": (context) => const TOSPage(),
+        "/signup/setup": (context) => const SetupProfilePage(),
+        "/signin": (context) => const SignInPage(),
+        "/signin/forgot": (context) => const ForgotPasswordPage(),
+        "/": (context) => const MainPage(),
+        "/event/create": (context) => const CreateEditEventPage(),
+        "/profile/edit": (context) =>
+            EditProfilePage(user: context.read<lm.User?>()!),
+      },
+      onGenerateRoute: (settings) {
+        Widget? page;
+        switch (settings.name) {
+          case "/event":
+            page = ViewEventPage(event: settings.arguments as Event);
+            break;
+          case "/event/edit":
+            page = CreateEditEventPage(event: settings.arguments as Event?);
+            break;
+          case "/event/review":
+            page = ReviewUserPage(event: settings.arguments as Event);
+            break;
+          case "/event/chat":
+            page = ChatRoomPage(event: settings.arguments as Event);
+            break;
+          case "/profile":
+            Map<String, dynamic> args =
+                settings.arguments as Map<String, dynamic>;
+
+            page = UserProfilePage(
+              isOtherUser: args["isOtherUser"],
+              userId: args["userId"],
+            );
+            break;
+        }
+
+        if (page != null) {
+          return MaterialPageRoute(builder: (context) => page!);
+        }
+        return null;
+      },
+      initialRoute: "/startup",
     );
   }
 }

@@ -20,6 +20,7 @@ class ImageCoverPickerState extends State<ImageCoverPicker>
   Widget pickerOptionButton(
       {VoidCallback? onPressed, required IconData icon, String? text}) {
     return Material(
+      color: Theme.of(context).cardColor,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onPressed,
