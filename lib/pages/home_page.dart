@@ -27,23 +27,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   Widget eventCard(Event event) {
     return EventCard(
-        isSmall: true,
-        event: event,
-        onPressed: () async {
-          await context
-              .read<GlobalKey<NavigatorState>>()
-              .currentState!
-              .pushNamed("/event", arguments: event);
+      isSmall: true,
+      event: event,
+      onPressed: () async {
+        await context
+          .read<GlobalKey<NavigatorState>>()
+          .currentState!
+          .pushNamed(
+            "/event", arguments: event
+          );
 
-          setState(() {});
-
-          context.read<CloudFirestoreService>().addUserRecentView(
-                user: context.read<User?>()!,
-                eventId: event.id!,
-              );
+        setState(() {
         });
+
+        context.read<CloudFirestoreService>().addUserRecentView(
+          user: context.read<User?>()!,
+          eventId: event.id!,
+        );
+      }
+    );
   }
 
   Widget headerPlaceholder() {
@@ -103,7 +108,8 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(16),
             color: Colors.black,
           ),
-        ).horizontalPadding(),
+        )
+        .horizontalPadding(),
         const SizedBox(height: 16),
         SingleChildScrollView(
           physics: const BouncingScrollPhysics(
@@ -138,15 +144,26 @@ class _HomePageState extends State<HomePage> {
 
   Widget upcomingEvents(User user) {
     return FutureBuilder(
-      future: FirebaseFirestore.instance
-          .collection("events")
-          .where("member", arrayContains: user.toDocRef())
-          .where("startTime", isGreaterThanOrEqualTo: DateTime.now())
-          .orderBy("startTime")
-          .get()
-          .then((list) {
-        return list.docs.map((doc) => Event.fromFirestore(doc: doc)).toList();
-      }),
+      future: FirebaseFirestore.instance.collection("events")
+        .where(
+          "member", arrayContains: user.toDocRef()
+        )
+        .where(
+          "startTime", isGreaterThanOrEqualTo: DateTime.now()
+        )
+        .orderBy(
+          "startTime"
+        )
+        .get()
+        .then(
+          (list) {
+            return list.docs.map(
+              (doc) => Event.fromFirestore(doc: doc)
+            )
+            .toList();
+          }
+        ),
+
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return ShimmerLoading(
           isLoading: !snapshot.hasData,
@@ -169,8 +186,10 @@ class _HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.w500,
                     fontSize: 22,
                   ),
-                ).horizontalPadding(),
+                )
+                .horizontalPadding(),
                 const SizedBox(height: 16),
+
                 if (listEvent.length == 1) ...{
                   Row(
                     children: [
@@ -184,7 +203,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                } else ...{
+                }
+                else ...{
                   Row(
                     children: [
                       Expanded(
@@ -197,20 +217,26 @@ class _HomePageState extends State<HomePage> {
                             spacing: 16,
                             children: [
                               const SizedBox(width: 16),
-                              ...listEvent.map((event) {
-                                return EventCard(
-                                  isSmall: true,
-                                  event: event,
-                                  onPressed: () async {
-                                    await context
+                              ...listEvent.map(
+                                (event) {
+                                  return EventCard(
+                                    isSmall: true,
+                                    event: event,
+                                    onPressed: () async {
+                                      await context
                                         .read<GlobalKey<NavigatorState>>()
                                         .currentState!
-                                        .pushNamed("/event", arguments: event);
+                                        .pushNamed(
+                                          "/event", arguments: event
+                                        );
 
-                                    setState(() {});
-                                  },
-                                );
-                              }).toList(),
+                                      setState(() {
+                                      });
+                                    },
+                                  );
+                                }
+                              )
+                              .toList(),
                               const SizedBox(width: 16),
                             ],
                           ),
@@ -250,8 +276,10 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     "Recently Viewed",
                     style: Theme.of(context).textTheme.headline1,
-                  ).horizontalPadding(),
+                  )
+                  .horizontalPadding(),
                   const SizedBox(height: 16),
+
                   if (listEvent.length == 1) ...{
                     Row(
                       children: [
@@ -265,7 +293,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                  } else ...{
+                  }
+                  else ...{
                     Row(
                       children: [
                         Expanded(
@@ -278,6 +307,7 @@ class _HomePageState extends State<HomePage> {
                               spacing: 16,
                               children: [
                                 const SizedBox(width: 16),
+
                                 for (Event? event in listEvent) ...{
                                   if (event != null) ...{
                                     EventCard(
@@ -285,14 +315,14 @@ class _HomePageState extends State<HomePage> {
                                       event: event,
                                       onPressed: () async {
                                         await context
-                                            .read<GlobalKey<NavigatorState>>()
-                                            .currentState!
-                                            .pushNamed(
-                                              "/event",
-                                              arguments: event,
-                                            );
+                                          .read<GlobalKey<NavigatorState>>()
+                                          .currentState!
+                                          .pushNamed(
+                                            "/event", arguments: event,
+                                          );
 
-                                        setState(() {});
+                                        setState(() {
+                                        });
                                       },
                                     ),
                                   },
@@ -316,19 +346,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget eventSection(Category category) {
+    int eventLimit = 10;
+
     return FutureBuilder(
-      future: FirebaseFirestore.instance
-          .collection("events")
-          .where("category", isEqualTo: category.toDocRef())
-          .orderBy(
-            "createdTime",
-            descending: true,
-          )
-          .limit(10)
-          .get()
-          .then((list) {
-        return list.docs.map((doc) => Event.fromFirestore(doc: doc)).toList();
-      }),
+      future: FirebaseFirestore.instance.collection("events")
+        .where(
+          "category", isEqualTo: category.toDocRef()
+        )
+        .orderBy(
+          "createdTime", descending: true,
+        )
+        .limit(
+          eventLimit
+        )
+        .get()
+        .then(
+          (list) {
+            return list.docs.map(
+              (doc) => Event.fromFirestore(doc: doc)
+            )
+            .toList();
+          }
+        ),
+
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return ShimmerLoading(
           isLoading: !snapshot.hasData,
@@ -345,35 +385,46 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
-                    onTap: () {
+                  onTap: () {
+
+                    if (listEvent.length >= eventLimit) {
                       // More in this category
                       widget.navigatorKey.currentState!.pushNamed(
-                        "/search",
-                        arguments: SearchFilterController(
-                          category: category,
-                        ),
+                          "/search",
+                          arguments: SearchFilterController(
+                            category: category,
+                          ),
                       );
-                    },
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          category.icon,
-                          color: Theme.of(context).textTheme.headline1!.color,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                            child: Text(
+                    }
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        category.icon,
+                        color: Theme.of(context).textTheme.headline1!.color,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
                           category.name,
                           style: Theme.of(context).textTheme.headline1,
-                        )),
+                        )
+                      ),
+
+                      if (listEvent.length >= eventLimit) ...{
                         Text(
                           "More",
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
-                      ],
-                    )).horizontalPadding(),
+                      },
+                    ],
+                  )
+                )
+                .horizontalPadding(),
+
                 const SizedBox(height: 16),
+
                 if (listEvent.length == 1) ...{
                   Row(
                     children: [
@@ -387,7 +438,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                } else ...{
+                }
+                else ...{
                   Row(
                     children: [
                       Expanded(
@@ -400,9 +452,12 @@ class _HomePageState extends State<HomePage> {
                             spacing: 16,
                             children: [
                               const SizedBox(width: 16),
-                              ...listEvent.map((event) {
-                                return eventCard(event);
-                              }).toList(),
+                              ...listEvent.map(
+                                (event) {
+                                  return eventCard(event);
+                                }
+                              )
+                              .toList(),
                               const SizedBox(width: 16),
                             ],
                           ),
@@ -425,17 +480,18 @@ class _HomePageState extends State<HomePage> {
     List<Category> allCategory = context.watch<List<Category>>();
 
     List<Category> favCategory = user != null
-        ? allCategory
-            .where((category) => user.favCategory.contains(category.toDocRef()))
-            .toList()
-        : [];
+      ? allCategory.where(
+        (category) => user.favCategory.contains(category.toDocRef())
+      )
+      .toList()
+      : [];
 
     List<Category> notFavCategory = user != null
-        ? allCategory
-            .where(
-                (category) => !user.favCategory.contains(category.toDocRef()))
-            .toList()
-        : allCategory;
+      ? allCategory.where(
+        (category) => !user.favCategory.contains(category.toDocRef())
+      )
+      .toList()
+      : allCategory;
 
     if (user == null) {
       return const Scaffold(
@@ -455,6 +511,7 @@ class _HomePageState extends State<HomePage> {
             bottomRight: Radius.circular(16),
           ),
         ),
+
         flexibleSpace: SafeArea(
           child: GestureDetector(
             onTap: () {
@@ -473,19 +530,22 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(right: 16),
+                      padding: const EdgeInsets.only(
+                        right: 16
+                      ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: user.image.isNotEmpty
-                            ? CachedNetworkImage(
-                                imageUrl: user.image,
-                                fit: BoxFit.cover,
-                                width: 64,
-                                height: 64,
-                              )
-                            : null,
+                          ? CachedNetworkImage(
+                            imageUrl: user.image,
+                            fit: BoxFit.cover,
+                            width: 64,
+                            height: 64,
+                          )
+                          : null,
                       ),
                     ),
+
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -498,8 +558,7 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(height: 8),
                           FutureBuilder(
                             future: user.getRole,
-                            builder:
-                                (BuildContext contex, AsyncSnapshot snapshot) {
+                            builder: (BuildContext contex, AsyncSnapshot snapshot) {
                               return ShimmerLoading(
                                 isLoading: !snapshot.hasData,
                                 placeholder: Container(
@@ -532,9 +591,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+
       body: RefreshIndicator(
         onRefresh: () {
-          setState(() {});
+          setState(() {
+          });
 
           return Future.delayed(
             const Duration(
@@ -542,6 +603,7 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
+
         child: Column(
           children: [
             Expanded(
@@ -557,18 +619,25 @@ class _HomePageState extends State<HomePage> {
                   child: Wrap(
                     runSpacing: 32,
                     children: [
+
                       upcomingEvents(user),
                       recentViewEvents(user),
+
                       Text(
                         "Explore New Events",
                         style: Theme.of(context).textTheme.headline1,
-                      ).horizontalPadding(),
-                      ...favCategory
-                          .map((category) => eventSection(category))
-                          .toList(),
-                      ...notFavCategory
-                          .map((category) => eventSection(category))
-                          .toList(),
+                      )
+                      .horizontalPadding(),
+
+                      ...favCategory.map(
+                        (category) => eventSection(category)
+                      )
+                      .toList(),
+
+                      ...notFavCategory.map(
+                        (category) => eventSection(category)
+                      )
+                      .toList(),
                     ],
                   ),
                 ),
@@ -580,6 +649,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
 
 extension PaddingEx on Widget {
   Widget horizontalPadding() {
