@@ -240,7 +240,7 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
       child: ChangeNotifierProvider(
         create: (_) => ThemeProvider(defaultMode: ThemeMode.system),
         child: Consumer<ThemeProvider>(
-          builder: (consumerContext, themeProvider, child) {
+          builder: (context, themeProvider, child) {
             return materialApp(
               themeMode: themeProvider.mode,
             );
