@@ -244,12 +244,22 @@ class _MainPageState extends State<MainPage> {
           themeProvider.mode = newMode;
         });
       },
-      child: drawerButton(
-        icon: Icons.palette_rounded,
-        label: "Choose theme",
-        onPressed: () {
-          key.currentState!.showButtonMenu();
-        },
+      child: ResponsiveLayout(
+        extraLarge: drawerButton(
+          icon: Icons.palette_rounded,
+          label: "Choose theme",
+          onPressed: () {
+            key.currentState!.showButtonMenu();
+          },
+        ),
+        medium: IconButton(
+          icon: const Icon(Icons.palette_rounded),
+          color:
+              Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.65),
+          onPressed: () {
+            key.currentState!.showButtonMenu();
+          },
+        ),
       ),
     );
   }
@@ -282,6 +292,7 @@ class _MainPageState extends State<MainPage> {
 
               // Change theme
               chooseThemeButton(),
+              const SizedBox(height: 16),
 
               // sign out
               drawerButton(
@@ -333,16 +344,28 @@ class _MainPageState extends State<MainPage> {
             );
           },
         ),
-        trailing: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 8,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            color: Theme.of(context).errorColor,
-            onPressed: () {
-              context.read<AuthenticationService>().signOut();
-            },
+        trailing: Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: 24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  chooseThemeButton(),
+                  const SizedBox(height: 32),
+                  IconButton(
+                    icon: const Icon(Icons.logout_rounded),
+                    color: Theme.of(context).errorColor,
+                    onPressed: () {
+                      context.read<AuthenticationService>().signOut();
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
         onDestinationSelected: (int index) {
