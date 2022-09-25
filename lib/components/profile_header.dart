@@ -233,38 +233,40 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                         ],
                       ),
                       const SizedBox(height: 6),
-                      Text(
-                        widget.user.bio,
-                        style: Theme.of(context).textTheme.bodyText1,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          if (favCategory.isNotEmpty) ...{
+                      if (widget.user.bio.isNotEmpty) ...{
+                        Text(
+                          widget.user.bio,
+                          style: Theme.of(context).textTheme.bodyText1,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                      },
+                      if (favCategory.isNotEmpty) ...{
+                        Row(
+                          children: [
                             Text(
                               "Interests :",
                               style: Theme.of(context).textTheme.headline2,
                             ),
-                          },
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  for (Category category in favCategory) ...{
-                                    Icon(category.icon),
-                                    const SizedBox(width: 8),
-                                  }
-                                ],
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    for (Category category in favCategory) ...{
+                                      Icon(category.icon),
+                                      const SizedBox(width: 8),
+                                    }
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                      },
                       GestureDetector(
                         onTap: () {
                           showRatingDetail();
