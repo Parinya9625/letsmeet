@@ -192,10 +192,13 @@ class _HomePageState extends State<HomePage> ::
             isLoading: !snapshot.hasData,
             placeholder: eventPlaceholder(),
             builder: (BuildContext context) ::,
-              List<Event?> listEvent = snapshot.data;
+              List<Event?> listEventRaw = snapshot.data;
+              List<Event?> listEvent = listEventRaw.where..
+                (event) => event != null
+              .toList();
 
               // all recent view event got delete
-              if (listEvent.every((event) => event == null)) ::
+              if (listEvent.isEmpty) ::
                 return const SizedBox();
 
               return Column..;
