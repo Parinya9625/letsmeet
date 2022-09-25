@@ -94,6 +94,99 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     );
   }
 
+  Widget ratingBar({String title = "", int value = 0, int max = 100}) {
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.headline2,
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: LinearProgressIndicator(
+                value: value == 0 ? 0 : value / max,
+                minHeight: 12,
+                color: Theme.of(context).extension<LetsMeetColor>()!.rating,
+                backgroundColor: Theme.of(context).disabledColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showRatingDetail() async {
+    UserRating rating = widget.user.rating;
+    double avgRating = rating.average();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Ratings"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    avgRating.toStringAsFixed(1),
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 2,
+                    children: [
+                      for (int i = 1; i < 6; i++) ...{
+                        Icon(
+                          i <= avgRating
+                              ? Icons.star_rounded
+                              : avgRating.round() == i
+                                  ? Icons.star_half_rounded
+                                  : Icons.star_border_rounded,
+                          color: Theme.of(context)
+                              .extension<LetsMeetColor>()!
+                              .rating,
+                          size: 16,
+                        ),
+                      },
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "(${rating.amount()})",
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (MapEntry<String, int> rate
+                      in rating.reverseMap().entries) ...{
+                    ratingBar(
+                      title: rate.key,
+                      value: rate.value,
+                      max: rating.max(),
+                    ),
+                  },
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget userData() {
     return FutureBuilder(
       future: Future.wait([widget.user.getRole, widget.user.getFavCategory]),
@@ -172,31 +265,36 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                         ],
                       ),
                       const SizedBox(height: 6),
-                      Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 4,
-                        children: [
-                          Text(
-                            "Rating :",
-                            style: Theme.of(context).textTheme.headline2,
-                          ),
-                          for (int i = 1; i < 6; i++) ...{
-                            Icon(
-                              i <= ratingAvg
-                                  ? Icons.star_rounded
-                                  : ratingAvg.round() == i
-                                      ? Icons.star_half_rounded
-                                      : Icons.star_border_rounded,
-                              color: Theme.of(context)
-                                  .extension<LetsMeetColor>()!
-                                  .rating,
+                      GestureDetector(
+                        onTap: () {
+                          showRatingDetail();
+                        },
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 4,
+                          children: [
+                            Text(
+                              "Rating :",
+                              style: Theme.of(context).textTheme.headline2,
                             ),
-                          },
-                          Text(
-                            "($ratingAmount)",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                        ],
+                            for (int i = 1; i < 6; i++) ...{
+                              Icon(
+                                i <= ratingAvg
+                                    ? Icons.star_rounded
+                                    : ratingAvg.round() == i
+                                        ? Icons.star_half_rounded
+                                        : Icons.star_border_rounded,
+                                color: Theme.of(context)
+                                    .extension<LetsMeetColor>()!
+                                    .rating,
+                              ),
+                            },
+                            Text(
+                              "($ratingAmount)",
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
