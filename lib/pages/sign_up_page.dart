@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:letsmeet/components/checkbox_tile.dart';
 import 'package:letsmeet/components/continue_with_google.dart';
@@ -193,10 +194,14 @@ class _SignUpPageState extends State<SignUpPage> {
                           controller: nameController,
                           hintText: 'Name',
                           icon: const Icon(Icons.person_rounded),
+                          maxLength: 75,
+                          maxLengthEnforcement: MaxLengthEnforcement.none,
                           onClear: () {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Please enter your name\n";
+                            } else if (nameController.text.trim().length > 75) {
+                              return "Name exceeds the maximum length\n";
                             }
                             return null;
                           },
@@ -206,10 +211,14 @@ class _SignUpPageState extends State<SignUpPage> {
                           controller: surnameController,
                           hintText: 'Surname',
                           icon: const Icon(Icons.person_rounded),
+                          maxLength: 75,
+                          maxLengthEnforcement: MaxLengthEnforcement.none,
                           onClear: () {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Please enter your surname\n";
+                            } else if (nameController.text.trim().length > 75) {
+                              return "Name exceeds the maximum length\n";
                             }
                             return null;
                           },
