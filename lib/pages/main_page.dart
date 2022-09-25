@@ -54,6 +54,7 @@ class _MainPageState extends State<MainPage> {
           bottomNavigationBar: Visibility(
             visible: isShowBottomNav,
             child: BottomAppBar(
+              color: Theme.of(context).cardColor,
               shape: const CircularNotchedRectangle(),
               notchMargin: 6,
               child: Padding(
@@ -140,8 +141,11 @@ class _MainPageState extends State<MainPage> {
                     });
                     break;
                   case "/profile":
-                    page =
-                        UserProfilePage(userId: user!.id!, isOtherUser: false);
+                    page = UserProfilePage(
+                      userId: user!.id!,
+                      isOtherUser: false,
+                      automaticallyImplyLeading: false,
+                    );
                     setState(() {
                       selectedPath = settings.name!;
                     });

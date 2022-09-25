@@ -498,6 +498,7 @@ class _GoogleMapPageState extends State<_GoogleMapPage> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 64 + 16, 16, 16),
                 child: Material(
+                  color: Theme.of(context).cardColor,
                   elevation: 2,
                   clipBehavior: Clip.antiAlias,
                   borderRadius: BorderRadius.circular(16),

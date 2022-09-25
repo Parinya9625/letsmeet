@@ -38,6 +38,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   Widget pickerOptionButton(
       {VoidCallback? onPressed, required IconData icon, String? text}) {
     return Material(
+      color: Theme.of(context).cardColor,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onPressed,

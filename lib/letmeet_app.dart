@@ -24,6 +24,7 @@ import 'package:letsmeet/pages/welcome_page.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/services/storage.dart';
+import 'package:letsmeet/services/theme_provider.dart';
 import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -210,7 +211,6 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
   @override
   void dispose() {
     streamUserAuthState.cancel();
-
     super.dispose();
   }
 
@@ -237,60 +237,82 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
           create: (_) => navigatorKey,
         ),
       ],
-      child: Shimmer(
-        child: MaterialApp(
-          navigatorKey: navigatorKey,
-          scaffoldMessengerKey: scaffoldMessangerKey,
-          title: 'LetsMeet',
-          theme: lightTheme,
-          routes: {
-            "/startup": (context) => const LoadingPage(),
-            "/welcome": (context) => const WelcomePage(),
-            "/signup": (context) => const SignUpPage(),
-            "/signup/tos": (context) => const TOSPage(),
-            "/signup/setup": (context) => const SetupProfilePage(),
-            "/signin": (context) => const SignInPage(),
-            "/signin/forgot": (context) => const ForgotPasswordPage(),
-            "/": (context) => const MainPage(),
-            "/event/create": (context) => const CreateEditEventPage(),
-            "/profile/edit": (context) =>
-                EditProfilePage(user: context.read<lm.User?>()!),
+      child: ChangeNotifierProvider(
+        create: (_) => ThemeProvider(defaultMode: ThemeMode.system),
+        child: Consumer<ThemeProvider>(
+          builder: (context, themeProvider, child) {
+            return materialApp(
+              themeMode: themeProvider.mode,
+            );
           },
-          onGenerateRoute: (settings) {
-            Widget? page;
-            switch (settings.name) {
-              case "/event":
-                page = ViewEventPage(event: settings.arguments as Event);
-                break;
-              case "/event/edit":
-                page = CreateEditEventPage(event: settings.arguments as Event?);
-                break;
-              case "/event/review":
-                page = ReviewUserPage(event: settings.arguments as Event);
-                break;
-              case "/event/chat":
-                page = ChatRoomPage(event: settings.arguments as Event);
-                break;
-              case "/profile":
-                Map<String, dynamic> args =
-                    settings.arguments as Map<String, dynamic>;
-
-                page = UserProfilePage(
-                  isOtherUser: args["isOtherUser"],
-                  userId: args["userId"],
-                );
-                break;
-            }
-
-            if (page != null) {
-              return MaterialPageRoute(builder: (context) => page!);
-            }
-            return null;
-          },
-          initialRoute: "/startup",
-          // home: kIsWeb ? const ForWeb() : const ForMobile(),
         ),
       ),
+    );
+  }
+
+  Widget materialApp({ThemeMode themeMode = ThemeMode.system}) {
+    return MaterialApp(
+      navigatorKey: navigatorKey,
+      scaffoldMessengerKey: scaffoldMessangerKey,
+      title: 'LetsMeet',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
+      routes: {
+        "/startup": (context) => const LoadingPage(),
+        "/welcome": (context) => const WelcomePage(),
+        "/signup": (context) => const SignUpPage(),
+        "/signup/tos": (context) => const TOSPage(),
+        "/signup/setup": (context) => const SetupProfilePage(),
+        "/signin": (context) => const SignInPage(),
+        "/signin/forgot": (context) => const ForgotPasswordPage(),
+        "/": (context) => const MainPage(),
+        "/event/create": (context) => const CreateEditEventPage(),
+        "/profile/edit": (context) =>
+            EditProfilePage(user: context.read<lm.User?>()!),
+      },
+      onGenerateRoute: (settings) {
+        Widget? page;
+        switch (settings.name) {
+          case "/event":
+            page = ViewEventPage(event: settings.arguments as Event);
+            break;
+          case "/event/edit":
+            page = CreateEditEventPage(event: settings.arguments as Event?);
+            break;
+          case "/event/review":
+            page = ReviewUserPage(event: settings.arguments as Event);
+            break;
+          case "/event/chat":
+            page = ChatRoomPage(event: settings.arguments as Event);
+            break;
+          case "/profile":
+            Map<String, dynamic> args =
+                settings.arguments as Map<String, dynamic>;
+
+            page = UserProfilePage(
+              isOtherUser: args["isOtherUser"],
+              userId: args["userId"],
+            );
+            break;
+        }
+
+        if (page != null) {
+          return MaterialPageRoute(builder: (context) => page!);
+        }
+        return null;
+      },
+      initialRoute: "/startup",
+      builder: (BuildContext context, Widget? child) {
+        return Shimmer(
+          colors: [
+            Theme.of(context).extension<LetsMeetColor>()!.shimmerBase,
+            Theme.of(context).extension<LetsMeetColor>()!.shimmerRun,
+            Theme.of(context).extension<LetsMeetColor>()!.shimmerBase,
+          ],
+          child: child,
+        );
+      },
     );
   }
 }

@@ -22,8 +22,8 @@ class ModeSearchFilter extends StatefulWidget ::
 class _ModeSearchFilterState extends State<ModeSearchFilter> ::
   late String selectedValue;
   List<Map<String, dynamic>> optionList = [
-    {"name": "Event", "icon": Icons.group_rounded, "value": "Event"},
-    {"name": "User", "icon": Icons.videocam_rounded, "value": "User"},
+    {"name": "Event", "icon": Icons.calendar_month_rounded, "value": "Event"},
+    {"name": "User", "icon": Icons.person_rounded, "value": "User"},
   ];
 
   Widget filterOptionButton({
@@ -33,6 +33,7 @@ class _ModeSearchFilterState extends State<ModeSearchFilter> ::
     bool isSelected = false,
   }) ::
     return Material..;
+      color: Theme.of(context).cardColor,
       child: InkWell..,
         borderRadius: BorderRadius.circular(16),
         onTap: onPressed,

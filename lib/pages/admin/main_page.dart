@@ -6,6 +6,7 @@ import 'package:letsmeet/pages/admin/events_page.dart';
 import 'package:letsmeet/pages/admin/roles_page.dart';
 import 'package:letsmeet/pages/admin/categories_page.dart';
 import 'package:letsmeet/services/authentication.dart';
+import 'package:letsmeet/services/theme_provider.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/components/shimmer.dart';
@@ -175,6 +176,94 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  Color? isSelectedTheme(ThemeMode current, ThemeMode mode) {
+    return current == mode ? Theme.of(context).primaryColor : null;
+  }
+
+  Widget chooseThemeButton() {
+    GlobalKey<PopupMenuButtonState<ThemeMode>> key = GlobalKey();
+    ThemeProvider themeProvider = context.read<ThemeProvider>();
+    ThemeMode currentThemeMode = themeProvider.mode;
+
+    return PopupMenuButton(
+      key: key,
+      enabled: false,
+      position: PopupMenuPosition.over,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: ThemeMode.light,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              Icons.light_mode_rounded,
+              color: isSelectedTheme(currentThemeMode, ThemeMode.light),
+            ),
+            title: Text(
+              "Light",
+              style: TextStyle(
+                color: isSelectedTheme(currentThemeMode, ThemeMode.light),
+              ),
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: ThemeMode.dark,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              Icons.dark_mode_rounded,
+              color: isSelectedTheme(currentThemeMode, ThemeMode.dark),
+            ),
+            title: Text(
+              "Dark",
+              style: TextStyle(
+                color: isSelectedTheme(currentThemeMode, ThemeMode.dark),
+              ),
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: ThemeMode.system,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              Icons.settings_suggest_rounded,
+              color: isSelectedTheme(currentThemeMode, ThemeMode.system),
+            ),
+            title: Text(
+              "System",
+              style: TextStyle(
+                color: isSelectedTheme(currentThemeMode, ThemeMode.system),
+              ),
+            ),
+          ),
+        ),
+      ],
+      onSelected: (ThemeMode newMode) {
+        setState(() {
+          themeProvider.mode = newMode;
+        });
+      },
+      child: ResponsiveLayout(
+        extraLarge: drawerButton(
+          icon: Icons.palette_rounded,
+          label: "Choose theme",
+          onPressed: () {
+            key.currentState!.showButtonMenu();
+          },
+        ),
+        medium: IconButton(
+          icon: const Icon(Icons.palette_rounded),
+          color:
+              Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.65),
+          onPressed: () {
+            key.currentState!.showButtonMenu();
+          },
+        ),
+      ),
+    );
+  }
+
   Widget appDrawer() {
     return ResponsiveLayout(
       extraLarge: Drawer(
@@ -200,6 +289,10 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               ),
+
+              // Change theme
+              chooseThemeButton(),
+              const SizedBox(height: 16),
 
               // sign out
               drawerButton(
@@ -251,16 +344,28 @@ class _MainPageState extends State<MainPage> {
             );
           },
         ),
-        trailing: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 8,
-          ),
-          child: IconButton(
-            icon: Icon(Icons.logout_rounded),
-            color: Theme.of(context).errorColor,
-            onPressed: () {
-              context.read<AuthenticationService>().signOut();
-            },
+        trailing: Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: 24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  chooseThemeButton(),
+                  const SizedBox(height: 32),
+                  IconButton(
+                    icon: const Icon(Icons.logout_rounded),
+                    color: Theme.of(context).errorColor,
+                    onPressed: () {
+                      context.read<AuthenticationService>().signOut();
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
         onDestinationSelected: (int index) {

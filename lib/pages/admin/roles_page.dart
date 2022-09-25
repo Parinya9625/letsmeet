@@ -35,7 +35,7 @@ class _RolesPageState extends State<RolesPage> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).errorColor,
-                padding: const EdgeInsets.all(0),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 elevation: 0,
               ),
               child: const Text("Remove"),
@@ -127,6 +127,8 @@ class _RolesPageState extends State<RolesPage> {
         Color backgroundColor = currentRole.backgroundColor;
         CheckboxTileController isAdminController =
             CheckboxTileController(value: currentRole.permission.isAdmin);
+        CheckboxTileController isDeveloperController =
+            CheckboxTileController(value: currentRole.permission.isDeveloper);
 
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -145,6 +147,8 @@ class _RolesPageState extends State<RolesPage> {
                       foregroundColor = currentRole.foregroundColor;
                       backgroundColor = currentRole.backgroundColor;
                       isAdminController.value = currentRole.permission.isAdmin;
+                      isDeveloperController.value =
+                          currentRole.permission.isDeveloper;
                     });
                   }),
               Visibility(
@@ -166,6 +170,7 @@ class _RolesPageState extends State<RolesPage> {
                         backgroundColor: backgroundColor,
                         permission: UserPermission(
                           isAdmin: isAdminController.value ?? false,
+                          isDeveloper: isDeveloperController.value ?? false,
                         ),
                       );
                       oldRole = currentRole;
@@ -183,6 +188,7 @@ class _RolesPageState extends State<RolesPage> {
                       backgroundColor: backgroundColor,
                       permission: UserPermission(
                         isAdmin: isAdminController.value ?? false,
+                        isDeveloper: isDeveloperController.value ?? false,
                       ),
                     );
                     context.read<CloudFirestoreService>().addRole(
@@ -209,7 +215,7 @@ class _RolesPageState extends State<RolesPage> {
                 icon: Icons.delete_rounded,
                 visible: !isEditing &&
                     !addNewRole &&
-                    !["user", "admin"].contains(role.id),
+                    !["user", "admin", "developer"].contains(role.id),
                 onPressed: () {
                   confirmRemoveRole(context, role);
                 },
@@ -344,9 +350,18 @@ class _RolesPageState extends State<RolesPage> {
                       ),
                       const SizedBox(height: 16),
                       CheckboxTile(
+                        disable:
+                            ["user", "admin", "developer"].contains(role.id),
                         controller: isAdminController,
                         elevation: 0,
                         title: const Text("isAdmin"),
+                      ),
+                      CheckboxTile(
+                        disable:
+                            ["user", "admin", "developer"].contains(role.id),
+                        controller: isDeveloperController,
+                        elevation: 0,
+                        title: const Text("isDeveloper"),
                       ),
                     ],
                   ),

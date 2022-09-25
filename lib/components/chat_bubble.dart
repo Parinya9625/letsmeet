@@ -72,17 +72,18 @@ class _ChatBubbleState extends State<ChatBubble> {
                       width: 40,
                       height: 40,
                     )
-                  : widget.customProfileAvatar ?? ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: GestureDetector(
-                        onTap: widget.onTapProfile,
-                        child: CachedNetworkImage(
-                          imageUrl: user.image,
-                          width: 40,
-                          height: 40,
+                  : widget.customProfileAvatar ??
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: GestureDetector(
+                          onTap: widget.onTapProfile,
+                          child: CachedNetworkImage(
+                            imageUrl: user.image,
+                            width: 40,
+                            height: 40,
+                          ),
                         ),
                       ),
-                    ),
             ),
           },
           // chat
@@ -117,7 +118,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                           style: widget.isSender
                               ? Theme.of(context).textTheme.headline1
                               : Theme.of(context).textTheme.headline1!.copyWith(
-                                    color: Theme.of(context).cardColor,
+                                    color: Colors.white,
                                   ),
                         ),
                       },

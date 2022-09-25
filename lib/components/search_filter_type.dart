@@ -34,6 +34,7 @@ class _TypeSearchFilterState extends State<TypeSearchFilter> {
     bool isSelected = false,
   }) {
     return Material(
+      color: Theme.of(context).cardColor,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onPressed,
