@@ -125,6 +125,12 @@ class BaseTheme {
         backgroundColor: card,
         foregroundColor: title,
       ),
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: card,
+        unselectedIconTheme: IconThemeData(
+          color: subtitle,
+        ),
+      ),
       listTileTheme: ListTileThemeData(
         textColor: title,
         iconColor: title,
