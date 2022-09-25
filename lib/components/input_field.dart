@@ -128,6 +128,33 @@ class _InputFieldState extends State<InputField> {
         enabled: widget.enabled,
         enableSuggestions: widget.enableSuggestions,
         inputFormatters: widget.inputFormatters,
+        buildCounter: (
+          context, {
+          required currentLength,
+          required isFocused,
+          required maxLength,
+        }) {
+          TextEditingController currentController =
+              widget.controller ?? controller;
+
+          int currentTextLength = currentController.text.trim().length;
+
+          if (isFocused && maxLength != null ||
+              (maxLength != null && currentTextLength > maxLength)) {
+            return Text(
+              "$currentTextLength / $maxLength\n",
+              style: TextStyle(
+                color: currentTextLength <= maxLength
+                    ? Theme.of(context).textTheme.bodyText1!.color
+                    : Theme.of(context).errorColor,
+                fontSize: 12,
+                fontWeight:
+                    currentTextLength > maxLength ? FontWeight.bold : null,
+              ),
+            );
+          }
+          return null;
+        },
       ),
     );
   }
