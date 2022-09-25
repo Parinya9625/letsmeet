@@ -40,12 +40,11 @@ class LetsMeetApp extends StatefulWidget {
   State<LetsMeetApp> createState() => _LetsMeetAppState();
 }
 
-class _LetsMeetAppState extends State<LetsMeetApp> with WidgetsBindingObserver {
+class _LetsMeetAppState extends State<LetsMeetApp> {
   late StreamSubscription<User?> streamUserAuthState;
   final navigatorKey = GlobalKey<NavigatorState>();
   final scaffoldMessangerKey = GlobalKey<ScaffoldMessengerState>();
   List<SingleChildWidget> afterAuthProviders = [];
-  bool isLightMode = true;
 
   showBanDialog(Ban ban) {
     scaffoldMessangerKey.currentState!.showMaterialBanner(
@@ -98,11 +97,6 @@ class _LetsMeetAppState extends State<LetsMeetApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    // System light / dark mode
-    WidgetsBinding.instance.addObserver(this);
-    isLightMode =
-        WidgetsBinding.instance.window.platformBrightness == Brightness.light;
-
     // Check if user login and update page to user state
     streamUserAuthState = FirebaseAuth.instance.authStateChanges().listen(
       (user) async {
@@ -217,19 +211,7 @@ class _LetsMeetAppState extends State<LetsMeetApp> with WidgetsBindingObserver {
   @override
   void dispose() {
     streamUserAuthState.cancel();
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  @override
-  void didChangePlatformBrightness() {
-    if (mounted) {
-      setState(() {
-        isLightMode = WidgetsBinding.instance.window.platformBrightness ==
-            Brightness.light;
-      });
-    }
-    super.didChangePlatformBrightness();
   }
 
   @override
@@ -256,31 +238,11 @@ class _LetsMeetAppState extends State<LetsMeetApp> with WidgetsBindingObserver {
         ),
       ],
       child: ChangeNotifierProvider(
-        create: (_) => ThemeProvider(),
+        create: (_) => ThemeProvider(defaultMode: ThemeMode.system),
         child: Consumer<ThemeProvider>(
-          builder: (context, themeProvider, child) {
-            return Shimmer(
-              linearGradient: LinearGradient(
-                colors: themeProvider.mode == ThemeMode.light ||
-                        (themeProvider.mode == ThemeMode.system && isLightMode)
-                    ? [
-                        lightBase.shimmerBase,
-                        lightBase.shimmerRun,
-                        lightBase.shimmerBase,
-                      ]
-                    : [
-                        darkBase.shimmerBase,
-                        darkBase.shimmerRun,
-                        darkBase.shimmerBase,
-                      ],
-                stops: const [0.1, 0.3, 0.4],
-                begin: const Alignment(-1.0, -0.3),
-                end: const Alignment(1.0, 0.3),
-                tileMode: TileMode.clamp,
-              ),
-              child: materialApp(
-                themeMode: themeProvider.mode,
-              ),
+          builder: (consumerContext, themeProvider, child) {
+            return materialApp(
+              themeMode: themeProvider.mode,
             );
           },
         ),
@@ -341,6 +303,16 @@ class _LetsMeetAppState extends State<LetsMeetApp> with WidgetsBindingObserver {
         return null;
       },
       initialRoute: "/startup",
+      builder: (BuildContext context, Widget? child) {
+        return Shimmer(
+          colors: [
+            Theme.of(context).extension<LetsMeetColor>()!.shimmerBase,
+            Theme.of(context).extension<LetsMeetColor>()!.shimmerRun,
+            Theme.of(context).extension<LetsMeetColor>()!.shimmerBase,
+          ],
+          child: child,
+        );
+      },
     );
   }
 }

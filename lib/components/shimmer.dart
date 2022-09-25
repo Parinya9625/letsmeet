@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 
 class Shimmer extends StatefulWidget {
   final LinearGradient linearGradient;
+  final List<Color>? colors;
   final Widget? child;
 
-  const Shimmer({
+  Shimmer({
     Key? key,
-    this.linearGradient = const LinearGradient(
-      colors: [Color(0xFFEBEBF4), Color(0xFFF4F4F4), Color(0xFFEBEBF4)],
-      stops: [0.1, 0.3, 0.4],
-      begin: Alignment(-1.0, -0.3),
-      end: Alignment(1.0, 0.3),
-      tileMode: TileMode.clamp,
-    ),
+    this.colors,
     this.child,
-  }) : super(key: key);
+  })  : linearGradient = LinearGradient(
+          colors: colors ??
+              const [Color(0xFFEBEBF4), Color(0xFFF4F4F4), Color(0xFFEBEBF4)],
+          stops: const [0.1, 0.3, 0.4],
+          begin: const Alignment(-1.0, -0.3),
+          end: const Alignment(1.0, 0.3),
+          tileMode: TileMode.clamp,
+        ),
+        super(key: key);
 
   @override
   State<Shimmer> createState() => ShimmerState();

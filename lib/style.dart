@@ -275,6 +275,8 @@ class BaseTheme {
           eventOpen: eventOpen,
           eventClose: eventClose,
           eventRestrict: error,
+          shimmerBase: shimmerBase,
+          shimmerRun: shimmerRun,
         ),
       ],
     );
@@ -360,25 +362,34 @@ class LetsMeetColor extends ThemeExtension<LetsMeetColor> {
   final Color eventOpen;
   final Color eventClose;
   final Color eventRestrict;
+  final Color shimmerBase;
+  final Color shimmerRun;
 
   const LetsMeetColor({
     required this.rating,
     required this.eventOpen,
     required this.eventClose,
     required this.eventRestrict,
+    required this.shimmerBase,
+    required this.shimmerRun,
   });
 
   @override
-  ThemeExtension<LetsMeetColor> copyWith(
-      {Color? rating,
-      Color? eventOpen,
-      Color? eventClose,
-      Color? eventRestrict}) {
+  ThemeExtension<LetsMeetColor> copyWith({
+    Color? rating,
+    Color? eventOpen,
+    Color? eventClose,
+    Color? eventRestrict,
+    Color? shimmerBase,
+    Color? shimmerRun,
+  }) {
     return LetsMeetColor(
       rating: rating ?? this.rating,
       eventOpen: eventOpen ?? this.eventOpen,
       eventClose: eventClose ?? this.eventClose,
       eventRestrict: eventRestrict ?? this.eventRestrict,
+      shimmerBase: shimmerBase ?? this.shimmerBase,
+      shimmerRun: shimmerRun ?? this.shimmerRun,
     );
   }
 
@@ -394,6 +405,8 @@ class LetsMeetColor extends ThemeExtension<LetsMeetColor> {
       eventOpen: Color.lerp(eventOpen, other.eventOpen, t)!,
       eventClose: Color.lerp(eventClose, other.eventClose, t)!,
       eventRestrict: Color.lerp(eventRestrict, other.eventRestrict, t)!,
+      shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t)!,
+      shimmerRun: Color.lerp(shimmerRun, other.shimmerRun, t)!,
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
   String key = "theme";
+  final ThemeMode defaultMode;
   SharedPreferences? preferences;
 
   ThemeMode get mode => _getThemeMode();
@@ -11,7 +12,7 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  ThemeProvider() {
+  ThemeProvider({this.defaultMode = ThemeMode.system}) {
     _loadSharePreferences();
   }
 
@@ -21,41 +22,51 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   ThemeMode _getThemeMode() {
-    String modeStr = preferences?.getString(key) ?? "system";
-    ThemeMode mode;
+    String modeStr =
+        preferences?.getString(key) ?? _themeModeToString(defaultMode);
 
-    switch (modeStr) {
-      case "light":
-        mode = ThemeMode.light;
-        break;
-      case "dark":
-        mode = ThemeMode.dark;
-        break;
-      case "system":
-      default:
-        mode = ThemeMode.system;
-        break;
-    }
-
-    return mode;
+    return _stringToThemeMode(modeStr);
   }
 
   void _saveThemeMode(ThemeMode newMode) {
-    String mode;
+    preferences?.setString(key, _themeModeToString(newMode));
+  }
 
-    switch (newMode) {
-      case ThemeMode.light:
-        mode = "light";
+  ThemeMode _stringToThemeMode(String mode) {
+    ThemeMode themeMode;
+
+    switch (mode) {
+      case "light":
+        themeMode = ThemeMode.light;
         break;
-      case ThemeMode.dark:
-        mode = "dark";
+      case "dark":
+        themeMode = ThemeMode.dark;
         break;
-      case ThemeMode.system:
+      case "system":
       default:
-        mode = "system";
+        themeMode = ThemeMode.system;
         break;
     }
 
-    preferences?.setString(key, mode);
+    return themeMode;
+  }
+
+  String _themeModeToString(ThemeMode mode) {
+    String strMode;
+
+    switch (mode) {
+      case ThemeMode.light:
+        strMode = "light";
+        break;
+      case ThemeMode.dark:
+        strMode = "dark";
+        break;
+      case ThemeMode.system:
+      default:
+        strMode = "system";
+        break;
+    }
+
+    return strMode;
   }
 }
