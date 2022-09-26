@@ -619,12 +619,16 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                       controller: nameController,
                       icon: const Icon(Icons.event_note_rounded),
                       hintText: "Name",
+                      maxLength: 100,
+                      maxLengthEnforcement: MaxLengthEnforcement.none,
                       onClear: () {
                         nameController.clear();
                       },
                       validator: (value) {
                         if (nameController.text.trim().isEmpty) {
                           return "Please enter event name\n";
+                        } else if (nameController.text.trim().length > 100) {
+                          return "Name exceeds the maximum length\n";
                         }
                         return null;
                       },
@@ -713,6 +717,14 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                       keyboardType: TextInputType.multiline,
                       minLines: 1,
                       maxLines: 50,
+                      maxLength: 500,
+                      maxLengthEnforcement: MaxLengthEnforcement.none,
+                      validator: (value) {
+                        if (detailController.text.trim().length > 500) {
+                          return "Detail exceeds the maximum length";
+                        }
+                        return null;
+                      },
                     ).horizontalPadding(),
                     const SizedBox(height: 16),
                     CheckboxTile(

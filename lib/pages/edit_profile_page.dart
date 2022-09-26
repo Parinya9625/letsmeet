@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:letsmeet/components/controllers/image_picker_controller.dart';
 import 'package:letsmeet/components/controllers/interest_category_controller.dart';
 import 'package:letsmeet/components/image_profile_picker.dart';
@@ -153,11 +154,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     controller: nameController,
                     hintText: "Name",
                     icon: const Icon(Icons.person_rounded),
+                    maxLength: 75,
+                    maxLengthEnforcement: MaxLengthEnforcement.none,
                     onClear: () {},
                     validator: (value) {
                       if (nameController.text.trim().isEmpty) {
                         return "Please enter your name\n";
+                      } else if (nameController.text.trim().length > 75) {
+                        return "Name exceeds the maximum length\n";
                       }
+
                       return null;
                     },
                   ),
@@ -166,10 +172,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     controller: surnameController,
                     hintText: "Surname",
                     icon: const Icon(Icons.person_rounded),
+                    maxLength: 75,
+                    maxLengthEnforcement: MaxLengthEnforcement.none,
                     onClear: () {},
                     validator: (value) {
                       if (surnameController.text.trim().isEmpty) {
                         return "Please enter your surname\n";
+                      } else if (nameController.text.trim().length > 75) {
+                        return "Name exceeds the maximum length\n";
                       }
                       return null;
                     },
@@ -179,7 +189,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     controller: bioController,
                     hintText: 'Bio',
                     icon: const Icon(Icons.badge_rounded),
+                    maxLength: 200,
+                    maxLengthEnforcement: MaxLengthEnforcement.none,
                     onClear: () {},
+                    validator: (value) {
+                      if (bioController.text.trim().length > 200) {
+                        return "Bio exceeds the maximum length";
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
                   InterestCategorySelector(

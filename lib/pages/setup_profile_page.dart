@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:letsmeet/components/controllers/image_picker_controller.dart';
 import 'package:letsmeet/components/controllers/interest_category_controller.dart';
 import 'package:letsmeet/components/image_profile_picker.dart';
@@ -120,7 +121,15 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                     controller: bioController,
                     hintText: 'Bio',
                     icon: const Icon(Icons.badge_rounded),
+                    maxLength: 200,
+                    maxLengthEnforcement: MaxLengthEnforcement.none,
                     onClear: () {},
+                    validator: (value) {
+                      if (bioController.text.trim().length > 200) {
+                        return "Bio exceeds the maximum length";
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
                   InterestCategorySelector(
