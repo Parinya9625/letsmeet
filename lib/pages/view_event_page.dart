@@ -498,322 +498,170 @@ class _ViewEventPageState extends State<ViewEventPage> {
     User? user = context.read<User?>();
 
     return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection("events")
-            .doc(widget.event.id)
-            .snapshots()
-            .map((doc) => Event.fromFirestore(doc: doc)),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            event = snapshot.data;
-          }
+      stream: FirebaseFirestore.instance
+          .collection("events")
+          .doc(widget.event.id)
+          .snapshots()
+          .map((doc) => Event.fromFirestore(doc: doc)),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          event = snapshot.data;
+        }
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(event.name),
-              actions: [
-                if (canReviewUser()) ...{
-                  IconButton(
-                    icon: const Icon(Icons.reviews_rounded),
-                    tooltip: "Review user",
-                    onPressed: () {
-                      context
-                          .read<GlobalKey<NavigatorState>>()
-                          .currentState!
-                          .pushNamed("/event/review", arguments: event);
-                    },
-                  ),
-                },
-                if (event.member.any((member) => member.id == user!.id)) ...{
-                  IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.comment),
-                    tooltip: "Chat",
-                    onPressed: () {
-                      context
-                          .read<GlobalKey<NavigatorState>>()
-                          .currentState!
-                          .pushNamed(
-                            "/event/chat",
-                            arguments: event,
-                          );
-                    },
-                  ),
-                },
-                PopupMenuButton(
-                  position: PopupMenuPosition.under,
-                  itemBuilder: (context) {
-                    return [
-                      if (canJoinEvent()) ...{
-                        popupMenuItem(
-                          icons: Icons.event_available_rounded,
-                          title: "Join event",
-                        ),
-                      },
-                      if (event.member.any((member) => member.id == user!.id) &&
-                          event.owner.id != user!.id) ...{
-                        popupMenuItem(
-                          icons: Icons.event_busy_rounded,
-                          title: "Leave event",
-                        ),
-                      },
-                      if (event.owner.id == user!.id) ...{
-                        if (DateTime.now().isBefore(event.startTime)) ...{
-                          popupMenuItem(
-                            icons: Icons.edit_calendar_rounded,
-                            title: "Edit event",
-                          ),
-                        },
-                        popupMenuItem(
-                          icons: Icons.event_busy_rounded,
-                          title: "Close event",
-                        ),
-                      } else ...{
-                        popupMenuItem(
-                          icons: Icons.flag_rounded,
-                          title: "Report",
-                        ),
-                      },
-                    ];
-                  },
-                  onSelected: (selected) {
-                    switch (selected) {
-                      case "Join event":
-                        joinEvent();
-                        break;
-                      case "Leave event":
-                        confirmLeaveEvent();
-                        break;
-                      case "Close event":
-                        confirmCloseEvent();
-                        break;
-                      case "Edit event":
-                        context
-                            .read<GlobalKey<NavigatorState>>()
-                            .currentState!
-                            .pushNamed("/event/edit", arguments: event);
-                        break;
-                      case "Report":
-                        showReportEventDialog();
-                        break;
-                    }
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(event.name),
+            actions: [
+              if (canReviewUser()) ...{
+                IconButton(
+                  icon: const Icon(Icons.reviews_rounded),
+                  tooltip: "Review user",
+                  onPressed: () {
+                    context
+                        .read<GlobalKey<NavigatorState>>()
+                        .currentState!
+                        .pushNamed("/event/review", arguments: event);
                   },
                 ),
-              ],
-            ),
-            body: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
+              },
+              if (event.member.any((member) => member.id == user!.id)) ...{
+                IconButton(
+                  icon: const FaIcon(FontAwesomeIcons.comment),
+                  tooltip: "Chat",
+                  onPressed: () {
+                    context
+                        .read<GlobalKey<NavigatorState>>()
+                        .currentState!
+                        .pushNamed(
+                          "/event/chat",
+                          arguments: event,
+                        );
+                  },
+                ),
+              },
+              PopupMenuButton(
+                position: PopupMenuPosition.under,
+                itemBuilder: (context) {
+                  return [
+                    if (canJoinEvent()) ...{
+                      popupMenuItem(
+                        icons: Icons.event_available_rounded,
+                        title: "Join event",
+                      ),
+                    },
+                    if (event.member.any((member) => member.id == user!.id) &&
+                        event.owner.id != user!.id) ...{
+                      popupMenuItem(
+                        icons: Icons.event_busy_rounded,
+                        title: "Leave event",
+                      ),
+                    },
+                    if (event.owner.id == user!.id) ...{
+                      if (DateTime.now().isBefore(event.startTime)) ...{
+                        popupMenuItem(
+                          icons: Icons.edit_calendar_rounded,
+                          title: "Edit event",
+                        ),
+                      },
+                      popupMenuItem(
+                        icons: Icons.event_busy_rounded,
+                        title: "Close event",
+                      ),
+                    } else ...{
+                      popupMenuItem(
+                        icons: Icons.flag_rounded,
+                        title: "Report",
+                      ),
+                    },
+                  ];
+                },
+                onSelected: (selected) {
+                  switch (selected) {
+                    case "Join event":
+                      joinEvent();
+                      break;
+                    case "Leave event":
+                      confirmLeaveEvent();
+                      break;
+                    case "Close event":
+                      confirmCloseEvent();
+                      break;
+                    case "Edit event":
+                      context
+                          .read<GlobalKey<NavigatorState>>()
+                          .currentState!
+                          .pushNamed("/event/edit", arguments: event);
+                      break;
+                    case "Report":
+                      showReportEventDialog();
+                      break;
+                  }
+                },
               ),
-              child: Column(
-                children: [
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: CachedNetworkImage(
-                            imageUrl: event.image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        if (event.ageRestrict) ...{
-                          Positioned(
-                            top: 16,
-                            right: 16,
-                            child: Badge(
-                              title: "Over 20+",
-                              backgroundColor: Theme.of(context)
-                                  .extension<LetsMeetColor>()!
-                                  .eventRestrict,
-                            ),
-                          ),
-                        },
-                      ],
-                    ),
+            ],
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Wrap(
-                      runSpacing: 16,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  event.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline1!
-                                      .copyWith(
-                                        fontSize: 28,
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: Stack(
                           children: [
-                            Icon(
-                              Icons.category_rounded,
-                              color:
-                                  Theme.of(context).textTheme.headline1!.color,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  "Category",
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
+                            Positioned.fill(
+                              child: CachedNetworkImage(
+                                imageUrl: event.image,
+                                fit: BoxFit.cover,
                               ),
                             ),
-                            FutureBuilder(
-                              future: event.getCategory,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                return ShimmerLoading(
-                                  isLoading: !snapshot.hasData,
-                                  placeholder: placeholder(),
-                                  builder: (BuildContext context) {
-                                    Category category = snapshot.data;
-                                    return Row(
-                                      children: [
-                                        Icon(
-                                          category.icon,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          category.name,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+                            if (event.ageRestrict) ...{
+                              Positioned(
+                                top: 16,
+                                right: 16,
+                                child: Badge(
+                                  title: "Over 20+",
+                                  backgroundColor: Theme.of(context)
+                                      .extension<LetsMeetColor>()!
+                                      .eventRestrict,
+                                ),
+                              ),
+                            },
                           ],
                         ),
-                        if (event.type == "In Person") ...{
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.place_rounded,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .color,
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  child: Text(
-                                    "Location",
-                                    style:
-                                        Theme.of(context).textTheme.headline1,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                event.location.name,
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Material(
-                            color: Theme.of(context).cardColor,
-                            elevation: 2,
-                            borderRadius: BorderRadius.circular(16),
-                            clipBehavior: Clip.antiAlias,
-                            child: AspectRatio(
-                              aspectRatio: 21 / 9,
-                              child: GoogleMap(
-                                initialCameraPosition: CameraPosition(
-                                  target: LatLng(
-                                      event.location.geoPoint!.latitude,
-                                      event.location.geoPoint!.longitude),
-                                  zoom: 16,
-                                ),
-                                liteModeEnabled: true,
-                                markers: {
-                                  Marker(
-                                    markerId:
-                                        MarkerId(DateTime.now().toString()),
-                                    position: LatLng(
-                                        event.location.geoPoint!.latitude,
-                                        event.location.geoPoint!.longitude),
-                                  ),
-                                },
-                                onMapCreated: (GoogleMapController controller) {
-                                  mapController.complete(controller);
-                                },
-                              ),
-                            ),
-                          ),
-                        },
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_month_rounded,
-                              color:
-                                  Theme.of(context).textTheme.headline1!.color,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  "Date",
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              DateFormat("EEEE, dd MMMM y")
-                                  .format(event.startTime),
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.schedule_rounded,
-                              color:
-                                  Theme.of(context).textTheme.headline1!.color,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  "Time",
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              DateFormat("HH:mm").format(event.startTime),
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                          ],
-                        ),
-                        Wrap(
-                          alignment: WrapAlignment.start,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Wrap(
                           runSpacing: 16,
                           children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      event.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .copyWith(
+                                            fontSize: 28,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             Row(
                               children: [
                                 Icon(
-                                  Icons.notes_rounded,
+                                  Icons.category_rounded,
                                   color: Theme.of(context)
                                       .textTheme
                                       .headline1!
@@ -824,148 +672,270 @@ class _ViewEventPageState extends State<ViewEventPage> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16),
                                     child: Text(
-                                      "Detail",
+                                      "Category",
                                       style:
                                           Theme.of(context).textTheme.headline1,
                                     ),
                                   ),
                                 ),
+                                FutureBuilder(
+                                  future: event.getCategory,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    return ShimmerLoading(
+                                      isLoading: !snapshot.hasData,
+                                      placeholder: placeholder(),
+                                      builder: (BuildContext context) {
+                                        Category category = snapshot.data;
+                                        return Row(
+                                          children: [
+                                            Icon(
+                                              category.icon,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              category.name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
                               ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: Text(
-                                event.description,
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (event.type == "Online" &&
-                            event.member
-                                .any((member) => member.id == user!.id)) ...{
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.language_rounded,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .color,
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  child: Text(
-                                    "Link",
-                                    style:
-                                        Theme.of(context).textTheme.headline1,
+                            if (event.type == "In Person") ...{
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.place_rounded,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .color,
                                   ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  if (!await launchUrl(
-                                      Uri.parse(event.location.link!),
-                                      mode: LaunchMode.externalApplication,
-                                      webOnlyWindowName: "_blank")) {
-                                    // if launch url fail
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          "Could not launch ${event.location.link}",
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: Tooltip(
-                                  message: event.location.link!,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.open_in_new_rounded,
-                                        size: 18,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .headline3!
-                                            .color,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        "Open in Browser",
-                                        textAlign: TextAlign.center,
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16),
+                                      child: Text(
+                                        "Location",
                                         style: Theme.of(context)
                                             .textTheme
-                                            .headline3!
-                                            .copyWith(
-                                                decoration:
-                                                    TextDecoration.underline),
+                                            .headline1,
                                       ),
-                                    ],
+                                    ),
+                                  ),
+                                  Text(
+                                    event.location.name,
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Material(
+                                color: Theme.of(context).cardColor,
+                                elevation: 2,
+                                borderRadius: BorderRadius.circular(16),
+                                clipBehavior: Clip.antiAlias,
+                                child: AspectRatio(
+                                  aspectRatio: 21 / 9,
+                                  child: GoogleMap(
+                                    initialCameraPosition: CameraPosition(
+                                      target: LatLng(
+                                          event.location.geoPoint!.latitude,
+                                          event.location.geoPoint!.longitude),
+                                      zoom: 16,
+                                    ),
+                                    liteModeEnabled: true,
+                                    markers: {
+                                      Marker(
+                                        markerId:
+                                            MarkerId(DateTime.now().toString()),
+                                        position: LatLng(
+                                            event.location.geoPoint!.latitude,
+                                            event.location.geoPoint!.longitude),
+                                      ),
+                                    },
+                                    onMapCreated:
+                                        (GoogleMapController controller) {
+                                      mapController.complete(controller);
+                                    },
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        },
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.person_rounded,
-                              color:
-                                  Theme.of(context).textTheme.headline1!.color,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  "Host",
-                                  style: Theme.of(context).textTheme.headline1,
+                            },
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_month_rounded,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline1!
+                                      .color,
                                 ),
-                              ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Text(
+                                      "Date",
+                                      style:
+                                          Theme.of(context).textTheme.headline1,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat("EEEE, dd MMMM y")
+                                      .format(event.startTime),
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              ],
                             ),
-                            FutureBuilder(
-                              future: event.getOwner,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                return ShimmerLoading(
-                                  isLoading: !snapshot.hasData,
-                                  placeholder: placeholder(),
-                                  builder: (BuildContext context) {
-                                    User owner = snapshot.data;
-                                    return GestureDetector(
-                                      onTap: () => viewUserProfile(owner),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.schedule_rounded,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline1!
+                                      .color,
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Text(
+                                      "Time",
+                                      style:
+                                          Theme.of(context).textTheme.headline1,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat("HH:mm").format(event.startTime),
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              ],
+                            ),
+                            Wrap(
+                              alignment: WrapAlignment.start,
+                              runSpacing: 16,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.notes_rounded,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .color,
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: Text(
+                                          "Detail",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline1,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Text(
+                                    event.description,
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (event.type == "Online" &&
+                                event.member.any(
+                                    (member) => member.id == user!.id)) ...{
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.language_rounded,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .color,
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16),
+                                      child: Text(
+                                        "Link",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (!await launchUrl(
+                                          Uri.parse(event.location.link!),
+                                          mode: LaunchMode.externalApplication,
+                                          webOnlyWindowName: "_blank")) {
+                                        // if launch url fail
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              "Could not launch ${event.location.link}",
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: Tooltip(
+                                      message: event.location.link!,
                                       child: Row(
                                         children: [
-                                          avatar(url: owner.image),
+                                          Icon(
+                                            Icons.open_in_new_rounded,
+                                            size: 18,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .headline3!
+                                                .color,
+                                          ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            "${owner.name} ${owner.surname}",
+                                            "Open in Browser",
+                                            textAlign: TextAlign.center,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyText1,
+                                                .headline3!
+                                                .copyWith(
+                                                    decoration: TextDecoration
+                                                        .underline),
                                           ),
                                         ],
                                       ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        Wrap(
-                          runSpacing: 16,
-                          children: [
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            },
                             Row(
                               children: [
                                 Icon(
-                                  Icons.group_rounded,
+                                  Icons.person_rounded,
                                   color: Theme.of(context)
                                       .textTheme
                                       .headline1!
@@ -976,150 +946,212 @@ class _ViewEventPageState extends State<ViewEventPage> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16),
                                     child: Text(
-                                      "Members",
+                                      "Host",
                                       style:
                                           Theme.of(context).textTheme.headline1,
                                     ),
                                   ),
                                 ),
-                                Badge(
-                                  title:
-                                      "${event.member.length} / ${event.maxMember}",
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
+                                FutureBuilder(
+                                  future: event.getOwner,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    return ShimmerLoading(
+                                      isLoading: !snapshot.hasData,
+                                      placeholder: placeholder(),
+                                      builder: (BuildContext context) {
+                                        User owner = snapshot.data;
+                                        return GestureDetector(
+                                          onTap: () => viewUserProfile(owner),
+                                          child: Row(
+                                            children: [
+                                              avatar(url: owner.image),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                "${owner.name} ${owner.surname}",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: FutureBuilder(
-                                future: event.getMember,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot snapshot) {
-                                  return ShimmerLoading(
-                                    isLoading: !snapshot.hasData,
-                                    placeholder: GridView.count(
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      crossAxisCount: 8,
-                                      mainAxisSpacing: 8,
-                                      crossAxisSpacing: 8,
-                                      children: [
-                                        for (var i = 0; i < 4; i++) ...{
-                                          Container(
-                                            width: 32,
-                                            height: 32,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        }
-                                      ],
+                            Wrap(
+                              runSpacing: 16,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.group_rounded,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .color,
                                     ),
-                                    builder: (BuildContext context) {
-                                      List<User> listMember = snapshot.data;
-
-                                      if (listMember.isNotEmpty) {
-                                        return GridView.count(
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: Text(
+                                          "Members",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline1,
+                                        ),
+                                      ),
+                                    ),
+                                    Badge(
+                                      title:
+                                          "${event.member.length} / ${event.maxMember}",
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: FutureBuilder(
+                                    future: event.getMember,
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot snapshot) {
+                                      return ShimmerLoading(
+                                        isLoading: !snapshot.hasData,
+                                        placeholder: GridView.count(
                                           physics:
                                               const NeverScrollableScrollPhysics(),
                                           shrinkWrap: true,
                                           crossAxisCount: 8,
                                           mainAxisSpacing: 8,
                                           crossAxisSpacing: 8,
-                                          children: listMember.map((member) {
-                                            if (user!.id == event.owner.id &&
-                                                user.id != member.id) {
-                                              // owner option to other user
-                                              return showOwnerOtherUserMenu(
-                                                  member);
+                                          children: [
+                                            for (var i = 0; i < 4; i++) ...{
+                                              Container(
+                                                width: 32,
+                                                height: 32,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                  color: Colors.black,
+                                                ),
+                                              ),
                                             }
+                                          ],
+                                        ),
+                                        builder: (BuildContext context) {
+                                          List<User> listMember = snapshot.data;
 
-                                            // normal member / owner option to self
-                                            return GestureDetector(
-                                              onTap: () {
-                                                viewUserProfile(member);
-                                              },
-                                              child: avatar(url: member.image),
+                                          if (listMember.isNotEmpty) {
+                                            return GridView.count(
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              crossAxisCount: 8,
+                                              mainAxisSpacing: 8,
+                                              crossAxisSpacing: 8,
+                                              children:
+                                                  listMember.map((member) {
+                                                if (user!.id ==
+                                                        event.owner.id &&
+                                                    user.id != member.id) {
+                                                  // owner option to other user
+                                                  return showOwnerOtherUserMenu(
+                                                      member);
+                                                }
+
+                                                // normal member / owner option to self
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    viewUserProfile(member);
+                                                  },
+                                                  child:
+                                                      avatar(url: member.image),
+                                                );
+                                              }).toList(),
                                             );
-                                          }).toList(),
-                                        );
-                                      }
+                                          }
 
-                                      return const SizedBox();
+                                          return const SizedBox();
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        //
-                        if (canJoinEvent()) ...{
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: (!event.ageRestrict ||
-                                          (event.ageRestrict && isUserOver20()))
-                                      ? () async {
-                                          joinEvent();
-                                        }
-                                      : null,
-                                  child: const Text("JOIN"),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        },
-                        if (canReviewUser()) ...{
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: Theme.of(context)
-                                      .elevatedButtonTheme
-                                      .style!
-                                      .copyWith(
-                                    backgroundColor:
-                                        MaterialStateProperty.resolveWith(
-                                      (states) {
-                                        if (states
-                                            .contains(MaterialState.disabled)) {
-                                          return Theme.of(context)
-                                              .disabledColor;
-                                        }
-                                        return Theme.of(context)
-                                            .extension<LetsMeetColor>()!
-                                            .rating;
-                                      },
+                              ],
+                            ),
+
+                            //
+                            if (canJoinEvent()) ...{
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: (!event.ageRestrict ||
+                                              (event.ageRestrict &&
+                                                  isUserOver20()))
+                                          ? () async {
+                                              joinEvent();
+                                            }
+                                          : null,
+                                      child: const Text("JOIN"),
                                     ),
                                   ),
-                                  onPressed: () {
-                                    context
-                                        .read<GlobalKey<NavigatorState>>()
-                                        .currentState!
-                                        .pushNamed("/event/review",
-                                            arguments: event);
-                                  },
-                                  child: const Text("REVIEW"),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        }
-                      ],
-                    ),
+                            },
+                            if (canReviewUser()) ...{
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      style: Theme.of(context)
+                                          .elevatedButtonTheme
+                                          .style!
+                                          .copyWith(
+                                        backgroundColor:
+                                            MaterialStateProperty.resolveWith(
+                                          (states) {
+                                            if (states.contains(
+                                                MaterialState.disabled)) {
+                                              return Theme.of(context)
+                                                  .disabledColor;
+                                            }
+                                            return Theme.of(context)
+                                                .extension<LetsMeetColor>()!
+                                                .rating;
+                                          },
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        context
+                                            .read<GlobalKey<NavigatorState>>()
+                                            .currentState!
+                                            .pushNamed("/event/review",
+                                                arguments: event);
+                                      },
+                                      child: const Text("REVIEW"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            }
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          );
-        });
+            ],
+          ),
+        );
+      },
+    );
   }
 }
