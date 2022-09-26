@@ -13,6 +13,7 @@ import 'package:letsmeet/components/badge.dart';
 import 'package:letsmeet/components/event_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letsmeet/components/controllers/search_filter_controller.dart';
+import 'package:letsmeet/components/no_event_banner.dart';
 
 class HomePage extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;
@@ -567,10 +568,47 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       upcomingEvents(user),
                       recentViewEvents(user),
-                      Text(
-                        "Explore New Events",
-                        style: Theme.of(context).textTheme.headline1,
-                      ).horizontalPadding(),
+                      FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection("events")
+                            .limit(1)
+                            .get()
+                            .then((events) {
+                          return events.docs
+                              .map((doc) => Event.fromFirestore(doc: doc))
+                              .toList();
+                        }),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          return ShimmerLoading(
+                            isLoading: !snapshot.hasData,
+                            placeholder: Container(
+                              width: 180,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: Colors.black,
+                              ),
+                            ).horizontalPadding(),
+                            builder: (BuildContext context) {
+                              List<Event> events = snapshot.data;
+
+                              if (events.isEmpty) {
+                                return NoEventBanner(
+                                  onPressed: () {
+                                    setState(() {});
+                                  },
+                                );
+                              }
+
+                              return Text(
+                                "Explore New Events",
+                                style: Theme.of(context).textTheme.headline1,
+                              ).horizontalPadding();
+                            },
+                          );
+                        },
+                      ),
                       ...favCategory
                           .map((category) => eventSection(category))
                           .toList(),
