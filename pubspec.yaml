@@ -61,6 +61,7 @@ dependencies:
   shared_preferences: ^2.0.15
   flutter_colorpicker: ^1.0.3
   flutter_launcher_icons: ^0.10.0
+  flutter_markdown: ^0.6.12
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +89,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
+    - lib/assets/
     - lib/assets/images/
     - lib/assets/images/icon/
   # An image asset can refer to one or more resolution-specific "variants", see
