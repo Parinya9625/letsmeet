@@ -23,7 +23,7 @@ class Feedback {
 
     return Feedback(
       id: doc.id,
-      createdTime: data["createTime"].toDate(),
+      createdTime: data["createdTime"].toDate(),
       message: data["message"],
     );
   }
