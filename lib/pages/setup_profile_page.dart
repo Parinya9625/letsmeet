@@ -126,7 +126,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                     onClear: () {},
                     validator: (value) {
                       if (bioController.text.trim().length > 200) {
-                        return "Bio exceeds the maximum length";
+                        return "Bio exceeds the maximum length\n";
                       }
                       return null;
                     },

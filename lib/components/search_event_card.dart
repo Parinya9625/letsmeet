@@ -124,6 +124,7 @@ class _SearchEventCardState extends State<SearchEventCard> {
                 ),
                 const SizedBox(height: 6),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
@@ -133,14 +134,17 @@ class _SearchEventCardState extends State<SearchEventCard> {
                         color: Theme.of(context).textTheme.bodyText1!.color,
                       ),
                     ),
-                    Text(
-                      "${owner.name} ${owner.surname}",
-                      style: Theme.of(context).textTheme.bodyText1,
+                    Expanded(
+                      child: Text(
+                        "${owner.name} ${owner.surname}",
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
@@ -152,14 +156,17 @@ class _SearchEventCardState extends State<SearchEventCard> {
                         color: Theme.of(context).textTheme.bodyText1!.color,
                       ),
                     ),
-                    Text(
-                      widget.event.location.name,
-                      style: Theme.of(context).textTheme.bodyText1,
+                    Expanded(
+                      child: Text(
+                        widget.event.location.name,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
@@ -169,10 +176,12 @@ class _SearchEventCardState extends State<SearchEventCard> {
                         color: Theme.of(context).textTheme.bodyText1!.color,
                       ),
                     ),
-                    Text(
-                      DateFormat("EEE, dd MMM y, HH:mm")
-                          .format(widget.event.startTime),
-                      style: Theme.of(context).textTheme.bodyText1,
+                    Expanded(
+                      child: Text(
+                        DateFormat("EEE, dd MMM y, HH:mm")
+                            .format(widget.event.startTime),
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
                     ),
                   ],
                 ),

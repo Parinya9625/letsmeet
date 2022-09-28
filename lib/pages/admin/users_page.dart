@@ -825,7 +825,7 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  Widget topSection() {
+  Widget topSection({int count = 0}) {
     return Row(
       children: [
         Expanded(
@@ -836,7 +836,7 @@ class _UsersPageState extends State<UsersPage> {
             medium: 2,
           ),
           child: Text(
-            "Users",
+            "Users (${count})",
             style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
@@ -958,7 +958,9 @@ class _UsersPageState extends State<UsersPage> {
           padding: const EdgeInsets.all(48),
           child: Column(
             children: [
-              topSection(),
+              topSection(
+                count: listUser.length,
+              ),
               const SizedBox(height: 24),
               GridView.count(
                 shrinkWrap: true,

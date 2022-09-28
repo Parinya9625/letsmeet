@@ -250,7 +250,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "Categories",
+                      "Categories (${listCategory.length})",
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
                   ),

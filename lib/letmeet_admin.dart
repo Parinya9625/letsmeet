@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letsmeet/components/shimmer.dart';
+import 'package:letsmeet/models/feedback.dart' as lm;
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/services/storage.dart';
@@ -182,6 +183,11 @@ class _LetsMeetAdminState extends State<LetsMeetAdmin> {
               StreamProvider<List<Role>>(
                 create: (context) =>
                     context.read<CloudFirestoreService>().streamRoles,
+                initialData: const [],
+              ),
+              StreamProvider<List<lm.Feedback>>(
+                create: (context) =>
+                    context.read<CloudFirestoreService>().streamFeedbacks,
                 initialData: const [],
               ),
             ],

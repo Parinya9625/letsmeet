@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letsmeet/models/category.dart';
 import 'package:letsmeet/models/event.dart';
+import 'package:letsmeet/models/feedback.dart';
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/models/ban.dart';
@@ -16,6 +17,7 @@ class CollectionPath {
   static const String bans = "bans";
   static const String categories = "categories";
   static const String roles = "roles";
+  static const String feedbacks = "feedbacks";
 }
 
 class SubcollectionPath {
@@ -57,6 +59,14 @@ class CloudFirestoreService {
   Stream<List<Role>> get streamRoles =>
       _firestore.collection(CollectionPath.roles).snapshots().map((roles) =>
           roles.docs.map((doc) => Role.fromFirestore(doc: doc)).toList());
+
+  Stream<List<Feedback>> get streamFeedbacks => _firestore
+      .collection(CollectionPath.feedbacks)
+      .orderBy("createdTime", descending: true)
+      .snapshots()
+      .map((feedbacks) => feedbacks.docs
+          .map((doc) => Feedback.fromFirestore(doc: doc))
+          .toList());
 
   // * ----------  BAN ----------
 
@@ -242,6 +252,15 @@ class CloudFirestoreService {
 
   removeRole({required String id}) {
     _firestore.collection(CollectionPath.roles).doc(id).delete();
+  }
+
+  // * ----------  FEEDBACK ----------
+  addFeedback({required Feedback feedback}) {
+    feedback.toDocRef().set(feedback.toMap());
+  }
+
+  removeFeedback({required String id}) {
+    _firestore.collection(CollectionPath.feedbacks).doc(id).delete();
   }
 
   // --------------------

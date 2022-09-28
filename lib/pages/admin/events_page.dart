@@ -586,7 +586,7 @@ class _EventsPageState extends State<EventsPage> {
     );
   }
 
-  Widget topSection() {
+  Widget topSection({int count = 0}) {
     return Row(
       children: [
         Expanded(
@@ -597,7 +597,7 @@ class _EventsPageState extends State<EventsPage> {
             medium: 2,
           ),
           child: Text(
-            "Events",
+            "Events (${count})",
             style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
@@ -709,7 +709,9 @@ class _EventsPageState extends State<EventsPage> {
           padding: const EdgeInsets.all(48),
           child: Column(
             children: [
-              topSection(),
+              topSection(
+                count: listEvent.length,
+              ),
               const SizedBox(height: 24),
               GridView.count(
                 shrinkWrap: true,

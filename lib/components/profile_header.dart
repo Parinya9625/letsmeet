@@ -1,11 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:letsmeet/components/badge.dart';
+import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/category.dart';
+import 'package:letsmeet/models/feedback.dart' as lm;
 import 'package:letsmeet/models/role.dart';
 import 'package:letsmeet/models/user.dart';
 import 'package:letsmeet/services/authentication.dart';
+import 'package:letsmeet/services/firestore.dart';
 import 'package:letsmeet/services/theme_provider.dart';
 import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
@@ -29,8 +33,9 @@ class ProfileHeader extends StatefulWidget {
 }
 
 enum _PopupMenuValue {
-  signout,
   chooseTheme,
+  shareFeedback,
+  signout,
 }
 
 class _ProfileHeaderState extends State<ProfileHeader> {
@@ -396,6 +401,91 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     );
   }
 
+  void feedbackDialog() async {
+    final formKey = GlobalKey<FormState>();
+    TextEditingController textController = TextEditingController();
+    bool canSend = false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Share Feedback"),
+              content: Form(
+                key: formKey,
+                child: InputField(
+                  controller: textController,
+                  elevation: 0,
+                  backgroundColor: Theme.of(context).disabledColor,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 16,
+                  ),
+                  minLines: 5,
+                  maxLines: 5,
+                  hintText: "What do you want to share with us?",
+                  maxLength: 1000,
+                  maxLengthEnforcement: MaxLengthEnforcement.none,
+                  onChanged: (value) {
+                    setState(() {
+                      canSend = textController.text.trim().isNotEmpty;
+                    });
+                  },
+                  onClear: () {
+                    setState(() {
+                      canSend = textController.text.trim().isNotEmpty;
+                    });
+                  },
+                  validator: (value) {
+                    if (textController.text.trim().isEmpty) {
+                      return "Please enter your feedback\n";
+                    } else if (textController.text.trim().length > 1000) {
+                      return "Feedback message exceeds the maximum length\n";
+                    }
+
+                    return null;
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: const Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    padding: const EdgeInsets.all(0),
+                    elevation: 0,
+                  ),
+                  onPressed: canSend == true
+                      ? () async {
+                          final formV = formKey.currentState!.validate();
+
+                          if (formV) {
+                            context.read<CloudFirestoreService>().addFeedback(
+                                  feedback: lm.Feedback.create(
+                                    message: textController.text.trim(),
+                                  ),
+                                );
+                            Navigator.pop(dialogContext);
+                          }
+                        }
+                      : null,
+                  child: const Text("Submit"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget popupMenu() {
     GlobalKey<PopupMenuButtonState<_PopupMenuValue>> key = GlobalKey();
 
@@ -413,6 +503,20 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             ),
             title: Text(
               "Choose theme",
+              style: Theme.of(context).textTheme.headline1,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: _PopupMenuValue.shareFeedback,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              Icons.rate_review_rounded,
+              color: Theme.of(context).textTheme.headline1!.color,
+            ),
+            title: Text(
+              "Share feedback",
               style: Theme.of(context).textTheme.headline1,
             ),
           ),
@@ -443,6 +547,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             break;
           case _PopupMenuValue.chooseTheme:
             chooseThemeDialog();
+            break;
+          case _PopupMenuValue.shareFeedback:
+            feedbackDialog();
             break;
         }
       },
