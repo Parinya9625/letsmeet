@@ -724,7 +724,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                       maxLengthEnforcement: MaxLengthEnforcement.none,
                       validator: (value) {
                         if (detailController.text.trim().length > 500) {
-                          return "Detail exceeds the maximum length";
+                          return "Detail exceeds the maximum length\n";
                         }
                         return null;
                       },
