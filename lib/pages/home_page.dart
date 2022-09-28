@@ -351,15 +351,13 @@ class _HomePageState extends State<HomePage> {
               children: [
                 GestureDetector(
                     onTap: () {
-                      if (listEvent.length >= eventLimit) {
-                        // More in this category
-                        widget.navigatorKey.currentState!.pushNamed(
-                          "/search",
-                          arguments: SearchFilterController(
-                            category: category,
-                          ),
-                        );
-                      }
+                      // More in this category
+                      widget.navigatorKey.currentState!.pushNamed(
+                        "/search",
+                        arguments: SearchFilterController(
+                          category: category,
+                        ),
+                      );
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -374,12 +372,10 @@ class _HomePageState extends State<HomePage> {
                           category.name,
                           style: Theme.of(context).textTheme.headline1,
                         )),
-                        if (listEvent.length >= eventLimit) ...{
-                          Text(
-                            "More",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                        },
+                        Text(
+                          "More",
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
                       ],
                     )).horizontalPadding(),
                 const SizedBox(height: 16),
