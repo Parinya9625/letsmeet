@@ -676,6 +676,9 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
                         } else if (int.parse(maxPeopleController.text.trim()) <=
                             1) {
                           return "Minimun people for create event is 2\n";
+                        } else if (int.parse(maxPeopleController.text.trim()) >=
+                            10000) {
+                          return "Maximum people for create event is 10,000\n";
                         }
                         return null;
                       },
