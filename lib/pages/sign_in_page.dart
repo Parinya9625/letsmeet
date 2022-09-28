@@ -22,7 +22,7 @@ class _SignInPageState extends State<SignInPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  showErrorDialog(String message) {
+  showErrorDialog(String message, {bool forceSignOut = false}) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -34,6 +34,9 @@ class _SignInPageState extends State<SignInPage> {
               child: const Text('Done'),
               onPressed: () {
                 Navigator.of(context).pop();
+                if (forceSignOut) {
+                  context.read<AuthenticationService>().signOut();
+                }
               },
             ),
           ],
@@ -221,7 +224,8 @@ class _SignInPageState extends State<SignInPage> {
                         }
                       } else {
                         Navigator.pop(context);
-                        showErrorDialog(result.result.message);
+                        showErrorDialog(
+                            "${result.result.message} ${result.errorOutput != null ? '\n\n${result.errorOutput}' : ''}");
                       }
                     },
                   ),

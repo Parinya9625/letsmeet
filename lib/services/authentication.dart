@@ -9,6 +9,8 @@ enum AuthenticationResult {
   wrongPassword("The password that you've entered is incorrect."),
   emailAlreadyInUse("This email already in use."),
   error("Unknow error. Please try again later."),
+  birthdayNotFound("Can't access your birthday info for checking your age."),
+  ageUnder18("User over 18 years can sign up"),
   googleSigninDismiss(""),
   success("");
 
@@ -33,6 +35,7 @@ enum AuthenticationResult {
 
 class AuthResultWithUserInfo {
   final AuthenticationResult result;
+  final String? errorOutput;
   final String? uid;
   final String? name;
   final String? surname;
@@ -42,6 +45,7 @@ class AuthResultWithUserInfo {
 
   AuthResultWithUserInfo({
     required this.result,
+    this.errorOutput,
     this.uid,
     this.birthday,
     this.name,
@@ -104,8 +108,15 @@ class AuthenticationService {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await _googleSignIn.signIn();
+
+      if (googleSignInAccount == null) {
+        return AuthResultWithUserInfo(
+          result: AuthenticationResult.googleSigninDismiss,
+        );
+      }
+
       final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount!.authentication;
+          await googleSignInAccount.authentication;
       final AuthCredential authCredential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
@@ -115,38 +126,45 @@ class AuthenticationService {
       var ageLimitDay = DateTime(now.year - 18, now.month, now.day);
       late UserCredential userCredential;
       final birthday = await getUserBirthday();
-      if (birthday != null && birthday.isBefore(ageLimitDay)) {
-        userCredential =
-            await _firebaseAuth.signInWithCredential(authCredential);
 
-        final displayName = userCredential.user!.displayName!.trim();
-        final splitIndex = displayName.indexOf(" ");
-        final name = splitIndex != -1
-            ? displayName.substring(0, splitIndex)
-            : displayName;
-        final surname = splitIndex != -1
-            ? displayName.substring(splitIndex, displayName.length)
-            : "";
-
+      if (birthday == null) {
         return AuthResultWithUserInfo(
-          result: AuthenticationResult.success,
-          uid: userCredential.user!.uid,
-          birthday: birthday,
-          name: name.trim(),
-          surname: surname.trim(),
-          photoUrl: userCredential.user!.photoURL,
-          createdTime: userCredential.user!.metadata.creationTime,
+          result: AuthenticationResult.birthdayNotFound,
         );
-      } else {
-        signOut();
-        return AuthResultWithUserInfo(result: AuthenticationResult.error);
+      } else if (!birthday.isBefore(ageLimitDay)) {
+        return AuthResultWithUserInfo(
+          result: AuthenticationResult.ageUnder18,
+        );
       }
+
+      userCredential = await _firebaseAuth.signInWithCredential(authCredential);
+
+      final displayName = userCredential.user!.displayName!.trim();
+      final splitIndex = displayName.indexOf(" ");
+      final name =
+          splitIndex != -1 ? displayName.substring(0, splitIndex) : displayName;
+      final surname = splitIndex != -1
+          ? displayName.substring(splitIndex, displayName.length)
+          : "";
+
+      return AuthResultWithUserInfo(
+        result: AuthenticationResult.success,
+        uid: userCredential.user!.uid,
+        birthday: birthday,
+        name: name.trim(),
+        surname: surname.trim(),
+        photoUrl: userCredential.user!.photoURL,
+        createdTime: userCredential.user!.metadata.creationTime,
+      );
     } on FirebaseAuthException catch (e) {
       return AuthResultWithUserInfo(
-          result: AuthenticationResult.fromCode(e.code));
+        result: AuthenticationResult.fromCode(e.code),
+      );
     } catch (e) {
       return AuthResultWithUserInfo(
-          result: AuthenticationResult.googleSigninDismiss);
+        result: AuthenticationResult.error,
+        errorOutput: e.toString(),
+      );
     }
   }
 

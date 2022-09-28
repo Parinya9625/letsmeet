@@ -54,7 +54,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return date;
   }
 
-  showErrorDialog(String message) {
+  showErrorDialog(String message, {bool forceSignOut = false}) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -66,6 +66,9 @@ class _SignUpPageState extends State<SignUpPage> {
               child: const Text('Done'),
               onPressed: () {
                 Navigator.of(context).pop();
+                if (forceSignOut) {
+                  context.read<AuthenticationService>().signOut();
+                }
               },
             ),
           ],
@@ -153,7 +156,10 @@ class _SignUpPageState extends State<SignUpPage> {
                         }
                       } else {
                         Navigator.pop(context);
-                        showErrorDialog(result.result.message);
+                        showErrorDialog(
+                          "${result.result.message} ${result.errorOutput != null ? '\n\n${result.errorOutput}' : ''}",
+                          forceSignOut: true,
+                        );
                       }
                     },
                   ),
