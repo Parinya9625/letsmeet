@@ -60,6 +60,14 @@ class CloudFirestoreService {
       _firestore.collection(CollectionPath.roles).snapshots().map((roles) =>
           roles.docs.map((doc) => Role.fromFirestore(doc: doc)).toList());
 
+  Stream<List<Feedback>> get streamFeedbacks => _firestore
+      .collection(CollectionPath.feedbacks)
+      .orderBy("createdTime", descending: true)
+      .snapshots()
+      .map((feedbacks) => feedbacks.docs
+          .map((doc) => Feedback.fromFirestore(doc: doc))
+          .toList());
+
   // * ----------  BAN ----------
 
   addBan({required Ban ban}) {

@@ -5,6 +5,7 @@ import 'package:letsmeet/pages/admin/users_page.dart';
 import 'package:letsmeet/pages/admin/events_page.dart';
 import 'package:letsmeet/pages/admin/roles_page.dart';
 import 'package:letsmeet/pages/admin/categories_page.dart';
+import 'package:letsmeet/pages/admin/feedbacks_page.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/theme_provider.dart';
 import 'package:letsmeet/models/user.dart';
@@ -25,7 +26,13 @@ class _MainPageState extends State<MainPage> {
   User? user;
   List<Role> listRole = [];
   String selectedPath = "/users";
-  List<String> pathName = ["/users", "/events", "/categories", "/roles"];
+  List<String> pathName = [
+    "/users",
+    "/events",
+    "/categories",
+    "/roles",
+    "/feedbacks"
+  ];
   List<Map<String, dynamic>> menus = [
     {"path": "/users", "icon": Icons.person_rounded, "label": "Users"},
     {"path": "/events", "icon": Icons.event_rounded, "label": "Events"},
@@ -35,6 +42,11 @@ class _MainPageState extends State<MainPage> {
       "label": "Categories"
     },
     {"path": "/roles", "icon": Icons.manage_accounts_rounded, "label": "Roles"},
+    {
+      "path": "/feedbacks",
+      "icon": Icons.rate_review_rounded,
+      "label": "Feedbacks"
+    },
   ];
 
   Color? isSelectedPath(String name) {
@@ -424,6 +436,9 @@ class _MainPageState extends State<MainPage> {
                       break;
                     case "/roles":
                       page = const RolesPage();
+                      break;
+                    case "/feedbacks":
+                      page = const FeedbacksPage();
                       break;
                     default:
                       page = TempPage(
