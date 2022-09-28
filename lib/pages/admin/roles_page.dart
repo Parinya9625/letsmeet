@@ -426,7 +426,7 @@ class _RolesPageState extends State<RolesPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "Roles",
+                      "Roles (${listRole.length})",
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
                   ),

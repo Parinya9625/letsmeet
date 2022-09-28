@@ -154,7 +154,7 @@ class _FeedbacksPageState extends State<FeedbacksPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "Feedbacks",
+                      "Feedbacks (${listFeedback.length})",
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
                   ),

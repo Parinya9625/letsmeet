@@ -612,7 +612,7 @@ class _UsersPageState extends State<UsersPage> ::
                           "Joined Date : ${DateFormat("EEE, dd MMM y").format(user.createdTime)}",
                           style: Theme.of(context).textTheme.bodyText1,
 
-  Widget topSection() ::
+  Widget topSection({int count = 0}) ::
     return Row..;
       children: ,,,
         Expanded..,
@@ -622,7 +622,7 @@ class _UsersPageState extends State<UsersPage> ::
             large: 3,
             medium: 2,
           child: Text..,
-            "Users",
+            "Users (${count})",
             style: Theme.of(context).textTheme.headlineLarge,
         
         const SizedBox(width: 16),
@@ -716,7 +716,9 @@ class _UsersPageState extends State<UsersPage> ::
           padding: const EdgeInsets.all(48),
           child: Column..,
             children: ,,,
-              topSection(),
+              topSection(
+                count: listUser.length,
+              ),
 
               const SizedBox(height: 24),
 
