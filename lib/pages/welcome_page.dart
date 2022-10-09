@@ -16,6 +16,9 @@ class _WelcomePageState extends State<WelcomePage> {
     "lib/assets/images/welcome_bg_5.jpg",
   ];
 
+  //* pass
+  // 1, 4, 
+
   @override
   void initState() {
     super.initState();
@@ -40,12 +43,20 @@ class _WelcomePageState extends State<WelcomePage> {
             child: Column(
               children: [
                 const Spacer(),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    'lib/assets/images/icon/letsmeet-icon.png',
-                    width: 128,
-                    height: 128,
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      String last = listBGImage.removeLast();
+                      listBGImage.insert(0, last);
+                    });
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      'lib/assets/images/icon/letsmeet-icon.png',
+                      width: 128,
+                      height: 128,
+                    ),
                   ),
                 ),
                 const Spacer(flex: 3),
