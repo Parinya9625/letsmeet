@@ -212,7 +212,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialEntryMode: DatePickerEntryMode.calendarOnly,
-      initialDate: DateTime.now(),
+      initialDate: date ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2025),
     );
@@ -228,7 +228,7 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
   void selectTime() async {
     TimeOfDay? selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: time ?? TimeOfDay.now(),
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
@@ -329,7 +329,8 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
       time = TimeOfDay(
           hour: widget.event!.startTime.hour,
           minute: widget.event!.startTime.minute);
-      timeController.text = "${time!.hour}:${time!.minute}";
+      timeController.text =
+          "${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}";
       maxPeopleController.text = widget.event!.maxMember.toString();
       detailController.text = widget.event!.description;
       limitController.value = widget.event!.ageRestrict;
