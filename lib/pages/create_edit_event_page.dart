@@ -329,7 +329,8 @@ class _CreateEditEventPageState extends State<CreateEditEventPage> {
       time = TimeOfDay(
           hour: widget.event!.startTime.hour,
           minute: widget.event!.startTime.minute);
-      timeController.text = "${time!.hour}:${time!.minute}";
+      timeController.text =
+          "${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}";
       maxPeopleController.text = widget.event!.maxMember.toString();
       detailController.text = widget.event!.description;
       limitController.value = widget.event!.ageRestrict;
