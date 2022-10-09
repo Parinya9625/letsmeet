@@ -177,7 +177,18 @@ class CloudFirestoreService {
   }
 
   Future<void> removeEvent({required String id}) async {
-    return _firestore.collection(CollectionPath.events).doc(id).delete();
+    return _firestore
+        .collection(CollectionPath.events)
+        .doc(id)
+        .collection(SubcollectionPath.chats)
+        .get()
+        .then((querySnapshot) {
+      for (var snapshot in querySnapshot.docs) {
+        snapshot.reference.delete();
+      }
+    }).then((_) {
+      return _firestore.collection(CollectionPath.events).doc(id).delete();
+    });
   }
 
   Future<bool> addEventMember(
