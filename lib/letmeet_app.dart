@@ -13,6 +13,7 @@ import 'package:letsmeet/pages/create_edit_event_page.dart';
 import 'package:letsmeet/pages/edit_profile_page.dart';
 import 'package:letsmeet/pages/forgot_password_page.dart';
 import 'package:letsmeet/pages/main_page.dart';
+import 'package:letsmeet/pages/privacy_page.dart';
 import 'package:letsmeet/pages/review_user_page.dart';
 import 'package:letsmeet/pages/setup_profile_page.dart';
 import 'package:letsmeet/pages/sign_in_page.dart';
@@ -263,6 +264,7 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
         "/welcome": (context) => const WelcomePage(),
         "/signup": (context) => const SignUpPage(),
         "/signup/tos": (context) => const TOSPage(),
+        "/signup/privacy": (context) => const PrivacyPage(),
         "/signup/setup": (context) => const SetupProfilePage(),
         "/signin": (context) => const SignInPage(),
         "/signin/forgot": (context) => const ForgotPasswordPage(),
