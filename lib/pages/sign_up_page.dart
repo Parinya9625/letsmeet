@@ -338,6 +338,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                           context, "/signup/tos");
                                     },
                                 ),
+                                const TextSpan(text: " and "),
+                                TextSpan(
+                                  text: "Privacy Policy",
+                                  style: Theme.of(context).textTheme.headline3,
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.pushNamed(
+                                          context, "/signup/privacy");
+                                    },
+                                ),
                                 const TextSpan(text: "."),
                               ],
                             ),
