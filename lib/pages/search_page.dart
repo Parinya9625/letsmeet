@@ -76,6 +76,16 @@ class SearchPageState extends State<SearchPage> {
     } else if (searchFilterController.mode == "User") {
       query = FirebaseFirestore.instance.collection("users");
 
+      User? user = context.read<User?>();
+
+      // limit user search
+      if (user?.role.id == "user") {
+        query = query.where(
+          "role",
+          isEqualTo: user?.role,
+        );
+      }
+
       // search word
       if (currentSearchText.trim().isNotEmpty) {
         query = query.where("searchIndex",
