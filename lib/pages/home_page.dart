@@ -325,9 +325,9 @@ class _HomePageState extends State<HomePage> {
       future: FirebaseFirestore.instance
           .collection("events")
           .where("category", isEqualTo: category.toDocRef())
+          .where("startTime", isGreaterThan: DateTime.now())
           .orderBy(
-            "createdTime",
-            descending: true,
+            "startTime",
           )
           .limit(eventLimit)
           .get()
