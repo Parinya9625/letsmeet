@@ -101,8 +101,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     if (result == AuthenticationResult.success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
+                          duration: Duration(seconds: 10),
                           content: Text(
-                            "Email sent successfully, please check your email !",
+                            "Email sent successfully. Please ensure to check your spam box in case you can't find it in your inbox",
                           ),
                         ),
                       );

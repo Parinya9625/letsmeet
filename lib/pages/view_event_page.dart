@@ -152,7 +152,11 @@ class _ViewEventPageState extends State<ViewEventPage> {
                 await context.read<CloudFirestoreService>().removeEventMember(
                     event: event, user: context.read<User?>()!);
 
-                Navigator.pop(context);
+                await context
+                    .read<GlobalKey<NavigatorState>>()
+                    .currentState!
+                    .pushNamedAndRemoveUntil("/event", ModalRoute.withName("/"),
+                        arguments: event);
               },
             ),
           ],

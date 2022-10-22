@@ -634,8 +634,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                       user: context.read<User?>()!,
                     );
 
-                Navigator.pop(context);
-                Navigator.pop(context);
+                Navigator.popUntil(context, ModalRoute.withName("/"));
               },
             ),
           ],
