@@ -155,6 +155,14 @@ class User {
     return Future.wait(rv);
   }
 
+  Future<bool> get isBanned {
+    return FirebaseFirestore.instance
+        .collection(CollectionPath.bans)
+        .doc(id)
+        .get()
+        .then((snapshot) => snapshot.exists);
+  }
+
   factory User.fromFirestore({required DocumentSnapshot doc}) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 

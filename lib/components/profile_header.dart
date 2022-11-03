@@ -194,7 +194,11 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
   Widget userData() {
     return FutureBuilder(
-      future: Future.wait([widget.user.getRole, widget.user.getFavCategory]),
+      future: Future.wait([
+        widget.user.getRole,
+        widget.user.getFavCategory,
+        widget.user.isBanned
+      ]),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return ShimmerLoading(
           isLoading: !snapshot.hasData,
@@ -202,6 +206,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           builder: (BuildContext context) {
             Role role = snapshot.data[0];
             List<Category> favCategory = snapshot.data[1];
+            bool isBanned = snapshot.data[2];
             double ratingAvg = widget.user.rating.average();
             int ratingAmount = widget.user.rating.amount();
 
@@ -230,11 +235,17 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                             "${widget.user.name} ${widget.user.surname}",
                             style: Theme.of(context).textTheme.headline1,
                           ),
-                          Badge(
-                            title: role.name,
-                            backgroundColor: role.backgroundColor,
-                            foregroundColor: role.foregroundColor,
-                          ),
+                          isBanned
+                              ? Badge(
+                                  title: "Banned",
+                                  backgroundColor: Theme.of(context).errorColor,
+                                  foregroundColor: Colors.white,
+                                )
+                              : Badge(
+                                  title: role.name,
+                                  backgroundColor: role.backgroundColor,
+                                  foregroundColor: role.foregroundColor,
+                                ),
                         ],
                       ),
                       const SizedBox(height: 6),
