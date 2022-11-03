@@ -30,6 +30,7 @@ class _DateSearchFilterState extends State<DateSearchFilter> {
     DateTimeRange? date = await showDateRangePicker(
       context: context,
       initialDateRange: value,
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (BuildContext context, Widget? child) {
