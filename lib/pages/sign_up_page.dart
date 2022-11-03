@@ -39,6 +39,7 @@ class _SignUpPageState extends State<SignUpPage> {
         context: context,
         firstDate: DateTime.parse("1900-01-01"),
         lastDate: DateTime.now(),
+        keyboardType: TextInputType.text,
         builder: (BuildContext context, Widget? child) {
           return Theme(
             data: Theme.of(context).copyWith(
