@@ -319,16 +319,33 @@ class SearchPageState extends State<SearchPage> {
                               (doc) {
                                 User? me = context.read<User?>();
                                 User user = User.fromFirestore(doc: doc);
-                                return SearchUserCard(
-                                  user: user,
-                                  onPressed: () {
-                                    context
-                                        .read<GlobalKey<NavigatorState>>()
-                                        .currentState!
-                                        .pushNamed("/profile", arguments: {
-                                      "userId": user.id,
-                                      "isOtherUser": user.id != me!.id,
-                                    });
+
+                                return FutureBuilder(
+                                  future: user.isBanned,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const SizedBox();
+                                    }
+
+                                    bool isBanned = snapshot.data;
+
+                                    if (isBanned) {
+                                      return const SizedBox();
+                                    }
+
+                                    return SearchUserCard(
+                                      user: user,
+                                      onPressed: () {
+                                        context
+                                            .read<GlobalKey<NavigatorState>>()
+                                            .currentState!
+                                            .pushNamed("/profile", arguments: {
+                                          "userId": user.id,
+                                          "isOtherUser": user.id != me!.id,
+                                        });
+                                      },
+                                    );
                                   },
                                 );
                               },
