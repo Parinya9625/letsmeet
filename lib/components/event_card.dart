@@ -201,16 +201,24 @@ class _EventCardState extends State<EventCard> {
                       },
                       if (!widget.isSmall) ...{
                         if (!widget.event.startTime
-                                .difference(DateTime.now())
-                                .isNegative &&
-                            widget.event.member.length <
-                                widget.event.maxMember) ...{
-                          Badge(
-                            title: "Open",
-                            backgroundColor: Theme.of(context)
-                                .extension<LetsMeetColor>()!
-                                .eventOpen,
-                          ),
+                            .difference(DateTime.now())
+                            .isNegative) ...{
+                          if (widget.event.member.length <
+                              widget.event.maxMember) ...{
+                            Badge(
+                              title: "Open",
+                              backgroundColor: Theme.of(context)
+                                  .extension<LetsMeetColor>()!
+                                  .eventOpen,
+                            ),
+                          } else ...{
+                            Badge(
+                              title: "Full",
+                              backgroundColor: Theme.of(context)
+                                  .extension<LetsMeetColor>()!
+                                  .eventRestrict,
+                            ),
+                          }
                         } else ...{
                           if (!widget.isReviewed) ...{
                             Badge(
