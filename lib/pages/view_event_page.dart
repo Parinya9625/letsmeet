@@ -543,64 +543,69 @@ class _ViewEventPageState extends State<ViewEventPage> {
                   },
                 ),
               },
-              PopupMenuButton(
-                position: PopupMenuPosition.under,
-                itemBuilder: (context) {
-                  return [
-                    if (canJoinEvent()) ...{
-                      popupMenuItem(
-                        icons: Icons.event_available_rounded,
-                        title: "Join event",
-                      ),
-                    },
-                    if (event.member.any((member) => member.id == user!.id) &&
-                        event.owner.id != user!.id) ...{
-                      popupMenuItem(
-                        icons: Icons.event_busy_rounded,
-                        title: "Leave event",
-                      ),
-                    },
-                    if (event.owner.id == user!.id) ...{
-                      if (DateTime.now().isBefore(event.startTime)) ...{
+              Visibility(
+                visible: event.owner.id != user?.id ||
+                    DateTime.now().isBefore(event.startTime),
+                child: PopupMenuButton(
+                  position: PopupMenuPosition.under,
+                  itemBuilder: (context) {
+                    return [
+                      if (canJoinEvent()) ...{
                         popupMenuItem(
-                          icons: Icons.edit_calendar_rounded,
-                          title: "Edit event",
+                          icons: Icons.event_available_rounded,
+                          title: "Join event",
                         ),
                       },
-                      popupMenuItem(
-                        icons: Icons.event_busy_rounded,
-                        title: "Close event",
-                      ),
-                    } else ...{
-                      popupMenuItem(
-                        icons: Icons.flag_rounded,
-                        title: "Report",
-                      ),
-                    },
-                  ];
-                },
-                onSelected: (selected) {
-                  switch (selected) {
-                    case "Join event":
-                      joinEvent();
-                      break;
-                    case "Leave event":
-                      confirmLeaveEvent();
-                      break;
-                    case "Close event":
-                      confirmCloseEvent();
-                      break;
-                    case "Edit event":
-                      context
-                          .read<GlobalKey<NavigatorState>>()
-                          .currentState!
-                          .pushNamed("/event/edit", arguments: event);
-                      break;
-                    case "Report":
-                      showReportEventDialog();
-                      break;
-                  }
-                },
+                      if (event.member.any((member) => member.id == user!.id) &&
+                          event.owner.id != user!.id &&
+                          DateTime.now().isBefore(event.startTime)) ...{
+                        popupMenuItem(
+                          icons: Icons.event_busy_rounded,
+                          title: "Leave event",
+                        ),
+                      },
+                      if (event.owner.id == user!.id) ...{
+                        if (DateTime.now().isBefore(event.startTime)) ...{
+                          popupMenuItem(
+                            icons: Icons.edit_calendar_rounded,
+                            title: "Edit event",
+                          ),
+                          popupMenuItem(
+                            icons: Icons.event_busy_rounded,
+                            title: "Close event",
+                          ),
+                        },
+                      } else ...{
+                        popupMenuItem(
+                          icons: Icons.flag_rounded,
+                          title: "Report",
+                        ),
+                      },
+                    ];
+                  },
+                  onSelected: (selected) {
+                    switch (selected) {
+                      case "Join event":
+                        joinEvent();
+                        break;
+                      case "Leave event":
+                        confirmLeaveEvent();
+                        break;
+                      case "Close event":
+                        confirmCloseEvent();
+                        break;
+                      case "Edit event":
+                        context
+                            .read<GlobalKey<NavigatorState>>()
+                            .currentState!
+                            .pushNamed("/event/edit", arguments: event);
+                        break;
+                      case "Report":
+                        showReportEventDialog();
+                        break;
+                    }
+                  },
+                ),
               ),
             ],
           ),

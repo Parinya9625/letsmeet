@@ -86,7 +86,7 @@ class _SignInPageState extends State<SignInPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Welcome back",
+                    "Login",
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 32),
