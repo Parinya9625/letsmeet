@@ -403,6 +403,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                   stream: FirebaseFirestore.instance
                       .collection("events")
                       .where("owner", isEqualTo: user.toDocRef())
+                      .orderBy("createdTime", descending: true)
                       .snapshots()
                       .map(
                     (events) {
@@ -435,9 +436,14 @@ class _UserProfilePageState extends State<UserProfilePage>
                         });
                       }
 
-                      return events.docs
+                      List<Event> listEvent = events.docs
                           .map((doc) => Event.fromFirestore(doc: doc))
                           .toList();
+
+                      listEvent.sort(
+                          (a, b) => b.createdTime.compareTo(a.createdTime));
+
+                      return listEvent;
                     },
                   ),
                 ),
