@@ -253,6 +253,7 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
 
   Widget materialApp({ThemeMode themeMode = ThemeMode.system}) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
       scaffoldMessengerKey: scaffoldMessangerKey,
       title: 'LetsMeet',
