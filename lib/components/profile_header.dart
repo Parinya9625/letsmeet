@@ -29,7 +29,7 @@ class ProfileHeader extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ProfileHeader> createState() => _ProfileHeaderState();
+  State<ProfileHeader> createState() => ProfileHeaderState();
 }
 
 enum _PopupMenuValue {
@@ -38,7 +38,7 @@ enum _PopupMenuValue {
   signout,
 }
 
-class _ProfileHeaderState extends State<ProfileHeader> {
+class ProfileHeaderState extends State<ProfileHeader> {
   Widget placeholder() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,8 +334,8 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             child: const Text("EDIT PROFILE"),
           ),
         ),
-        const SizedBox(width: 8),
-        popupMenu(),
+        // const SizedBox(width: 8),
+        // popupMenu(),
       ],
     );
   }
@@ -481,6 +481,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                             context.read<CloudFirestoreService>().addFeedback(
                                   feedback: lm.Feedback.create(
                                     message: textController.text.trim(),
+                                    by: context.read<User?>()!.toDocRef(),
                                   ),
                                 );
                             Navigator.pop(dialogContext);

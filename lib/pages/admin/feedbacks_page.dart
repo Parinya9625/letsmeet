@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:letsmeet/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:letsmeet/models/feedback.dart' as lm;
 import 'package:letsmeet/services/firestore.dart';
-import 'package:letsmeet/components/input_field.dart';
 import 'package:letsmeet/components/admin/detail_dialog.dart';
 import 'package:letsmeet/components/admin/responsive_layout.dart';
 import 'package:intl/intl.dart';
@@ -50,7 +50,7 @@ class _FeedbacksPageState extends State<FeedbacksPage> {
         });
   }
 
-  void feedbackDialog({required lm.Feedback feedback}) {
+  void feedbackDialog({required lm.Feedback feedback, User? user}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -60,6 +60,7 @@ class _FeedbacksPageState extends State<FeedbacksPage> {
               width: 512,
               menus: [
                 DetailDialogMenuButton(
+                  color: Theme.of(context).errorColor,
                   icon: Icons.delete_rounded,
                   onPressed: () {
                     confirmRemoveFeedback(context, feedback);
@@ -85,6 +86,16 @@ class _FeedbacksPageState extends State<FeedbacksPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
+                        user != null ? "${user.name} ${user.surname}" : "...",
+                        textAlign: TextAlign.end,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
                         DateFormat("EEE, dd MMM y, HH:mm")
                             .format(feedback.createdTime),
                         style: Theme.of(context).textTheme.bodyText1,
@@ -101,10 +112,12 @@ class _FeedbacksPageState extends State<FeedbacksPage> {
   }
 
   Widget feedbackCard(lm.Feedback feedback) {
+    User? user;
     return GestureDetector(
       onTap: () {
         feedbackDialog(
           feedback: feedback,
+          user: user,
         );
       },
       child: Card(
@@ -118,11 +131,34 @@ class _FeedbacksPageState extends State<FeedbacksPage> {
               Expanded(
                 child: Text(
                   feedback.message,
-                  maxLines: 4,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FutureBuilder(
+                    future: feedback.getBy,
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Text("...");
+                      }
+
+                      user = snapshot.data;
+
+                      return Expanded(
+                        child: Text(
+                          "${user!.name} ${user!.surname}",
+                          textAlign: TextAlign.end,
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -177,9 +213,9 @@ class _FeedbacksPageState extends State<FeedbacksPage> {
                 crossAxisSpacing: 8.0,
                 childAspectRatio: ResponsiveValue(
                   context: context,
-                  small: 2 / 1,
-                  medium: 2 / 1,
-                  large: 1.5 / 1,
+                  small: 2.5 / 1,
+                  medium: 2.3 / 1,
+                  large: 2.5 / 1,
                   extraLarge: 2 / 1,
                 ),
                 children: [

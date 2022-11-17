@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -123,34 +124,35 @@ class _EventsPageState extends State<EventsPage> {
         });
   }
 
-  Widget textDetail({String? title, String? text, List<Widget>? children}) {
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          RichText(
-            text: TextSpan(
-              style: Theme.of(context).textTheme.headline2,
+  TableRow textDetail({String? title, String? text, List<Widget>? children}) {
+    return TableRow(
+      children: [
+        TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              title ?? "",
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+        ),
+        TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                if (title != null) ...{
-                  TextSpan(
-                    text: title,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  const TextSpan(text: "  "),
-                },
                 if (text != null) ...{
-                  TextSpan(
-                    text: text,
-                  ),
+                  Text(text),
                 },
+                ...?children,
               ],
             ),
           ),
-          ...?children,
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -191,65 +193,76 @@ class _EventsPageState extends State<EventsPage> {
             ],
           ),
           const SizedBox(height: 16),
-          textDetail(
-            title: "Name",
-            text: event.name,
-          ),
-          textDetail(
-            title: "Created Time",
-            text: DateFormat("EEE, dd MMM y").format(event.createdTime),
-          ),
-          textDetail(
-            title: "Type",
-            text: event.type,
-          ),
-          textDetail(
-            title: "Category",
+          Table(
+            columnWidths: const <int, TableColumnWidth>{
+              0: IntrinsicColumnWidth(),
+              1: FlexColumnWidth(),
+            },
             children: [
-              if (category != null) ...{
-                Icon(category.icon),
-                const SizedBox(width: 8),
-                Text(category.name),
-              },
+              textDetail(
+                title: "Name",
+                text: event.name,
+              ),
+              textDetail(
+                title: "Created Time",
+                text: DateFormat("EEE, dd MMM y").format(event.createdTime),
+              ),
+              textDetail(
+                title: "Type",
+                text: event.type,
+              ),
+              textDetail(
+                title: "Category",
+                children: [
+                  if (category != null) ...{
+                    Icon(
+                      category.icon,
+                      color: Theme.of(context).textTheme.headline1!.color,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(category.name),
+                  },
+                ],
+              ),
+              textDetail(
+                title: "Start Time",
+                text: DateFormat("EEE, dd MMM y").format(event.startTime),
+              ),
+              textDetail(
+                title: "Event Detail",
+                text: event.description,
+              ),
+              textDetail(
+                title: "Age Restrict",
+                text: event.ageRestrict.toString(),
+              ),
+              textDetail(
+                title: "Owner",
+                children: [
+                  if (owner != null) ...{
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        imageUrl: owner.image,
+                        fit: BoxFit.cover,
+                        width: 32,
+                        height: 32,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text("${owner.name} ${owner.surname}"),
+                  },
+                ],
+              ),
+              textDetail(
+                title: "Member",
+                text: event.member.length.toString(),
+              ),
+              textDetail(
+                title: "Max Member",
+                text: event.maxMember.toString(),
+              ),
             ],
-          ),
-          textDetail(
-            title: "Start Time",
-            text: DateFormat("EEE, dd MMM y").format(event.startTime),
-          ),
-          textDetail(
-            title: "Event Detail",
-            text: event.description,
-          ),
-          textDetail(
-            title: "Age Restrict",
-            text: event.ageRestrict.toString(),
-          ),
-          textDetail(
-            title: "Owner",
-            children: [
-              if (owner != null) ...{
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    imageUrl: owner.image,
-                    fit: BoxFit.cover,
-                    width: 32,
-                    height: 32,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text("${owner.name} ${owner.surname}"),
-              },
-            ],
-          ),
-          textDetail(
-            title: "Member",
-            text: event.member.length.toString(),
-          ),
-          textDetail(
-            title: "Max Member",
-            text: event.maxMember.toString(),
           ),
         ],
       ),
@@ -288,11 +301,14 @@ class _EventsPageState extends State<EventsPage> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
                     child: FaIcon(
                       FontAwesomeIcons.solidFaceLaugh,
                       size: 96,
+                      color: Theme.of(context)
+                          .extension<LetsMeetColor>()!
+                          .eventOpen,
                     ),
                   ),
                   Padding(
@@ -364,21 +380,29 @@ class _EventsPageState extends State<EventsPage> {
           ),
           const SizedBox(height: 16),
           if (event.type == "In Person") ...{
-            textDetail(
-              title: "Place ID",
-              text: event.location.placeId,
-            ),
-            textDetail(
-              title: "Name",
-              text: event.location.name,
-            ),
-            textDetail(
-              title: "Latitude",
-              text: "${event.location.geoPoint?.latitude}",
-            ),
-            textDetail(
-              title: "Longitude",
-              text: "${event.location.geoPoint?.longitude}",
+            Table(
+              columnWidths: const <int, TableColumnWidth>{
+                0: IntrinsicColumnWidth(),
+                1: FlexColumnWidth(),
+              },
+              children: [
+                textDetail(
+                  title: "Place ID",
+                  text: event.location.placeId,
+                ),
+                textDetail(
+                  title: "Name",
+                  text: event.location.name,
+                ),
+                textDetail(
+                  title: "Latitude",
+                  text: "${event.location.geoPoint?.latitude}",
+                ),
+                textDetail(
+                  title: "Longitude",
+                  text: "${event.location.geoPoint?.longitude}",
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Flexible(
@@ -413,13 +437,21 @@ class _EventsPageState extends State<EventsPage> {
               ),
             ),
           } else ...{
-            textDetail(
-              title: "Name",
-              text: event.location.name,
-            ),
-            textDetail(
-              title: "Link",
-              text: event.location.link,
+            Table(
+              columnWidths: const <int, TableColumnWidth>{
+                0: IntrinsicColumnWidth(),
+                1: FlexColumnWidth(),
+              },
+              children: [
+                textDetail(
+                  title: "Name",
+                  text: event.location.name,
+                ),
+                textDetail(
+                  title: "Link",
+                  text: event.location.link,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Flexible(
@@ -484,6 +516,7 @@ class _EventsPageState extends State<EventsPage> {
                   ),
                 },
                 DetailDialogMenuButton(
+                  color: Theme.of(context).errorColor,
                   child: Row(
                     children: const [
                       Icon(Icons.block_rounded),

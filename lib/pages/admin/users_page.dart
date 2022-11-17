@@ -261,11 +261,7 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   int getPermissionLevel(Role role) {
-    int permissionLevel = role.permission.isDeveloper
-        ? 0
-        : role.permission.isAdmin
-            ? 1
-            : 999;
+    int permissionLevel = role.permission.isAdmin ? 1 : 999;
 
     return permissionLevel;
   }
@@ -318,34 +314,34 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  Widget textDetail({String? title, String? text, List<Widget>? children}) {
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          RichText(
-            text: TextSpan(
-              style: Theme.of(context).textTheme.headline2,
+  TableRow textDetail({String? title, String? text, List<Widget>? children}) {
+    return TableRow(
+      children: [
+        TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              title ?? "",
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+        ),
+        TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Wrap(
               children: [
-                if (title != null) ...{
-                  TextSpan(
-                    text: title,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  const TextSpan(text: "  "),
-                },
                 if (text != null) ...{
-                  TextSpan(
-                    text: text,
-                  ),
+                  Text(text),
                 },
+                ...?children,
               ],
             ),
           ),
-          ...?children,
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -388,53 +384,55 @@ class _UsersPageState extends State<UsersPage> {
 
           const SizedBox(height: 16),
 
-          textDetail(
-            title: "Name",
-            text: user.name,
-          ),
-
-          textDetail(
-            title: "Surname",
-            text: user.surname,
-          ),
-
-          textDetail(
-            title: "Role",
+          Table(
+            columnWidths: const <int, TableColumnWidth>{
+              0: IntrinsicColumnWidth(),
+              1: FlexColumnWidth(),
+            },
             children: [
-              Badge(
-                title: getRole(user.role.id).name,
-                foregroundColor: getRole(user.role.id).foregroundColor,
-                backgroundColor: getRole(user.role.id).backgroundColor,
+              textDetail(
+                title: "Name",
+                text: user.name,
               ),
-            ],
-          ),
-
-          textDetail(
-            title: "Bio",
-            text: user.bio,
-          ),
-
-          textDetail(
-            title: "Birthday",
-            text: DateFormat("EEE, dd MMM y").format(user.birthday),
-          ),
-
-          textDetail(
-            title: "Joined Date",
-            text: DateFormat("EEE, dd MMM y").format(user.createdTime),
-          ),
-
-          textDetail(
-            title: "Interest Category",
-            children: [
-              for (DocumentReference category in user.favCategory) ...{
-                Padding(
-                  padding: const EdgeInsets.only(
-                    right: 8,
-                  ),
-                  child: Icon(getCategory(category.id).icon),
-                ),
-              },
+              textDetail(
+                title: "Surname",
+                text: user.surname,
+              ),
+              textDetail(
+                title: "Role",
+                text: getRole(user.role.id).name,
+              ),
+              textDetail(
+                title: "Bio",
+                text: user.bio,
+              ),
+              textDetail(
+                title: "Birthday",
+                text: DateFormat("EEE, dd MMM y").format(user.birthday),
+              ),
+              textDetail(
+                title: "Joined Date",
+                text: DateFormat("EEE, dd MMM y").format(user.createdTime),
+              ),
+              textDetail(
+                title: "Interest Category",
+                children: [
+                  for (DocumentReference category in user.favCategory) ...{
+                    Tooltip(
+                      message: getCategory(category.id).name,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: 8,
+                        ),
+                        child: Icon(
+                          getCategory(category.id).icon,
+                          color: Theme.of(context).textTheme.headline1!.color,
+                        ),
+                      ),
+                    ),
+                  },
+                ],
+              ),
             ],
           ),
         ],
@@ -550,12 +548,13 @@ class _UsersPageState extends State<UsersPage> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: FaIcon(
-                      FontAwesomeIcons.solidFaceLaugh,
-                      size: 96,
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: FaIcon(FontAwesomeIcons.solidFaceLaugh,
+                        size: 96,
+                        color: Theme.of(context)
+                            .extension<LetsMeetColor>()!
+                            .eventOpen),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16),
@@ -628,13 +627,21 @@ class _UsersPageState extends State<UsersPage> {
           ],
         ),
         const SizedBox(height: 16),
-        textDetail(
-          title: "Ban Date",
-          text: DateFormat("EEE, dd MMM y").format(ban.banTime),
-        ),
-        textDetail(
-          title: "Reason",
-          text: ban.reason,
+        Table(
+          columnWidths: const <int, TableColumnWidth>{
+            0: IntrinsicColumnWidth(),
+            1: FlexColumnWidth(),
+          },
+          children: [
+            textDetail(
+              title: "Ban Date",
+              text: DateFormat("EEE, dd MMM y").format(ban.banTime),
+            ),
+            textDetail(
+              title: "Reason",
+              text: ban.reason,
+            ),
+          ],
         ),
       ],
     );
@@ -725,6 +732,7 @@ class _UsersPageState extends State<UsersPage> {
                 } else ...{
                   if (cupLevel <= upLevel) ...{
                     DetailDialogMenuButton(
+                      color: Theme.of(context).errorColor,
                       child: Row(
                         children: const [
                           Icon(Icons.block_rounded),

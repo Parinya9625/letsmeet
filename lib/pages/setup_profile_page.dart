@@ -119,7 +119,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                   const SizedBox(height: 16),
                   InputField(
                     controller: bioController,
-                    hintText: 'Bio',
+                    hintText: 'Bio (Something about yourself)',
                     icon: const Icon(Icons.badge_rounded),
                     maxLength: 200,
                     maxLengthEnforcement: MaxLengthEnforcement.none,
