@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:letsmeet/style.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -288,11 +289,14 @@ class _EventsPageState extends State<EventsPage> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
                     child: FaIcon(
                       FontAwesomeIcons.solidFaceLaugh,
                       size: 96,
+                      color: Theme.of(context)
+                          .extension<LetsMeetColor>()!
+                          .eventOpen,
                     ),
                   ),
                   Padding(

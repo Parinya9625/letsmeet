@@ -546,12 +546,13 @@ class _UsersPageState extends State<UsersPage> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: FaIcon(
-                      FontAwesomeIcons.solidFaceLaugh,
-                      size: 96,
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: FaIcon(FontAwesomeIcons.solidFaceLaugh,
+                        size: 96,
+                        color: Theme.of(context)
+                            .extension<LetsMeetColor>()!
+                            .eventOpen),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16),
