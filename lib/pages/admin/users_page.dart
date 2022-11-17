@@ -261,11 +261,7 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   int getPermissionLevel(Role role) {
-    int permissionLevel = role.permission.isDeveloper
-        ? 0
-        : role.permission.isAdmin
-            ? 1
-            : 999;
+    int permissionLevel = role.permission.isAdmin ? 1 : 999;
 
     return permissionLevel;
   }
