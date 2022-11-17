@@ -481,6 +481,7 @@ class ProfileHeaderState extends State<ProfileHeader> {
                             context.read<CloudFirestoreService>().addFeedback(
                                   feedback: lm.Feedback.create(
                                     message: textController.text.trim(),
+                                    by: context.read<User?>()!.toDocRef(),
                                   ),
                                 );
                             Navigator.pop(dialogContext);

@@ -5,15 +5,18 @@ class Feedback {
   final String? id;
   final DateTime createdTime;
   final String message;
+  final DocumentReference by;
 
   Feedback({
     required this.id,
     required this.createdTime,
     required this.message,
+    required this.by,
   });
 
   Feedback.create({
     required this.message,
+    required this.by,
     DateTime? createdTime,
   })  : id = null,
         createdTime = createdTime ?? DateTime.now();
@@ -25,6 +28,7 @@ class Feedback {
       id: doc.id,
       createdTime: data["createdTime"].toDate(),
       message: data["message"],
+      by: data["by"],
     );
   }
 
@@ -38,6 +42,7 @@ class Feedback {
     return {
       "createdTime": createdTime,
       "message": message,
+      "by": by,
     };
   }
 }
