@@ -16,6 +16,15 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
+  List<Category> listCategory = [];
+
+  bool isDuplicate(Category category) {
+    return listCategory.any(
+      (cat) =>
+          cat.name.trim().toLowerCase() == category.name.trim().toLowerCase(),
+    );
+  }
+
   void confirmRemoveCategory(
       BuildContext detailContext, Category category) async {
     showDialog(
@@ -104,22 +113,46 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 icon: Icons.save_rounded,
                 visible: !isEditing || addNewCategory,
                 onPressed: () {
-                  if (addNewCategory) {
-                    currentCategory = Category(
-                      id: category.id,
-                      name: nameController.text.trim(),
-                      icon: iconController.value!,
+                  if (isDuplicate(Category.create(
+                    name: nameController.text.trim(),
+                    icon: iconController.value!,
+                  ))) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext errorContext) {
+                        return AlertDialog(
+                          title: const Text("Duplicated Error"),
+                          content: Text(
+                              "Category name \"${nameController.text.trim()}\" is duplicated."),
+                          actions: [
+                            TextButton(
+                              child: const Text("OK"),
+                              onPressed: () {
+                                Navigator.pop(errorContext);
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     );
-                    context.read<CloudFirestoreService>().addCategory(
-                          category: currentCategory,
-                        );
                   } else {
-                    context.read<CloudFirestoreService>().updateCategory(
-                          id: currentCategory.id!,
-                          data: currentCategory.toMap(),
-                        );
+                    if (addNewCategory) {
+                      currentCategory = Category(
+                        id: category.id,
+                        name: nameController.text.trim(),
+                        icon: iconController.value!,
+                      );
+                      context.read<CloudFirestoreService>().addCategory(
+                            category: currentCategory,
+                          );
+                    } else {
+                      context.read<CloudFirestoreService>().updateCategory(
+                            id: currentCategory.id!,
+                            data: currentCategory.toMap(),
+                          );
+                    }
+                    Navigator.pop(context);
                   }
-                  Navigator.pop(context);
                 },
               ),
               DetailDialogMenuButton(
@@ -224,7 +257,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Category> listCategory = context.watch<List<Category>?>() ?? [];
+    listCategory = context.watch<List<Category>?>() ?? [];
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
