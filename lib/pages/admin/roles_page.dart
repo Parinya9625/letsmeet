@@ -206,6 +206,7 @@ class _RolesPageState extends State<RolesPage> {
                     });
                   }),
               DetailDialogMenuButton(
+                color: Theme.of(context).errorColor,
                 icon: Icons.delete_rounded,
                 visible: !isEditing &&
                     !addNewRole &&

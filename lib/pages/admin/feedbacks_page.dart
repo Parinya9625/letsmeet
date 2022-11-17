@@ -60,6 +60,7 @@ class _FeedbacksPageState extends State<FeedbacksPage> {
               width: 512,
               menus: [
                 DetailDialogMenuButton(
+                  color: Theme.of(context).errorColor,
                   icon: Icons.delete_rounded,
                   onPressed: () {
                     confirmRemoveFeedback(context, feedback);

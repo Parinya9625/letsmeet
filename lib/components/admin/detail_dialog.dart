@@ -49,6 +49,7 @@ class DetailDialogMenuButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final IconData? icon;
   final Widget? child;
+  final Color? color;
   final bool visible;
 
   const DetailDialogMenuButton({
@@ -56,6 +57,7 @@ class DetailDialogMenuButton extends StatefulWidget {
     this.onPressed,
     this.icon,
     this.child,
+    this.color,
     this.visible = true,
   }) : super(key: key);
 
@@ -79,6 +81,7 @@ class _DetailDialogMenuButtonState extends State<DetailDialogMenuButton> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
+                    foregroundColor: widget.color,
                   ),
                   onPressed: widget.onPressed,
                   child: Padding(
@@ -91,6 +94,7 @@ class _DetailDialogMenuButtonState extends State<DetailDialogMenuButton> {
               : TextButton(
                   style: TextButton.styleFrom(
                     shape: const CircleBorder(),
+                    foregroundColor: widget.color,
                   ),
                   onPressed: widget.onPressed,
                   child: widget.icon?.fontPackage == "font_awesome_flutter"

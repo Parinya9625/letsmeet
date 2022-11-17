@@ -164,6 +164,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     });
                   }),
               DetailDialogMenuButton(
+                color: Theme.of(context).errorColor,
                 icon: Icons.delete_rounded,
                 visible: !isEditing && !addNewCategory,
                 onPressed: () {
