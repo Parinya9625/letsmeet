@@ -7,6 +7,7 @@ import 'package:letsmeet/components/shimmer.dart';
 import 'package:letsmeet/models/event.dart';
 import 'package:letsmeet/models/report.dart';
 import 'package:letsmeet/models/user.dart';
+import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +34,7 @@ class _UserProfilePageState extends State<UserProfilePage>
   List<Tab> tabName = [];
   TabController? tabController;
   late User user;
+  GlobalKey<ProfileHeaderState> headerState = GlobalKey();
 
   @override
   void initState() {
@@ -269,18 +271,20 @@ class _UserProfilePageState extends State<UserProfilePage>
   }
 
   PopupMenuItem<String> popupMenuItem(
-      {required IconData icons, required String title}) {
+      {required IconData icons, required String title, Color? color}) {
     return PopupMenuItem<String>(
       value: title,
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         leading: Icon(
           icons,
-          color: Theme.of(context).textTheme.headline1!.color,
+          color: color ?? Theme.of(context).textTheme.headline1!.color,
         ),
         title: Text(
           title,
-          style: Theme.of(context).textTheme.headline1,
+          style: color != null
+              ? Theme.of(context).textTheme.headline1!.copyWith(color: color)
+              : Theme.of(context).textTheme.headline1,
         ),
       ),
     );
@@ -345,6 +349,40 @@ class _UserProfilePageState extends State<UserProfilePage>
                             }
                           },
                         ),
+                      } else ...{
+                        PopupMenuButton(
+                          position: PopupMenuPosition.under,
+                          itemBuilder: (context) {
+                            return [
+                              popupMenuItem(
+                                icons: Icons.palette_rounded,
+                                title: "Choose theme",
+                              ),
+                              popupMenuItem(
+                                icons: Icons.rate_review_rounded,
+                                title: "Share feedback",
+                              ),
+                              popupMenuItem(
+                                icons: Icons.logout_rounded,
+                                title: "Sign out",
+                                color: Theme.of(context).errorColor,
+                              ),
+                            ];
+                          },
+                          onSelected: (selected) {
+                            switch (selected) {
+                              case "Sign out":
+                                context.read<AuthenticationService>().signOut();
+                                break;
+                              case "Choose theme":
+                                headerState.currentState?.chooseThemeDialog();
+                                break;
+                              case "Share feedback":
+                                headerState.currentState?.feedbackDialog();
+                                break;
+                            }
+                          },
+                        ),
                       },
                     ],
                     title: LayoutBuilder(
@@ -370,6 +408,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                     flexibleSpace: FlexibleSpaceBar(
                       background: SafeArea(
                         child: ProfileHeader(
+                          key: headerState,
                           user: user,
                           isOtherUser: widget.isOtherUser,
                           onEditPressed: () {
