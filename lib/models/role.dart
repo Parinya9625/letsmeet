@@ -23,6 +23,19 @@ class Role {
       : id = null;
 
   factory Role.fromFirestore({required DocumentSnapshot doc}) {
+    if (!doc.exists) {
+      return Role(
+        id: doc.id,
+        name: "Unknown",
+        foregroundColor: const Color.fromRGBO(254, 239, 0, 1),
+        backgroundColor: const Color.fromRGBO(227, 85, 15, 1),
+        permission: UserPermission(
+          isAdmin: false,
+          isDeveloper: false,
+        ),
+      );
+    }
+
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     return Role(
