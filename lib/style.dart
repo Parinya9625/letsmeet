@@ -23,7 +23,7 @@ BaseTheme lightBase = BaseTheme(
   background: const Color.fromRGBO(242, 249, 251, 1),
   card: Colors.white,
   error: const Color.fromRGBO(255, 78, 80, 1),
-  disable: const Color.fromRGBO(243, 243, 243, 1),
+  disable: const Color.fromRGBO(227, 227, 227, 1),
   highlight: const Color.fromRGBO(242, 201, 76, 1),
   eventOpen: const Color.fromRGBO(25, 214, 104, 1),
   eventClose: const Color.fromRGBO(106, 106, 106, 1),
