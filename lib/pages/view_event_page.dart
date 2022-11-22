@@ -726,22 +726,22 @@ class _ViewEventPageState extends State<ViewEventPage> {
                                         .headline1!
                                         .color,
                                   ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16),
-                                      child: Text(
-                                        "Location",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1,
-                                      ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Text(
+                                      "Location",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline1,
                                     ),
                                   ),
-                                  Text(
-                                    event.location.name,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
+                                  Expanded(
+                                    child: Text(
+                                      event.location.name,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
                                   ),
                                 ],
                               ),

@@ -562,57 +562,75 @@ class _EventsPageState extends State<EventsPage> {
         margin: const EdgeInsets.all(2),
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImage(
-                    imageUrl: event.image,
-                    fit: BoxFit.cover,
-                    width: 16 * 10,
-                    height: 9 * 10,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CachedNetworkImage(
+                      imageUrl: event.image,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Wrap(
-                  direction: Axis.vertical,
-                  spacing: 8,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
                       children: [
-                        Text(
-                          event.name,
-                          style: Theme.of(context).textTheme.headline1,
+                        Expanded(
+                          child: Text(
+                            event.name,
+                            style: Theme.of(context).textTheme.headline1,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         const Icon(Icons.place_rounded),
                         const SizedBox(width: 8),
-                        Text(
-                          "Location : ${event.location.name}",
-                          style: Theme.of(context).textTheme.bodyText1,
+                        Expanded(
+                          child: Text(
+                            "Location : ${event.location.name}",
+                            style: Theme.of(context).textTheme.bodyText1,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         const Icon(Icons.person_rounded),
                         const SizedBox(width: 8),
-                        Text(
-                          "Owner : ${owner != null ? '${owner.name} ${owner.surname}' : '!! UNKNOWN !!'}",
-                          style: Theme.of(context).textTheme.bodyText1,
+                        Expanded(
+                          child: Text(
+                            "Owner : ${owner != null ? '${owner.name} ${owner.surname}' : '!! UNKNOWN !!'}",
+                            style: Theme.of(context).textTheme.bodyText1,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -757,7 +775,7 @@ class _EventsPageState extends State<EventsPage> {
                 ),
                 mainAxisSpacing: 8.0,
                 crossAxisSpacing: 8.0,
-                childAspectRatio: 4 / 1,
+                childAspectRatio: 4 / 1.25,
                 children: [
                   for (Event event in listEvent) ...{
                     eventCard(event),
