@@ -491,6 +491,95 @@ class _ViewEventPageState extends State<ViewEventPage> {
     );
   }
 
+  Widget memberBuilder(User user) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: FutureBuilder(
+        future: event.getMember,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return ShimmerLoading(
+            isLoading: !snapshot.hasData,
+            placeholder: GridView.count(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              crossAxisCount: 8,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              children: [
+                for (var i = 0; i < 4; i++) ...{
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: Colors.black,
+                    ),
+                  ),
+                }
+              ],
+            ),
+            builder: (BuildContext context) {
+              List<User> listMember = snapshot.data;
+              listMember.shuffle();
+              List<User> listMemberLimit = listMember.length > 16
+                  ? listMember.take(15).toList()
+                  : listMember.take(16).toList();
+
+              int dif = listMember.length - listMemberLimit.length;
+              dif = dif > 99 ? 99 : dif;
+
+              if (listMember.isNotEmpty) {
+                return GridView.count(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  crossAxisCount: 8,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  children: [
+                    ...listMemberLimit.map((member) {
+                      if (user.id == event.owner.id && user.id != member.id) {
+                        // owner option to other user
+                        return showOwnerOtherUserMenu(member);
+                      }
+
+                      // normal member / owner option to self
+                      return GestureDetector(
+                        onTap: () {
+                          viewUserProfile(member);
+                        },
+                        child: avatar(url: member.image),
+                      );
+                    }).toList(),
+                    if (listMember.length > 16) ...{
+                      GestureDetector(
+                        onTap: () {
+                          context
+                              .read<GlobalKey<NavigatorState>>()
+                              .currentState!
+                              .pushNamed(
+                                "/event/members",
+                                arguments: listMember,
+                              );
+                        },
+                        child: Card(
+                          child: Center(
+                            child: Text("+$dif"),
+                          ),
+                        ),
+                      ),
+                    },
+                  ],
+                );
+              }
+
+              return const SizedBox();
+            },
+          );
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     event = widget.event;
@@ -731,9 +820,8 @@ class _ViewEventPageState extends State<ViewEventPage> {
                                         horizontal: 16),
                                     child: Text(
                                       "Location",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline1,
+                                      style:
+                                          Theme.of(context).textTheme.headline1,
                                     ),
                                   ),
                                   Expanded(
@@ -1024,75 +1112,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
                                     ),
                                   ],
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: FutureBuilder(
-                                    future: event.getMember,
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot snapshot) {
-                                      return ShimmerLoading(
-                                        isLoading: !snapshot.hasData,
-                                        placeholder: GridView.count(
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          crossAxisCount: 8,
-                                          mainAxisSpacing: 8,
-                                          crossAxisSpacing: 8,
-                                          children: [
-                                            for (var i = 0; i < 4; i++) ...{
-                                              Container(
-                                                width: 32,
-                                                height: 32,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(16),
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            }
-                                          ],
-                                        ),
-                                        builder: (BuildContext context) {
-                                          List<User> listMember = snapshot.data;
-
-                                          if (listMember.isNotEmpty) {
-                                            return GridView.count(
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
-                                              crossAxisCount: 8,
-                                              mainAxisSpacing: 8,
-                                              crossAxisSpacing: 8,
-                                              children:
-                                                  listMember.map((member) {
-                                                if (user!.id ==
-                                                        event.owner.id &&
-                                                    user.id != member.id) {
-                                                  // owner option to other user
-                                                  return showOwnerOtherUserMenu(
-                                                      member);
-                                                }
-
-                                                // normal member / owner option to self
-                                                return GestureDetector(
-                                                  onTap: () {
-                                                    viewUserProfile(member);
-                                                  },
-                                                  child:
-                                                      avatar(url: member.image),
-                                                );
-                                              }).toList(),
-                                            );
-                                          }
-
-                                          return const SizedBox();
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
+                                memberBuilder(user!),
                               ],
                             ),
 
