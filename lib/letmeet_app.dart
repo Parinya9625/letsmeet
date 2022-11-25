@@ -21,6 +21,7 @@ import 'package:letsmeet/pages/sign_up_page.dart';
 import 'package:letsmeet/pages/tos_page.dart';
 import 'package:letsmeet/pages/user_profile_page.dart';
 import 'package:letsmeet/pages/view_event_page.dart';
+import 'package:letsmeet/pages/view_members_page.dart';
 import 'package:letsmeet/pages/welcome_page.dart';
 import 'package:letsmeet/services/authentication.dart';
 import 'package:letsmeet/services/firestore.dart';
@@ -288,6 +289,10 @@ class _LetsMeetAppState extends State<LetsMeetApp> {
             break;
           case "/event/chat":
             page = ChatRoomPage(event: settings.arguments as Event);
+            break;
+          case "/event/members":
+            page = ViewMembersPage(
+                listMember: settings.arguments as List<lm.User>);
             break;
           case "/profile":
             Map<String, dynamic> args =
