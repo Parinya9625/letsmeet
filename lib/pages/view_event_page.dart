@@ -739,6 +739,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
                                   Expanded(
                                     child: Text(
                                       event.location.name,
+                                      textAlign: TextAlign.right,
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                     ),
