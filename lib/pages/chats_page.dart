@@ -157,6 +157,13 @@ class _ChatsPageState extends State<ChatsPage> {
                     "member",
                     arrayContains: user?.toDocRef(),
                   )
+                  .where(
+                    "startTime",
+                    isGreaterThan: DateTime.now().subtract(
+                      // Show only events that are not older than 1 months
+                      const Duration(days: 30 * 1),
+                    ),
+                  )
                   .orderBy(
                     "startTime",
                   )
